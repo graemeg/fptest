@@ -1,55 +1,58 @@
-{#(@)$Id: $ }
-{  DUnit: An XTreme testing framework for Delphi programs. }
-(*
- * The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is DUnit.
- *
- * The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
- * and Juancarlo Añez.
- * Portions created The Initial Developers are Copyright (C) 1999-2000.
- * Portions created by The DUnit Group are Copyright (C) 2000-2008.
- * All rights reserved.
- *
- * Contributor(s):
- * Kent Beck <kentbeck@csi.com>
- * Erich Gamma <Erich_Gamma@oti.com>
- * Juanco Añez <juanco@users.sourceforge.net>
- * Chris Morris <chrismo@users.sourceforge.net>
- * Jeff Moore <JeffMoore@users.sourceforge.net>
- * Uberto Barbini <uberto@usa.net>
- * Brett Shearer <BrettShearer@users.sourceforge.net>
- * Kris Golko <neuromancer@users.sourceforge.net>
- * The DUnit group at SourceForge <http://dunit.sourceforge.net>
- * Peter McNab <mcnabp@gmail.com>
- *
- *******************************************************************************
-*)
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
+
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   The Original Code is DUnit.
+
+   The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
+   and Juancarlo Añez.
+   Portions created The Initial Developers are Copyright (C) 1999-2000.
+   Portions created by The DUnit Group are Copyright (C) 2000-2007.
+   All rights reserved.
+
+   Contributor(s):
+   Kent Beck <kentbeck@csi.com>
+   Erich Gamma <Erich_Gamma@oti.com>
+   Juanco Añez <juanco@users.sourceforge.net>
+   Chris Morris <chrismo@users.sourceforge.net>
+   Jeff Moore <JeffMoore@users.sourceforge.net>
+   Uberto Barbini <uberto@usa.net>
+   Brett Shearer <BrettShearer@users.sourceforge.net>
+   Kris Golko <neuromancer@users.sourceforge.net>
+   The DUnit group at SourceForge <http://dunit.sourceforge.net>
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
 
 unit TestFrameworkProxyIfaces;
-// This unit sits between a modified GUITestRunner and the new DUnit2 TestFramework. It provides an
-// interface to make the new TestFrameWork look and appear to behave like the old TestFramework.
-// Once tests are running GUITestRunner will be gradually modified to interface
-// more closely with the new TestFramework.
-// This "Proxy" unit re-creates the Tests structure currently accessed by
-// the treeview.
+{ This unit sits between a modified GUITestRunner and the new DUnit2
+  TestFramework. It provides an interface to make the new TestFrameWork
+  look and appear to behave like the old TestFramework. Once tests are
+  running GUITestRunner will be gradually modified to interface more closely
+  with the new TestFramework. This "Proxy" unit re-creates the Tests
+  structure currently accessed by the treeview.  }
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ENDIF}
 
 interface
+
 uses
-  IniFiles,
-  Registry,
   Classes,
-  TestFrameworkIfaces; // New for Dunit2
+  TestFrameworkIfaces;
 
 type
+  // forward declarations
   TTestResult = interface;
   ITestListener = interface;
 
@@ -89,7 +92,6 @@ type
                                                  write set_InhibitSummaryLevelChecks;
     function  EarlyExit: boolean;
 
-    {$IFNDEF CLR}
     function  get_LeakAllowed: boolean;
     property  LeakAllowed: boolean read get_LeakAllowed;
     function  GetFailsOnMemoryLeak: Boolean;
@@ -99,7 +101,6 @@ type
     function  GetAllowedMemoryLeakSize: Integer;
     procedure SetAllowedMemoryLeakSize(const NewSize: Integer);
     function  GetFailsOnMemoryRecovery: Boolean;
-    {$ENDIF}
 
     procedure SaveConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean);
     procedure LoadConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean);
@@ -129,27 +130,25 @@ type
     property  FailsOnNoChecksExecuted: Boolean
                 read GetFailsOnNoChecksExecuted
                 write SetFailsOnNoChecksExecuted;
-    {$IFNDEF CLR}
     property  FailsOnMemoryLeak: Boolean read GetFailsOnMemoryLeak
                                          write SetFailsOnMemoryLeak;
-    // Dunit 9.3 compatibility requirement
     property  FailsOnMemLeakDetection: boolean read GetFailsOnMemoryLeak
                                                write SetFailsOnMemoryLeak;
     property  IgnoreSetUpTearDownLeaks: Boolean read GetIgnoreSetUpTearDownLeaks
                                                 write SetIgnoreSetUpTearDownLeaks;
     property  AllowedMemoryLeakSize: Integer read GetAllowedMemoryLeakSize
                                              write SetAllowedMemoryLeakSize;
-  {$ENDIF}
   end;
+
 
   ITestSuiteProxy = interface(ITestProxy)
   ['{7CFE1779-1207-4D55-A0DD-BA71240F96E0}']
     procedure TestSuiteTitle(const ATitle: string);
   end;
 
+
   TTestFailure = interface
   ['{C652E195-29DC-409D-B4EF-65B1EF1223F0}']
-
     function ThrownExceptionAddress: Cardinal;
     function FailedTest: ITestProxy;
     function ThrownExceptionName:    string;
@@ -163,7 +162,6 @@ type
   { IStatusListeners are notified of test status messages }
   IStatusListener = interface
   ['{8681DC88-033C-4A42-84F4-4C52EF9ABAC0}']
-
     procedure Status(const ATest: ITestProxy; AMessage: string);
   end;
 
@@ -171,8 +169,7 @@ type
     See ITestResult.AddListener()
   }
   ITestListener = interface(IStatusListener)
-    ['{114185BC-B36B-4C68-BDAB-273DBD450F72}']
-
+  ['{114185BC-B36B-4C68-BDAB-273DBD450F72}']
     procedure AddSuccess(Test: ITestProxy);
     procedure AddError(Error: TTestFailure);
     procedure AddFailure(Failure: TTestFailure);
@@ -186,8 +183,7 @@ type
 
 
   ITestListenerX = interface(ITestListener)
-    ['{5C28B1BE-38B5-4D6F-AA96-A04E9302C317}']
-
+  ['{5C28B1BE-38B5-4D6F-AA96-A04E9302C317}']
     procedure StartSuite(Suite: ITestProxy);
     procedure EndSuite(Suite: ITestProxy);
   end;

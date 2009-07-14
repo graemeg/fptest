@@ -1,59 +1,56 @@
-{#(@)$Id: $ }
-{  DUnit: An XTreme testing framework for Delphi programs. }
-(*
- * The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is DUnit.
- *
- * The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
- * and Juancarlo Añez.
- * Portions created The Initial Developers are Copyright (C) 1999-2000.
- * Portions created by The DUnit Group are Copyright (C) 2000-2007.
- * All rights reserved.
- *
- * Contributor(s):
- * Kent Beck <kentbeck@csi.com>
- * Erich Gamma <Erich_Gamma@oti.com>
- * Juanco Añez <juanco@users.sourceforge.net>
- * Chris Morris <chrismo@users.sourceforge.net>
- * Jeff Moore <JeffMoore@users.sourceforge.net>
- * Uberto Barbini <uberto@usa.net>
- * Brett Shearer <BrettShearer@users.sourceforge.net>
- * Kris Golko <neuromancer@users.sourceforge.net>
- * The DUnit group at SourceForge <http://dunit.sourceforge.net>
- * Peter McNab <mcnabp@gmail.com>
- *
- *******************************************************************************
-*)
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
+
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   The Original Code is DUnit.
+
+   The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
+   and Juancarlo Añez.
+   Portions created The Initial Developers are Copyright (C) 1999-2000.
+   Portions created by The DUnit Group are Copyright (C) 2000-2007.
+   All rights reserved.
+
+   Contributor(s):
+   Kent Beck <kentbeck@csi.com>
+   Erich Gamma <Erich_Gamma@oti.com>
+   Juanco Añez <juanco@users.sourceforge.net>
+   Chris Morris <chrismo@users.sourceforge.net>
+   Jeff Moore <JeffMoore@users.sourceforge.net>
+   Uberto Barbini <uberto@usa.net>
+   Brett Shearer <BrettShearer@users.sourceforge.net>
+   Kris Golko <neuromancer@users.sourceforge.net>
+   The DUnit group at SourceForge <http://dunit.sourceforge.net>
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
 
 unit TestFrameworkIfaces;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ENDIF}
+
 interface
+
 uses
-{$IFDEF CLR}System.Reflection,{$ENDIF}
   Classes,
   IniFiles,
   SysUtils;
 
 type
-  {$IFDEF VER130}
-    IInterface = IUnknown;
+  {$IFNDEF FPC}
+  PtrInt = LongInt; // What this when Delphi gets 64bit support
   {$ENDIF}
-  {$IFDEF CLR}
-    IUnknown = IInterface;
-    ExceptClass = class of Exception;
-    TExceptTestMethod = string;
-  {$ELSE}
-    IntPtr = Pointer;
-    TExceptTestMethod = procedure of object;
-  {$ENDIF}
+  TExceptTestMethod = procedure of object;
 
   TTestMethod = procedure of object;
   ITest = interface;
@@ -76,11 +73,13 @@ type
   TAllowedLeakArray = array[0..3] of integer;
   TListIterator = function: integer of object;
 
+
   IMemLeakMonitor = interface(IUnknown)
   ['{041368CC-5B04-4111-9E2E-05A5908B3A58}']
 
     function MemLeakDetected(out LeakSize: Integer): boolean;
   end;
+
 
   IDUnitMemLeakMonitor = interface(IMemLeakMonitor)
   ['{45466FCA-1ADC-4457-A41C-88FA3F8D23F7}']
@@ -104,12 +103,16 @@ type
     procedure MarkMemInUse;
   end;
 
+
+  // forward declaration
   ITestMethod = interface;
+
 
   ITestSetUpData = interface
   ['{46F62E93-A9C4-45D9-9AF1-C914E75481C0}']
   // derive from this interface when adding getters, setters and properties
   end;
+
 
   ITestExecControl = interface
   ['{F2E51368-2D72-49B3-A91F-E202C4466EB7}']
@@ -188,7 +191,6 @@ type
     procedure set_InhibitSummaryLevelChecks(const Value: boolean);
     property  InhibitSummaryLevelChecks: boolean read get_InhibitSummaryLevelChecks
                                                  write set_InhibitSummaryLevelChecks;
-    {$IFNDEF CLR}
     function  get_FailsOnMemoryLeak: boolean;
     procedure set_FailsOnMemoryLeak(const Value: boolean);
     property  FailsOnMemoryLeak: boolean read get_FailsOnMemoryLeak
@@ -200,10 +202,12 @@ type
     property  IgnoresMemoryLeakInSetUpTearDown: boolean
                 read get_IgnoresMemoryLeakInSetUpTearDown
                 write set_IgnoresMemoryLeakInSetUpTearDown;
-    {$ENDIF}
   end;
 
+
+  // forward declaration
   ITestCase = interface;
+
 
   ITest = interface
   ['{E465B9E7-5D7E-4A82-A5E7-9F4F86B465AD}']
@@ -259,7 +263,7 @@ type
     function  UpdateOnFail(const ATest: ITest;
                            const NewStatus: TExecutionStatus;
                            const Excpt: Exception;
-                           const Addrs: IntPtr): TExecutionStatus;
+                           const Addrs: PtrInt): TExecutionStatus;
     function  get_CheckCalled: boolean;
     procedure set_CheckCalled(const Value: boolean);
     property  CheckCalled: boolean read get_CheckCalled write set_CheckCalled;
@@ -283,8 +287,6 @@ type
                                                  write set_InhibitSummaryLevelChecks;
     function  get_EarlyExit: Boolean;
     property  EarlyExit: boolean read get_EarlyExit;
-
-    {$IFNDEF CLR}
     function  get_LeakAllowed: boolean;
     procedure set_LeakAllowed(const Value: boolean);
     property  LeakAllowed: boolean read get_LeakAllowed write set_LeakAllowed;
@@ -304,13 +306,8 @@ type
     property  IgnoresMemoryLeakInSetUpTearDown: boolean
                 read get_IgnoresMemoryLeakInSetUpTearDown
                 write set_IgnoresMemoryLeakInSetUpTearDown;
-    {$ELSE}
-    function  get_CLRExceptionLocation: string;
-    procedure set_CLRExceptionLocation(const Value: string);
-    property  CLRExceptionLocation: string read get_CLRExceptionLocation
-                                           write set_CLRExceptionLocation;
-    {$ENDIF}
   end;
+
 
   ITestMethod = interface(ITest)
   ['{9B2501B0-F692-48A5-BE95-4DB6DD3FD382}']
@@ -327,60 +324,42 @@ type
                             const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil);
     procedure FailNotSame(const expected, actual: WideString;
                           const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil);
-    function  get_ExceptionClass: ExceptClass;
-    procedure set_ExceptionClass(const Value: ExceptClass);
-    property  ExceptionClass: ExceptClass read get_ExceptionClass
-                                          write set_ExceptionClass;
-   {$IFDEF CLR}
-    procedure InvokeMethod(const Parent: IInterface; const AMethodName: string);
-    {$ENDIF}
+    //function  get_ExceptionClass: ExceptClass;
+    //procedure set_ExceptionClass(const Value: ExceptClass);
+    //property  ExceptionClass: ExceptClass read get_ExceptionClass
+    //                                      write set_ExceptionClass;
   end;
+
 
    ITestCheck = interface
    ['{D6CFEE09-44AE-499A-AE8E-EFE23848AEED}']
-
     procedure OnCheckCalled;
-  {$IFDEF VER130}
-    function  BoolToStr(ABool: boolean): string;
-  {$ENDIF}
-
     { The following are the calls users make in test procedures}
     procedure EarlyExitCheck(const condition: boolean; const ErrorMsg: string = '');
-
     procedure CheckFalse(const condition: boolean; const ErrorMsg: string = '');
     procedure CheckNotEquals(const expected, actual: boolean;
                              const ErrorMsg: string = ''); overload;
-
     procedure CheckEquals(const expected, actual: integer;
                           const ErrorMsg: string = ''); overload;
     procedure CheckNotEquals(const expected, actual: integer;
                              const ErrorMsg: string = ''); overload;
-
     procedure CheckEquals(const expected, actual: int64;
                           const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: int64;
                              const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: extended;
                              const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: extended;
                              const delta: extended;
                              const ErrorMsg: string= ''); overload;
-
-{$IFNDEF VER130}
     procedure CheckEquals(const expected, actual: string;
                           const ErrorMsg: string= ''); overload;
     procedure CheckNotEquals(const expected, actual: string;
                              const ErrorMsg: string = ''); overload;
-{$ENDIF}
-
     procedure CheckEqualsString(const expected, actual: string;
                                 const ErrorMsg: string = '');
     procedure CheckNotEqualsString(const expected, actual: string;
                                    const ErrorMsg: string = '');
-{$IFNDEF CLR}
   {$IFNDEF UNICODE}
     procedure CheckEquals(const expected, actual: WideString;
                           const ErrorMsg: string= ''); overload;
@@ -397,7 +376,6 @@ type
                                     const ErrorMsg: string= '');
     procedure CheckNotEqualsWideString(const expected, actual: WideString;
                                        const ErrorMsg: string = '');
-{$ENDIF}
     procedure CheckEqualsBin(const expected, actual: longword;
                              const ErrorMsg: string = '';
                              const digits: Integer=32);
@@ -425,7 +403,6 @@ type
                         const ErrorMsg: string = ''); overload;
     procedure CheckNotSame(const expected, actual: TObject;
                            const ErrorMsg: string = ''); overload;
-
     procedure CheckException(const AMethod: TExceptTestMethod;
                              const AExceptionClass: TClass;
                              const ErrorMsg :string = '');
@@ -436,34 +413,29 @@ type
     procedure CheckInherits(const expected, actual: TClass;
                             const ErrorMsg: string = '');
     procedure Check(const condition: boolean; const ErrorMsg: string= ''); overload;
-
     procedure CheckEquals(const expected, actual: extended;
                           const ErrorMsg: string= ''); overload;
-
     procedure CheckTrue(const condition: boolean; const ErrorMsg: string = '');
-
     procedure CheckEquals(const expected, actual: boolean;
                           const ErrorMsg: string = ''); overload;
-
     procedure CheckSame(const expected, actual: IInterface;
                         const ErrorMsg: string = ''); overload;
-
     procedure CheckIs(const AObject :TObject;
                       const AClass: TClass;
                       const ErrorMsg: string = '');
-
     procedure CheckEquals(const expected, actual: extended;
                           const delta: extended;
                           const ErrorMsg: string= ''); overload;
   end;
 
+
   ITestCase = interface(ITest)
-      ['{230CEE88-79CD-4D01-9CE3-DF8018327C05}']
+  ['{230CEE88-79CD-4D01-9CE3-DF8018327C05}']
     procedure SetUp;
     procedure TearDown;
     function  Run(const ExecControl: ITestExecControl): TExecutionStatus;
     procedure AddTest(const ATest: ITest);
-    function  Count: integer;
+    //function  Count: integer;
     function  CountTestCases: Integer;
     procedure AddSuite(const ATest: ITest);
     procedure Reset; //Resets to 1st entry
@@ -475,7 +447,7 @@ type
     procedure StartExpectingException(e: ExceptClass);
     property  ExpectedException :ExceptClass read  get_ExpectedException
                                              write StartExpectingException;
-    procedure InstallExecutionControl(const Value: ITestExecControl);
+    //procedure InstallExecutionControl(const Value: ITestExecControl);
     function  get_ReEntering: Boolean;
     procedure set_ReEntering(const Value: Boolean);
     property  ReEntering: Boolean read get_ReEntering write set_ReEntering;
@@ -484,11 +456,11 @@ type
     property  ReportErrorOnce: Boolean read get_ReportErrorOnce
                                        write set_ReportErrorOnce;
     procedure ReleaseProxys;
-
     procedure StopTests(const ErrorMsg: string = '');
     procedure InhibitStackTrace; overload;
     procedure InhibitStackTrace(const Value: boolean); overload;
   end;
+
 
   IReadOnlyIterator = interface
   ['{F76E5F49-B2EC-4F6C-ACB9-E8E03B1F230B}']
@@ -500,10 +472,12 @@ type
     function  CurrentTest: ITest;
   end;
 
+
   ITestIterator = interface(IReadOnlyIterator)
   ['{A408E082-8F55-4E37-AA66-E41629E2DE26}']
     procedure AddTest(const ATest: ITest);
   end;
+
 
   ITestSuite = interface(ITestCase)
   ['{DD917A7D-B457-43A9-9828-250C890DFE58}']
@@ -513,16 +487,12 @@ type
                       const Suites: array of ITestCase); overload;
   end;
 
+
   {: General interface for test decorators}
   ITestDecorator = interface(ITestSuite)
   ['{962956B6-0633-4296-A5E7-AC6250450793}']
-  {$IFDEF CLR}
-    procedure AddTest(const SuiteTitle: string;
-                      const ASuite: ITestCase); overload;
-    procedure AddTest(const SuiteTitle: string;
-                      const Suites: array of ITestCase); overload;
-  {$ENDIF}
   end;
+
 
   IRepeatedTest = interface(ITestSuite)
   ['{DF3B52FF-2645-42C2-958A-174FF87A19B8}']
@@ -533,6 +503,7 @@ type
     property  HaltOnError: Boolean read GetHaltOnError write SetHaltOnError;
   end;
 
+
   ITestProject = interface(ITestSuite)
   ['{83481224-7BC4-4C9F-83B3-56DD17BD73AA}']
     function  get_Manager: IInterface;
@@ -540,10 +511,10 @@ type
     property  Manager: IInterface read Get_Manager write Set_Manager;
     function  CountEnabledTests: integer;
     function  SuiteByTitle(const SuiteTitle: string): ITestSuite;
-    procedure AddTest(const SuiteTitle: string;
-                      const ASuite: ITestCase); overload;
-    procedure AddTest(const SuiteTitle: string;
-                      const Suites: array of ITestCase); overload;
+    //procedure AddTest(const SuiteTitle: string;
+    //                  const ASuite: ITestCase); overload;
+    //procedure AddTest(const SuiteTitle: string;
+    //                  const Suites: array of ITestCase); overload;
     procedure AddNamedSuite(const SuiteTitle: string; const ATest: ITestCase);
     function  FindFirstTest: ITest;
     function  FindNextTest: ITest;
@@ -553,12 +524,14 @@ type
     property  Listener: IInterface write set_Listener;
   end;
 
+
   IMemUseComparator = interface
   ['{1D015AE6-6555-426D-987D-64B482AFBB94}']
     procedure RunSetup(const UsersSetUp: TThreadMethod);
     procedure RunTearDown(const UsersTearDown: TThreadMethod);
     function  AlertOnMemoryLoss(const CurrentStatus: TExecutionStatus): TExecutionStatus;
   end;
+
 
 implementation
 
