@@ -1,79 +1,73 @@
-{#(@)$Id: $ }
-{  DUnit: An XTreme testing framework for Delphi programs. }
-(*
- * The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is DUnit.
- *
- * The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
- * and Juancarlo Añez.
- * Portions created The Initial Developers are Copyright (C) 1999-2000.
- * Portions created by The DUnit Group are Copyright (C) 2000-2008.
- * All rights reserved.
- *
- * Contributor(s):
- * Kent Beck <kentbeck@csi.com>
- * Erich Gamma <Erich_Gamma@oti.com>
- * Juanco Añez <juanco@users.sourceforge.net>
- * Chris Morris <chrismo@users.sourceforge.net>
- * Jeff Moore <JeffMoore@users.sourceforge.net>
- * Uberto Barbini <uberto@usa.net>
- * Brett Shearer <BrettShearer@users.sourceforge.net>
- * Kris Golko <neuromancer@users.sourceforge.net>
- * The DUnit group at SourceForge <http://dunit.sourceforge.net>
- * Peter McNab <mcnabp@gmail.com>
- *
- *******************************************************************************
-*)
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
 
-{$IFDEF CLR}
-  {$UNSAFECODE ON}
-  {$UNDEF FASTMM}
-{$ENDIF}
-{$IFNDEF VER130}
-  {$IFNDEF VER140}
-    {$WARN UNSAFE_CODE OFF}
-    {$WARN UNSAFE_CAST OFF}
-  {$ENDIF}
-{$ENDIF}
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   The Original Code is DUnit.
+
+   The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
+   and Juancarlo Añez.
+   Portions created The Initial Developers are Copyright (C) 1999-2000.
+   Portions created by The DUnit Group are Copyright (C) 2000-2007.
+   All rights reserved.
+
+   Contributor(s):
+   Kent Beck <kentbeck@csi.com>
+   Erich Gamma <Erich_Gamma@oti.com>
+   Juanco Añez <juanco@users.sourceforge.net>
+   Chris Morris <chrismo@users.sourceforge.net>
+   Jeff Moore <JeffMoore@users.sourceforge.net>
+   Uberto Barbini <uberto@usa.net>
+   Brett Shearer <BrettShearer@users.sourceforge.net>
+   Kris Golko <neuromancer@users.sourceforge.net>
+   The DUnit group at SourceForge <http://dunit.sourceforge.net>
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
 
 unit TestFramework;
 
-
-{ The following is for C++ Support }
-(*$HPPEMIT '#pragma link "dunitrtl.lib"' *)
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
 
 interface
+
 uses
-{$IFDEF CLR}  System.Reflection, System.Diagnostics, System.IO,{$ENDIF}
   TestFrameworkIfaces,
   Classes,
   SysUtils,
   IniFiles,
   Registry;
 
-type
-{$IFDEF CLR}
-  // This enables the [Test] statement in the unit tests.
-  TestAttribute = class(TCustomAttribute)
-  end;
-{$ENDIF}
+{ TODO : Remove Registry support - we want clean INI support only }
 
+type
   ETestFailure = class(EAbort)
      constructor Create;                          overload;
      constructor Create(const ErrorMsg :string);  overload;
   end;
 
+
   EDUnitException = class(Exception);
   ETestError = class(EDUnitException);
+
 
   TReadOnlyIterator = class(TInterfacedObject, IReadOnlyIterator)
   private
@@ -93,10 +87,12 @@ type
     destructor Destroy; override;
   end;
 
+
   TTestIterator = class(TReadOnlyIterator, ITestIterator)
   protected //Adds entry and resets idx to 1st entry
     procedure AddTest(const ATest: ITest);
   end;
+
 
   {$M+}
   TTestProc = class(TInterfacedObject, ITest, ITestMethod, ITestCheck)
@@ -128,25 +124,14 @@ type
     FParentPath: string;
     FInhibitSummaryLevelChecks: Boolean;
     FEarlyExit: Boolean;
-    {$IFNDEF CLR}
     FLeakAllowed: Boolean;
     FAllowedLeakList: TAllowedLeakArray;
     FAllowedLeakListIndex: Word;
     FFailsOnMemoryLeak: boolean;
     FIgnoresMemoryLeakInSetUpTearDown: boolean;
-    {$ELSE}
-    FCLRExceptionLocation: string;
-    {$ENDIF}
-
     function  CheckMethodCalledCheck(const ATest: ITest): TExecutionStatus;
     function  ElapsedTestTime: Cardinal;
-    {$IFDEF CLR}
-    procedure InvokeMethod(const Parent: IInterface; const MethodName: string); overload;
-    function  get_CLRExceptionLocation: string;
-    procedure set_CLRExceptionLocation(const Value: string);
-    {$ELSE}
     function  MethodCode(const MethodsName: string): TTestMethod;
-    {$ENDIF}
     procedure CheckMethodIsNotEmpty(const AMethod: TTestMethod);
     procedure InitializeRunState; virtual;
     function  Run(const CurrentTestCase: ITestCase;
@@ -196,7 +181,6 @@ type
     function  get_InhibitSummaryLevelChecks: boolean;
     procedure set_InhibitSummaryLevelChecks(const Value: boolean);
     function  get_EarlyExit: boolean;
-    {$IFNDEF CLR}
     function  get_LeakAllowed: boolean;
     procedure set_LeakAllowed(const Value: boolean);
     property  LeakAllowed: boolean read get_LeakAllowed;
@@ -209,7 +193,6 @@ type
     procedure set_AllowedMemoryLeakSize(const NewSize: Integer);
     function  get_IgnoresMemoryLeakInSetUpTearDown: boolean;
     procedure set_IgnoresMemoryLeakInSetUpTearDown(const Value: boolean);
-    {$ENDIF}
     function  get_ExpectedException: ExceptClass;
     procedure StartExpectingException(e: ExceptClass);
     procedure StopExpectingException(const ErrorMsg :string = '');
@@ -225,12 +208,12 @@ type
     function  UpdateOnFail(const ATest: ITest;
                            const NewStatus: TExecutionStatus;
                            const Excpt: Exception;
-                           const Addrs: IntPtr): TExecutionStatus;
+                           const Addrs: PtrInt): TExecutionStatus;
     function  UpdateOnError(const ATest: ITest;
                             const NewStatus: TExecutionStatus;
                             const ExceptnMsg: string;
                             const Excpt: Exception;
-                            const Addrs: IntPtr): TExecutionStatus;
+                            const Addrs: PtrInt): TExecutionStatus;
     function  GetStatus: string;
     procedure Status(const Value: string);
     function  get_Proxy: IInterface;
@@ -239,16 +222,14 @@ type
                        const ErrorAddress: Pointer = nil); overload;
     function  PtrToStr(const P: Pointer): string;
     procedure Invoke(AMethod: TExceptTestMethod);
-    {$IFNDEF CLR} // related to Check(Not)EqualsMem, pointer based, unsuitable for .NET
+    // related to Check(Not)EqualsMem, pointer based, unsuitable for .NET
     function  GetMemDiffStr(const expected, actual: pointer;
                             const size: longword; const ErrorMsg: string): string;
-    {$ENDIF}
 
     function  EqualsErrorMessage(const expected, actual :WideString;
                                  const ErrorMsg: string): WideString; virtual;
     function  NotEqualsErrorMessage(const expected, actual :WideString;
                                     const ErrorMsg: string): WideString; virtual;
-
   public
     procedure Fail(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil);
@@ -259,46 +240,33 @@ type
     procedure FailNotSame(const expected, actual: WideString;
                           const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil); //virtual;
     procedure OnCheckCalled;
-  {$IFDEF VER130}
-    function  BoolToStr(ABool: boolean): string;
-  {$ENDIF}
 
     { The following are the calls users make in test procedures . }
     procedure EarlyExitCheck(const condition: boolean; const ErrorMsg: string = '');
     procedure CheckFalse(const condition: boolean; const ErrorMsg: string = '');
     procedure CheckNotEquals(const expected, actual: boolean;
                              const ErrorMsg: string = ''); overload;
-
     procedure CheckEquals(const expected, actual: integer;
                           const ErrorMsg: string = ''); overload;
     procedure CheckNotEquals(const expected, actual: integer;
                              const ErrorMsg: string = ''); overload;
-
     procedure CheckEquals(const expected, actual: int64;
                           const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: int64;
                              const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: extended;
                              const ErrorMsg: string= ''); overload;
-
     procedure CheckNotEquals(const expected, actual: extended;
                              const delta: extended;
                              const ErrorMsg: string= ''); overload;
-
-{$IFNDEF VER130}
     procedure CheckEquals(const expected, actual: string;
                           const ErrorMsg: string= ''); overload;
     procedure CheckNotEquals(const expected, actual: string;
                              const ErrorMsg: string = ''); overload;
-{$ENDIF}
-
     procedure CheckEqualsString(const expected, actual: string;
                                 const ErrorMsg: string = '');
     procedure CheckNotEqualsString(const expected, actual: string;
                                    const ErrorMsg: string = '');
-{$IFNDEF CLR}
   {$IFNDEF UNICODE}
     procedure CheckEquals(const expected, actual: WideString;
                           const ErrorMsg: string= ''); overload;
@@ -315,7 +283,6 @@ type
                                     const ErrorMsg: string= '');
     procedure CheckNotEqualsWideString(const expected, actual: WideString;
                                        const ErrorMsg: string = '');
-{$ENDIF}
     procedure CheckEqualsBin(const expected, actual: longword;
                              const ErrorMsg: string = '';
                              const digits: Integer=32);
@@ -328,7 +295,6 @@ type
     procedure CheckNotEqualsHex(const expected, actual: longword;
                                 const ErrorMsg: string = '';
                                 const digits: Integer=8);
-
     procedure CheckNotNull(const obj :IInterface;
                            const ErrorMsg :string = ''); overload;
     procedure CheckNull(const obj: IInterface;
@@ -343,7 +309,6 @@ type
                         const ErrorMsg: string = ''); overload;
     procedure CheckNotSame(const expected, actual: TObject;
                            const ErrorMsg: string = ''); overload;
-
     procedure CheckException(const AMethod: TExceptTestMethod;
                              const AExceptionClass: TClass;
                              const ErrorMsg :string = '');
@@ -354,22 +319,16 @@ type
     procedure CheckInherits(const expected, actual: TClass;
                             const ErrorMsg: string = '');
     procedure Check(const condition: boolean; const ErrorMsg: string= ''); overload;
-
     procedure CheckEquals(const expected, actual: extended;
                           const ErrorMsg: string= ''); overload;
-
     procedure CheckTrue(const condition: boolean; const ErrorMsg: string = '');
-
     procedure CheckEquals(const expected, actual: boolean;
                           const ErrorMsg: string = ''); overload;
-
     procedure CheckSame(const expected, actual: IInterface;
                         const ErrorMsg: string = ''); overload;
-
     procedure CheckIs(const AObject :TObject;
                       const AClass: TClass;
                       const ErrorMsg: string = '');
-
     procedure CheckEquals(const expected, actual: extended;
                           const delta: extended;
                           const ErrorMsg: string= ''); overload;
@@ -405,18 +364,9 @@ type
     property  InhibitSummaryLevelChecks: boolean read get_InhibitSummaryLevelChecks
                                          write set_InhibitSummaryLevelChecks;
     property  EarlyExit: boolean read get_EarlyExit;
-    {$IFNDEF CLR}
-    property  FailsOnMemoryLeak: boolean read get_FailsOnMemoryLeak
-                                         write set_FailsOnMemoryLeak;
-    property  FailsOnMemLeakDetection: boolean read get_FailsOnMemoryLeak
-                                               write set_FailsOnMemoryLeak;
-    property  IgnoresMemoryLeakInSetUpTearDown: boolean
-                read get_IgnoresMemoryLeakInSetUpTearDown
-                write set_IgnoresMemoryLeakInSetUpTearDown;
-    {$ELSE}
-    property  CLRExceptionLocation: string read get_CLRExceptionLocation
-                                           write set_CLRExceptionLocation;
-    {$ENDIF}
+    property  FailsOnMemoryLeak: boolean read get_FailsOnMemoryLeak write set_FailsOnMemoryLeak;
+    property  FailsOnMemLeakDetection: boolean read get_FailsOnMemoryLeak write set_FailsOnMemoryLeak;
+    property  IgnoresMemoryLeakInSetUpTearDown: boolean read get_IgnoresMemoryLeakInSetUpTearDown write set_IgnoresMemoryLeakInSetUpTearDown;
     property  Proxy: IInterface read get_Proxy write set_Proxy;
   end;
   {$M-}
@@ -470,18 +420,16 @@ type
     procedure AddSuite(const ATest: ITest); virtual;
     procedure AddTest(const ATest: ITest);
     constructor Create; overload; override;
-    constructor Create(ProcName: string); reintroduce; overload; virtual;
+    constructor Create(const AProcName: string); overload; virtual;
     destructor Destroy; override;
     class function Suite: ITestCase; virtual;
   published
-  {$IFNDEF CLR}
-    property  AllowedMemoryLeakSize: Integer read get_AllowedMemoryLeakSize
-                                           write set_AllowedMemoryLeakSize;
+    property  AllowedMemoryLeakSize: Integer read get_AllowedMemoryLeakSize write set_AllowedMemoryLeakSize;
     property  AllowedLeaksIterator: TListIterator read get_AllowedLeaksIterator;
-  {$ENDIF}
     property  ProgressSummary: IInterface read get_ProgressSummary;
     property  ReEntering: Boolean read get_ReEntering write set_ReEntering;
   end;
+
 
   TTestSuite = class(TTestCase, ITestSuite)
   protected
@@ -490,22 +438,14 @@ type
     function  FindNextEnabledProc: ITest; override;
     function  TestIterator: IReadOnlyIterator;
   public
-    procedure AddTest(const SuiteTitle: string;
-                      const ASuite: ITestCase); reintroduce; overload;
-    procedure AddTest(const SuiteTitle: string;
-                      const Suites: array of ITestCase); reintroduce; overload;
-    constructor Create; overload; override;
-    constructor Create({const} SuiteName: string); overload; override;
-
+    procedure AddTest(const SuiteTitle: string; const ASuite: ITestCase); reintroduce; overload;
+    procedure AddTest(const SuiteTitle: string; const Suites: array of ITestCase); reintroduce; overload;
+    constructor Create(const ASuiteName: string); overload; override;
     class function Suite(const ASuiteName: string): ITestSuite; reintroduce; overload;
-                                                                {$IFDEF CLR} virtual; {$ENDIF}
-    class function Suite(const ASuiteName: string;
-                         const ATestCase: ITestCase): ITestSuite; reintroduce; overload;
-                                                                  {$IFDEF CLR} virtual; {$ENDIF}
-    class function Suite(const ASuiteName: string;
-                         const TestCases: array of ITestCase): ITestSuite; reintroduce; overload;
-                                                                          {$IFDEF CLR} virtual; {$ENDIF}
+    class function Suite(const ASuiteName: string; const ATestCase: ITestCase): ITestSuite; reintroduce; overload;
+    class function Suite(const ASuiteName: string; const TestCases: array of ITestCase): ITestSuite; reintroduce; overload;
   end;
+
 
   TTestDecorator = class(TTestSuite, ITestDecorator)
   protected
@@ -519,18 +459,16 @@ type
     // Provides a decoratorated TestSuite.
     class function Suite(const DecoratorName: string;
                          const DecoratedTestCase: ITestCase): ITestSuite; reintroduce; overload;
-      {$IFDEF CLR} virtual; {$ENDIF}
     // Provides an array of decorated TestSuites/TestCases
     class function Suite(const DecoratorName: string;
                          const DecoratedTestCases: array of ITestCase): ITestSuite; reintroduce; overload;
-      {$IFDEF CLR} virtual; {$ENDIF}
   end;
+
 
   TRepeatedTest = class(TTestSuite, IRepeatedTest)
   private
     FRepeatCount: Integer;
     FHaltOnError: Boolean;
-
     function  GetHaltOnError: Boolean;
     procedure SetHaltOnError(const Value: Boolean);
   protected
@@ -543,8 +481,8 @@ type
   public
     class function Suite(const CountedTestCase: ITestCase;
                          const Iterations: Cardinal): IRepeatedTest; reintroduce; overload;
-      {$IFDEF CLR} virtual; {$ENDIF}
   end;
+
 
   TTestProject = class(TTestSuite, ITestProject, IReadOnlyIterator)
   private
@@ -584,7 +522,7 @@ type
     procedure set_Listener(const Value: IInterface);
   public
     constructor Create; overload; override;
-    constructor Create({const} SuiteName: string); overload; override;
+    constructor Create(const ASuiteName: string); overload; override;
     destructor Destroy; override;
   published
     property  Manager: IInterface read get_Manager write set_Manager;
@@ -622,25 +560,18 @@ function  RegisterProject(const AProject: ITestProject): Integer; overload;
 function  RegisterProject(const AName: string;
                           const AProject: ITestProject): Integer; overload;
 procedure UnRegisterProjectManager;
-function  CallerAddr: Pointer; {$IFNDEF CLR} assembler; {$ENDIF}
+function  CallerAddr: Pointer; assembler;
 
 {$BOOLEVAL OFF}
 {==============================================================================}
 implementation
 uses
-  {$IFDEF VER130}
-    D5Support,
-  {$ELSE}
-    StrUtils,
-  {$ENDIF}
+  StrUtils,
   {$IFDEF FASTMM}
 //    FastMM4,
   {$ENDIF}
-{$IFDEF USE_JEDI_JCL}
-  JclDebug,
-{$ENDIF}
   TypInfo,
-  Windows,
+//  Windows,
   Math,
   ProjectsManagerIface,
   ProjectsManager,
@@ -677,10 +608,8 @@ type
     FCheckCalledCount: Integer;
     FInhibitStackTrace: boolean;
     FInhibitSummaryLevelChecks: Boolean;
-    {$IFNDEF CLR}
     FFailsOnMemoryLeak: boolean;
     FIgnoresMemoryLeakInSetUpTearDown: boolean;
-    {$ENDIF}
     function  get_TestSetUpData: ITestSetUpData;
     procedure set_TestSetUpData(const Value: ITestSetUpData);
     function  get_HaltExecution: boolean;
@@ -719,12 +648,10 @@ type
     procedure set_InhibitStackTrace(const Value: boolean);
     function  get_InhibitSummaryLevelChecks: boolean;
     procedure set_InhibitSummaryLevelChecks(const Value: boolean);
-    {$IFNDEF CLR}
     function  get_FailsOnMemoryLeak: boolean;
     procedure set_FailsOnMemoryLeak(const Value: boolean);
     function  get_IgnoresMemoryLeakInSetUpTearDown: boolean;
     procedure set_IgnoresMemoryLeakInSetUpTearDown(const Value: boolean);
-    {$ENDIF}
   public
     constructor Create; overload;
     constructor Create(const MExecStatusCallback: TExecStatusUpdater;
@@ -1649,7 +1576,6 @@ begin
   Assert(False, 'procedure IssueStatusMsg not implenented');
 end;
 
-{$IFNDEF CLR}
 function TTestExecControl.get_FailsOnMemoryLeak: boolean;
 begin
   Result := FFailsOnMemoryLeak;
@@ -1669,7 +1595,6 @@ procedure TTestExecControl.set_IgnoresMemoryLeakInSetUpTearDown(const Value: boo
 begin
   FIgnoresMemoryLeakInSetUpTearDown := Value;
 end;
-{$ENDIF}
 
 { TProgressSummary }
 
@@ -1915,18 +1840,6 @@ begin
   Result := FEarlyExit;
 end;
 
-{$IFDEF CLR}
-function TTestProc.get_CLRExceptionLocation: string;
-begin
-  Result := FCLRExceptionLocation;
-end;
-
-procedure TTestProc.set_CLRExceptionLocation(const Value: string);
-begin
-  FCLRExceptionLocation := Value;
-end;
-{$ELSE}
-
 function TTestProc.get_AllowedMemoryLeakSize: Integer;
 // Array[0] reserved for property AllowedLeakSize and remainder for
 // values entered by SetAllowedLeakArray
@@ -2017,7 +1930,6 @@ begin // Note the 0th element is reserved for old code value.
       FAllowedLeakList[i] := 0;
   end;
 end;
-{$ENDIF}
 
 function TTestProc.get_FailsOnNoChecksExecuted: boolean;
 begin
@@ -2252,47 +2164,11 @@ begin
   Result := (Ord(SupportedIfaceType) >= Ord(Value)); 
 end;
 
-{$IFDEF CLR}
-procedure TTestProc.InvokeMethod(const Parent: IInterface; const MethodName: string);
-  var
-    Args: array of System.Object;
-    LFullMsg: string;
-    LPosCRLF: Integer;
-    LPosIn: Integer;
-  begin
-    Args := nil;
-    (Parent as ITest).CLRExceptionLocation := '';
-    try
-      GetType.InvokeMember(MethodName,
-                           BindingFlags.Public or
-                           BindingFlags.Instance or
-                           BindingFlags.InvokeMethod,
-                           nil,
-                           Parent,
-                           Args);
-    except
-      on E:TargetInvocationException do
-      begin
-        LFullMsg := E.InnerException.ToString;
-        LPosCRLF := Pos(#$0D#$0A, LFullMsg);
-        LPosIn := Pos(' in ', LFullMsg);
-        (Parent as ITest).CLRExceptionLocation := Copy(LFullMsg, 1, Max(1, LPosCRLF-1)) +
-        Copy(LFullMsg, LPosIn, Length(LFullMsg));
-        raise E.InnerException;
-      end;
-    end;
-  end;
-{$ENDIF}
-
 function TTestProc.IsValidTestMethod(const AProc: TTestMethod): boolean;
 begin
-{$IFDEF CLR}
-  Result := (FMethodName <> '');
-{$ELSE}
   Result := (FMethodName <> '') and
             (TMethod(FMethod).Code <> nil) and
             (TMethod(FMethod).Data = TMethod(AProc).Data);
-{$ENDIF}
 end;
 
 function TTestProc.MethodsName: string;
@@ -2373,11 +2249,7 @@ begin
       if IsTestMethod then
       begin
         QueryPerformanceCounter(FStartTime);
-        {$IFDEF CLR}
-          (CurrentTestCase as ITestMethod).InvokeMethod(CurrentTestCase, AMethodName);
-        {$ELSE}
-          FMethod;
-        {$ENDIF}
+        FMethod;
       end
       else
       begin
@@ -2613,17 +2485,15 @@ begin
   EnumerateMethods;
 end;
 
-constructor TTestCase.Create({const} ProcName: string);
+constructor TTestCase.Create(const AProcName: string);
 var
   LTest: ITest;
 begin
   Create;
-
   repeat
     LTest := FTestIterator.FindNextTest;
     if Assigned(LTest) then
-      LTest.Enabled := (LTest.DisplayedName = ProcName) or
-        (ProcName = '');
+      LTest.Enabled := (LTest.DisplayedName = AProcName) or (AProcName = '');
   until (LTest = nil);
 end;
 
@@ -2642,11 +2512,7 @@ end;
 
 procedure TTestProc.Invoke(AMethod: TExceptTestMethod);
 begin
-  {$IFDEF CLR}
-    InvokeMethod(Self, AMethod);
-  {$ELSE}
-    AMethod;
-  {$ENDIF}
+  AMethod;
 end;
 
 function TTestCase.Count: Integer;
@@ -3025,7 +2891,6 @@ begin
 // Empty but required in case called via inheritance
 end;
 
-{$IFNDEF CLR}
 function ByteAt(P: pointer; const Offset: Integer): byte;
 begin
   Result:=pByte(Integer(P)+Offset)^;
@@ -3059,7 +2924,6 @@ begin
   Result := NotEqualsErrorMessage(IntToHex(Ldb1,2),IntToHex(Ldb2,2), ErrorMsg);
   Result := Result + ' at offset = ' + IntToHex(LOffset,4) + 'h';
 end;
-{$ENDIF}
 
 function TTestCase.GetName: string;
 var
@@ -3596,25 +3460,13 @@ begin
 end;
 
 
-{$IFDEF VER130}
-function TTestProc.BoolToStr(ABool: boolean): string;
-begin
-  Result := BooleanIdents[ABool];
-end;
-{$ENDIF}
-
 { TTestSuite }
 
-constructor TTestSuite.Create;
+constructor TTestSuite.Create(const ASuiteName: string);
 begin
-  inherited Create;
-end;
-
-constructor TTestSuite.Create({const} SuiteName: string);
-begin
-  inherited Create;
-  if SuiteName <> '' then
-    FDisplayedName := SuiteName;
+  Create;
+  if ASuiteName <> '' then
+    FDisplayedName := ASuiteName;
 end;
 
 class function TTestSuite.Suite(const ASuiteName: string): ITestSuite;
@@ -3899,11 +3751,11 @@ begin
   CreateFields;
 end;
 
-constructor TTestProject.Create({const} SuiteName: string);
+constructor TTestProject.Create(const ASuiteName: string);
 begin
   Create;
-  if (SuiteName <> '') then
-    FDisplayedName := SuiteName
+  if (ASuiteName <> '') then
+    FDisplayedName := ASuiteName
   else
     FDisplayedName := DefaultProject;
 end;

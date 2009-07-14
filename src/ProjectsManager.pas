@@ -1,42 +1,43 @@
-{#(@)$Id: $ }
-{  DUnit: An XTreme testing framework for Delphi programs. }
-(*
- * The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is DUnit.
- *
- * The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
- * and Juancarlo Añez.
- * Portions created The Initial Developers are Copyright (C) 1999-2000.
- * Portions created by The DUnit Group are Copyright (C) 2000-2008.
- * All rights reserved.
- *
- * Contributor(s):
- * Kent Beck <kentbeck@csi.com>
- * Erich Gamma <Erich_Gamma@oti.com>
- * Juanco Añez <juanco@users.sourceforge.net>
- * Chris Morris <chrismo@users.sourceforge.net>
- * Jeff Moore <JeffMoore@users.sourceforge.net>
- * Uberto Barbini <uberto@usa.net>
- * Brett Shearer <BrettShearer@users.sourceforge.net>
- * Kris Golko <neuromancer@users.sourceforge.net>
- * The DUnit group at SourceForge <http://dunit.sourceforge.net>
- * Peter McNab <mcnabp@gmail.com>
- *
- *******************************************************************************
-*)
-{$IFDEF CLR}
-  {$UNDEF FASTMM}
-{$ENDIF}
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
+
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   The Original Code is DUnit.
+
+   The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
+   and Juancarlo Añez.
+   Portions created The Initial Developers are Copyright (C) 1999-2000.
+   Portions created by The DUnit Group are Copyright (C) 2000-2007.
+   All rights reserved.
+
+   Contributor(s):
+   Kent Beck <kentbeck@csi.com>
+   Erich Gamma <Erich_Gamma@oti.com>
+   Juanco Añez <juanco@users.sourceforge.net>
+   Chris Morris <chrismo@users.sourceforge.net>
+   Jeff Moore <JeffMoore@users.sourceforge.net>
+   Uberto Barbini <uberto@usa.net>
+   Brett Shearer <BrettShearer@users.sourceforge.net>
+   Kris Golko <neuromancer@users.sourceforge.net>
+   The DUnit group at SourceForge <http://dunit.sourceforge.net>
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
+
 unit ProjectsManager;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ENDIF}
 
 interface
 uses
@@ -47,8 +48,9 @@ uses
   IniFiles,
   Registry;
 
-type
+{ TODO : Remove Registry support - we want clean INI support only }
 
+type
   {$M+}
   TProjectManager = class(TInterfacedObject, IProjectManager)
   private
@@ -65,7 +67,6 @@ type
     function  FindProjectID(const AName: string): Integer;
     procedure SaveConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean); virtual;
     procedure LoadConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean); virtual;
-
     procedure AddListener(const Listener: ITestListenerProxy); overload;
     procedure AddListener(const ProjectID: Integer; const Listener: ITestListenerProxy); overload;
     procedure RemoveListener(const Listener: ITestListenerProxy); overload;
@@ -84,13 +85,13 @@ type
   {$M-}
 
 implementation
+
 uses
   SysUtils,
   Math,
-  {$IFDEF VER130}
-    D5Support,
-  {$ENDIF}
+  {$IFDEF MSWINDOWS}
   XPVistaSupport,
+  {$ENDIF}
   TestFramework;
 
 var
@@ -112,20 +113,19 @@ begin
 end;
 
 
- { IProjectIterator }
-
 type
   IProjectIterator = interface(ITestIterator)
   ['{E1D98B08-C97B-42D0-8952-E74CA7F8C73B}']
     function Exists(const AProject: ITestProject): boolean;
   end;
 
+
   TProjectIterator = class(TTestIterator, IProjectIterator)
   protected
     function Exists(const AProject: ITestProject): boolean;
   end;
 
-type
+
   TMultiProjectSuite = class(TTestProject)
   private
     FForceFindFirstTest: boolean;
@@ -137,7 +137,7 @@ type
     procedure LoadConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean); reintroduce; overload;
   end;
 
-{ TProjectIterator }
+
 
 function TProjectIterator.Exists(const AProject: ITestProject): boolean;
 begin

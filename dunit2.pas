@@ -8,7 +8,7 @@ interface
 
 uses
     TestFrameworkIfaces, ProjectsManagerIface, TestListenerIface, 
-  TestFrameworkProxyIfaces, LazarusPackageIntf;
+  TestFrameworkProxyIfaces, ProjectsManager, LazarusPackageIntf;
 
 implementation
 
