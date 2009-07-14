@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+<meta content="text/html; charset=ISO-8859-1" http-equiv="content-type">
+<meta name="description" content="Project to improve usability of DUnit">
+<meta name="keywords" content="DUnit, Unit Testing,Delphi,Advanced,High Integrity"><title>Aims and achievements of DUnit re-write</title></head><body alink="#ff0000" bgcolor="#ffff99" link="#0000ff" text="#000000" vlink="#800080">
+<a name="top"></a> 
+
+<h1>Dunit2</h1>
+
+<h4>Re-write of Dunit</h4>
+
+Design aims used during project development,&nbsp;not necessarily
+in any particular order :- 
+
+<ul>
+<li>Introduce SetUpOnce and TearDownOnce per TestCase and
+TestSuite.</li>
+
+<li>Hopefully improve speed of test execution.</li>
+
+<li>Introduce multiple "Projects" and open the way to
+run projects in separate threads.</li>
+
+<li>Improve the ease of using Dunit. (in part by adding more
+example documentation)</li>
+
+<li>Ensure TTestCase Constructors and Destructors&nbsp;only
+execute once, not for each contained test method.</li>
+
+<li>Provide a non global var means for sharing high level setup
+data between test units.</li>
+
+<li>Improve the applicability of time measurements.</li>
+
+<li>Provide a visual count of detected memory leaks and checkless
+tests.</li>
+
+<li>Provide an optional count to identify which Check()
+failed.</li>
+
+<li>Continue support for Win32 (D5..BDS2006) and DotNet.</li>
+</ul>
+
+Current status is as follows:- 
+
+<ul>
+<li>New code remains compatible with existing test suites not
+relying on user modified Dunit code.</li>
+
+<li>New code remains compatible with existing test suites not
+relying on low level TestFramework functions (e.g.
+TTestResult).</li>
+
+<li>New code introduces a <strong>Project</strong> and <strong>
+ProjectManager</strong> class between the GUI and TextTestRunners
+to assist the future introduction of threaded unit testing.</li>
+
+<li>SetupOnce and TeardownOnce code reduces node and name clutter
+where test decorators would have previously been required.</li>
+
+<li>New Test Decoration code is easier to comprehend and
+extend.</li>
+
+<li>Execution call depth per TestCase procedure has been reduced
+in an effort to improve testing efficiency. (Execution path is
+easier to follow and so eases future code change).</li>
+
+<li>Individual test procedure timing is now taken on just the
+test method and excludes SetUp and TearDown times. The intention
+being to provide higher timing accuracy for method profiling.
+Overall Timing still brackets all code.</li>
+
+<li>All existing Check procedures are supported. Several new
+Check procedures have been added to complete the range
+available.</li>
+
+<li>New unit tests have been created to verify all Check()
+procedures detect pass and fail conditions.</li>
+
+<li>All tests run without memory leaks or the need to allow
+leaks.</li>
+
+<li>New unit tests are more comprehensive including checks to
+ensure setup conditions are properly met before executing the
+required tests.</li>
+
+<li>A Project class now handles registration and execution of
+grouped TestCases (TestSuites) and TestCases.</li>
+
+<li>Unit tests compiled into DLLs can be registered and execute
+as projects. However, the count of executed tests in projects has
+become intermittent. Aaarrghhh)</li>
+
+<li>Counted Tests can now be invoked inside nested Test
+Decorators to provide 2 or more dimensional test data</li>
+
+<li>Non Optimized empty tests still fail.</li>
+
+<li>Tests that don't call Check() can be globally armed to
+fail, i.e. from the GUI.</li>
+
+<li>Similarly tests causing memory leaks can optionally be
+globally armed to fail.</li>
+
+<li>Individual tests can optionally override the above GUI
+settings. (e.g. where a 3rd party component has a know leak)</li>
+
+<li>All tests that override GUI settings can optionally be
+identified after test execution by additional node colours.</li>
+
+<li>A count of overridden test failures is included in the
+execution status display.</li>
+
+<li>Overridden tests which would otherwise have failed generate a
+separate warning count visible in the updated GUI.</li>
+
+<li>Test Method names are decoupled from the execution process,
+allowing post compile information to be displayed at the GUI
+level.</li>
+
+<li>Added XML report generator, supplementing both GUITestRunner
+and TextTestRunner.</li>
+
+<li>Added capability in both GUITestRunner and TextTestRunner to
+skip (Exclude) individual tests separate from Enabling/Disabling
+tests.</li>
+
+<li>Tool buttons to GUITestRunner to ease control and show at
+runtime which soft options have been selected.</li>
+</ul>
+
+To facilitate early testing without completely re-developing
+GUITestsRunner and TextTestRunner an intermediate Proxy unit and
+a TTestResults replacement has been interposed between the GUI
+and new TestFramework. Although the original aim was to
+eventually completely re-develop the GUI the "Proxy"
+classes are working very well and may not need further work.<br>
+<br>
+<a href="#top">Back to Top</a><br>
+<br>
+ Further ideas&nbsp;are:- 
+
+<ul>
+<li>Support multiple exception types in CheckExceptions by adding
+a new Check, taking a const array of exception classes.</li>
+
+<li>As an option, enable the GUI to display the collapsed view
+and only expand the node view for failed TestCases.</li>
+
+<li>Add the ability to run a minimal set of Summary Level tests
+and automatically display and execute "Detailed Level"
+test methods when a Summary level Check fails.</li>
+
+<li>Add support for multiple Behavior Driven Development (BDD)
+functions per test method to seamlessly allow a change in focus
+from unit testing to specifying behavior.</li>
+
+<li>Allow tests to call external scripts to enable a data driven
+testing process.</li>
+
+<li>Enable test execution times and success to be recorded for
+historical comparison.</li>
+</ul>
+
+<br>
+<a href="http://validator.w3.org/check?uri=referer"><img alt="Valid HTML 4.0 Transitional" src="DUnit2Aims_files/valid-html40.png" height="31" width="88"></a><br>
+<a href="#top">Back to Top</a> <br>
+Page last updated 27th-Dec-2007<br>
+<img class="maincounter" alt="Page Hit Counter" src="DUnit2Aims_files/counter.gif">
+</body></html>

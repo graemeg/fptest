@@ -1,0 +1,611 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head>
+
+
+
+  <meta http-equiv="Content-Type" content="text/html;CHARSET=iso-8859-1">
+
+  <meta name="description" content="DUnit with advanced test integrity and memory leak detection">
+
+  <meta name="keywords" content="DUnit,Memory,Leak,TestCase,Delphi,Xtreme,CodeWatch,MemProof"><title>DUnit with Leak Detection</title>
+
+
+  
+  <style type="text/css">
+  
+  </style></head><body alink="#c11717" bgcolor="#b8d8a8" link="#0000ff" text="#000000" vlink="#800080">
+
+<a name="top"></a> 
+
+<h2> High Integrity Unit Testing with advanced DUnit V9.3 code.<br>
+
+</h2>
+<h3>DUnit.</h3>
+
+
+<p>DUnit is an excellent aid to creating and maintaining code to meet
+design criteria. It provides a very convenient framework to test pieces
+of code as they are written and as they are modified later. Automated
+testing after each code change gives confidence that code will perform
+as designed when deployed in production code. During development a
+change in one piece of code may pass it's associated unit tests but
+still cause failures elsewhere in the project. Project wide automated
+test suites help catch such errors early, while the developer is
+focused on the recently altered code and so significantly reduces
+debugging time and effort. Although DUnit has been closely allied with
+"Xtreme" techniques it is equally valid as a tool for individuals or
+disparate groups and quality assurance testers.</p>
+
+
+<hr>
+<a href="#emptytests">Empty Test Detection</a><br>
+
+<a href="#memoryleakdetection">Memory Leak Detection</a><br>
+
+<a href="#handlinglegitimateleaks">Handling legitimate leaks in test suites</a><br>
+
+<a href="#leakdetectionatshutdown">Memory Leak Detection at Shutdown</a><br>
+
+<a href="#runtimeappliedproperties">Showing TestCase Run-Time Applied Properties</a><br>
+
+<a href="#displayingoverriddenguisettings">Displaying Overridden GUI Settings</a><br>
+
+<a href="#findingtestcaseswitharmedruntimepropertiese">Finding TestCases containing armed Run-Time Properties</a><br>
+
+<a href="#displayofallowedleaksize">Displaying Allowed Leak Size in Run-Time Properties</a><br>
+
+<a href="#haltrepeatedtestsonfirstfailure">Halt Repeated tests on first failure</a> <br>
+
+<a href="#designgoals">Design Goals</a><br>
+
+<a href="#summaryofadditionalfeatures">Summary of New Features</a><br>
+
+<a href="#downloads">Downloads</a><br>
+
+<a href="#termsused">Terms used</a><br>
+
+<hr>
+<p><a name="emptytests"></a></p>
+
+
+<h3>Empty Tests.</h3>
+Previous versions of DUnit can convey a false sense of completeness
+when unit tests are left empty or fail to call Check() within an
+individual test case's test procedure.<br>
+Completely empty tests only failed when compiled with "Optimization ON"
+and passed otherwise. Developers frequently compile with "Optimization
+OFF" and so can easily overlook empty tests while a test suite is being
+developed. All tests containing at least one valid Delphi statement
+will always pass, regardless of the compiler optimization state.
+Instances have been encountered where complex test cases contain calls
+to Check() but the execution path bypasses the Check() statement. Such
+tests always pass, regardless of errors in the code under test, giving
+an optimistic impression of code correctness.<br>
+To detect all empty tests, regardless of compiler optimization and test
+cases which fail to call Check() select the GUI menu option as shown
+below.<br>
+
+<br>
+
+<img alt="Images shows Fail when Check not called Menu" src="HIDUnit_files/Fail%2520when%2520Check%2520not%2520called%2520Menu.png" border="1" height="279" width="253"><br>
+
+<br>
+In the rare circumstance where it is inappropriate to call Check() from
+within a test case, the global GUI setting can be overridden to prevant
+false test failures. This is achieved by placing the following
+statement within the individual test case's test procedure.<br>
+<br>
+
+<code> FailsOnNoChecksExecuted := False;</code><br>
+
+<br>
+
+Empty test failures take precedence over memory leak failures. <br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="memoryleakdetection"></a></p>
+
+
+<h3>Memory Leak Detection.</h3>
+
+
+The effect of memory leaks in production code varies from no ill effects to shutdown disasters.<br>
+Production code can be executed by memory and resource leak detection
+tools such as CodeWatch and MemProof but it's a tedious and non
+automated task. The code sequence leading to leaks and hence their
+discovery may never be exercised in the tester's environment. Whilst
+individual test cases can be also executed under the same tools, the
+tedium of repeatedly running more than a few tests becomes unrealistic.<br>
+
+<br>
+Test scenarios may create objects, strings, exceptions and populated
+dynamic arrays, perform some function and finally call Check() to
+report success or failure. With DUnit's new leak detection enabled if
+the test case passes but memory is leaked the test case now fails, The
+error message shows the imbalance for, Setup, test procedure or
+TearDown. DUnit reports memory "imbalance" i.e. where memory is
+consumed or retuned to the memory manager so the developer can make
+informed decisions about leak locations. Test cases do not fail where
+all memory used during the test is returned to the memory manager by
+the end of TearDown. Failures can optionally be ignored for SetUp and
+TearDown, however many unit tests are structured such that TearDown
+does the cleanup so this option may change in later versions. <br>
+
+<br>
+
+ 
+
+<p>Leak detection is globally enabled from the GUI under the "Options" main menu.<br>
+
+</p>
+
+
+<p><img alt="Image shows Detect Mem Leaks Menu" src="HIDUnit_files/Detect%2520Mem%2520Leaks%2520Menu.png" border="1" height="279" width="253"></p>
+
+
+Below we see the result of running Leak Detection on code which was previously thought to be free of memory leaks.<br>
+
+Deeper investigation can reveal however that <strong>leaks may be legitimate in the context of unit testing</strong> and not problems in the application code under test.<br>
+
+<br>
+
+<img alt="Image shows memory leaks detected during test suite execution" src="HIDUnit_files/Leak%2520Detection%2520in%2520action.png" border="1" height="714" width="718"><br>
+
+<br>
+
+ Executing test suites a second time without closing DUnit generally recovers assigned strings memory.<br>
+
+This is particularly noticeable where strings declared and assigned in test cases are not cleared in TearDown.<br>
+
+The string' ref count may not decrement to zero until DUnit closes.<br>
+
+The screen shot below shows the dramatic effect or re-executing the test suite a second time without closing the test project.<br>
+
+ <br>
+
+<img alt="Image shows the effect of reducing string leak reports after executing the test suite a second time" src="HIDUnit_files/Leak%2520Detection%2520in%2520action%25202nd%2520execution.png" border="1" height="714" width="718"><br>
+
+<br>
+
+<a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="handlinglegitimateleaks"></a></p>
+
+
+<h3>Handling legitimate leaks in test suites.</h3>
+
+
+<p>Unit test Setup and Teardown itself can legitimately contain code
+which does not release memory back to the memory manager. To prevent
+failure of a test case containing legitimate memory retention the
+developer can choose between several options. The first offers the
+least protection against real code leaks and simply prevents failure on
+any leak size.<br>
+Adding the following code to the test procedure or alternatively to
+SetUp if all tests in the suite need to be prevented from failing.<br>
+
+<code> FailsOnMemoryLeak := False;</code><br>
+
+<br>
+
+If the legitimate leak is of known size the developer can add the following code to the pest procedure.<br>
+
+<code> AllowedMemoryLeakSize := xxx;</code> // where xxx is in bytes, as reported but the executed test.<br>
+
+<br>
+In a multi threaded environment FastMM does not guarantee to always
+allocate a predictable size of memory and may allocate a larger block
+than requested. Other situations arise too where string lenghts may be
+differ from day to day, for instance when a long date format is used.
+Consequently it may be advisable to allocate several discrete memory
+leak sizes.<br>
+
+The developer can the add the following code to the test procedure.<br>
+
+<code> SetAllowedLeakArray([XX, YY, ZZ]);</code> //to a maximum of three values, where XX,YYand ZZ are in bytes, as reported by the executed test.<br>
+
+<br>
+The user can also globally ignore leaks caused solely by code in Setup
+and Teardown and just remain armed to fail on leaks in the test
+procedure.<br>
+
+<br>
+
+<img alt="Image shows Ignore Setup TearDown Leaks Menu" src="HIDUnit_files/Ignore%2520Setup%2520TearDown%2520Leaks%2520Menu.png" border="1" height="281" width="254"><br>
+
+<br>
+
+The above GUI setting can be overridden at the test case level by setting:-<br>
+
+<code> IgnoreSetUpTearDownLeaks := True;</code> //False as appropriate.<br>
+
+</p>
+
+<p>Lastly, memory recovered by a test that was leaked by the prior test
+will show as a negative leak. Currently there is a run-time property to
+force a failure if this occurs. This feature will probably disappear in
+future versions. Ideally tests should not be written to rely on any
+other tests having been executed. Having said that, in a QA test
+environment this is precisely what happens. Real leak sizes might
+therefore be misleadingly reported on some tests when run in succession
+and be accurate when run in isolation. Keep that in mind while
+debugging code.</p>
+ 
+         
+<a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="leakdetectionatshutdown"></a></p>
+
+
+<h3>Leak Detection at Shutdown.</h3>
+Finally, FastMM provides a leak report on shutdown which has a more
+detailed explanation of what leaked but applies to the whole test
+executable. It is of most value when it can be targeted at specific
+test cases that are run in isolation then DUnit is shut down.<br>
+
+Leak detection on shutdown is invoked at the GUI level regardless of other leak detection settings.<br>
+
+<br>
+
+<img alt="Images shows Report Leaks on Shutdown Menu" src="HIDUnit_files/Report%2520leaks%2520on%2520Shutdown%2520Menu.png" border="1" height="278" width="255"><br>
+
+<br>
+
+FastMM's report looks like this:-<br>
+
+<br>
+
+<img alt="FastMM leak report on shutdown" src="HIDUnit_files/FastMM%2520leak%2520report%2520on%2520shutdown.png" border="1" height="176" width="778"><br>
+
+<br>
+
+Notes.<br>
+Leak reporting on shutdown is automatically available when the code is
+compiled under BDS2006 and the Unit Tests are executed from the IDE.<br>
+
+For Delphi5..Delphi2005 the following applies.<br>
+As shipped, FastMM4options.inc does not define
+"ManualLeakReportingControl". To invoke a leak report on shutdown
+ManualLeakReportingControl needs to be defined either of 2 ways.<br>
+
+1 In Delphi, Project - Options - Conditional defines, before the project is compiled, or<br>
+
+2 In FastMM4options.inc by removing the . in the line containing {.$define ManualLeakReportingControl}<br>
+
+<br>
+
+Leak reporting as described is only available when the code is executed from the IDE.<br>
+
+To obtain leak reporting on shutdown outside Delphi's IDE follow the instructions in FastMM4options.inc.<br>
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="runtimeappliedproperties"></a></p>
+
+
+<h3>TestCase Run-Time Applied Properties Popup Menu.</h3>
+If you have read this far you may have noticed, that code affecting the
+new modes of test failure can be placed within Setup, (affecting all
+tests within a test class) or within individual test procedures. This
+code obviously has no effect until the test actually runs. Nor does the
+code have any effect if an ordinary failure occurs because the latter
+takes priority in being reported.<br>
+
+<br>
+This web page title mentions "High Integrity Unit Testing". So what are
+the implications of overriding at the test procedure level a GUI
+command to fail a test. Such overrides could go undetected, buried deep
+in test code and silently mask potential failures. Consequently, a
+Popup Menu has been added, which reports the actual properties that
+applied when the test completed execution.<br>
+
+<br>
+
+To Access the Run-Time Applied Properties:-<br>
+
+1 Select an individual test case in the Test Hierarchy.<br>
+
+2 Right click and select TestCase Properties at the top of the popup menu. -or-<br>
+
+2 Press Crtl+Shift+T.<br>
+
+<br>
+
+The basic popup menu is as shown below.<br>
+
+<br>
+
+<img alt="Run Time Properties Menu" src="HIDUnit_files/Run%2520Time%2520Properties%2520Menu.png" border="1" height="190" width="258"><br>
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="displayingoverriddenguisettings"></a></p>
+
+
+<h3>Displaying Overridden GUI Settings.</h3>
+
+
+The purpose of overriding a global GUI setting such as FailsOnNoChecksExecuted is to prevent an inappropriate failure.<br>
+A good example of this situation occurs in DUnit's own UnitTests
+project and so is illustrated below. Not all tests need to call Check()
+because the test might not have a checked result. Consequently when a
+test legitimately does not call Check() we place a GUI override
+statement in the test procedure.<br>
+
+<code>FailsOnNoChecksExecuted := False;</code><br>
+
+<br>
+Subsequently, when the test is executed the value of a new Results View
+value "Overrides" is incremented. This serves to indicate, regardless
+of the GUI option "Warn if Fail Test Overridden" setting.<br>
+To assist developers in locating Overridden GUI settings an Options
+menu item is provide, "Warn if Fail Test Overridden". When checked and
+underlaying test procedure passes the result is shown in Yellow instead
+of Green.<br>
+
+<br>
+
+<img alt="DUnit test hierarchy shows overridden GUI settings highlighted in yellow" src="HIDUnit_files/Overridden%2520TestCase%2520Property.png" border="1" height="572" width="539"><br>
+
+<br>
+Selecting the Run-Time Applied Properties shows that the GUI command to
+"Fail TestCase if no checks executed" has been overridden at the test
+case level and is highlighted in Yellow.<br>
+
+<br>
+
+<img alt="Run-Time Properties popu menu shows overridden GUI settings highlighted in yellow" src="HIDUnit_files/Overridden%2520TestCase%2520Property%2520shows%2520Yellow.png" border="1" height="190" width="260"><br>
+
+<br>
+
+It is important to be aware, that<strong> in this scenario, Yellow signifies that a potential failure has been masked.</strong>
+The reverse situation where a test case is armed to fail but the GUI is
+not requesting a failure does not produce a Yellow "Caution". If a
+failure results, when the test suite is run from the GUI the
+developer's attention will be grabbed by the familar Magenta color
+against test case and the Failure count increments.<br>
+
+<br>
+
+<br>
+
+ 
+
+<p><a name="findingtestcaseswitharmedruntimepropertiese"></a></p>
+
+
+<h3>Finding all TestCases that contain assertive Run-Time Properties</h3>
+The following non persisted menu option is provided to highlight test
+cases, that are armed at the test case level to fail when any of the
+following are set true. "FailsOnNoChecksExecuted", "FailsOnMemoryLeak",
+"FailsOnMemoryRecovery" or IgnoreSetUpTearDownLeaks.<br>
+The same function also highlights test cases containing a non zero
+"AllowedMemoryLeakSize", regardless of whether "FailsOnMemoryLeak" or
+"FailsOnMemoryRecovery" are set true.<br>
+
+<br>
+
+<img alt="DUnit test hierarchy shows TestCases having Run-Time Properties disarmed" src="HIDUnit_files/TestCases%2520with%2520Run-Time%2520Properties%2520Menu.png" border="1" height="274" width="251"><br>
+
+<br>
+Note. After selecting either "Warn if Fail Test Overridden" or "Show
+TestCases with RunTime Properties" it is necessary to re-run the unit
+tests to display the results.<br>
+
+Running the DUnit "UnitTests" under Win32 with the above selection produces the following result.<br>
+
+<br>
+
+<img alt="DUnit test hierarchy shows TestCases having Run-Time Properties armed." src="HIDUnit_files/TestCases%2520with%2520Run-Time%2520Properties.png" border="1" height="573" width="538">&nbsp;<br>
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="displayofallowedleaksize"></a></p>
+
+
+<h3>Display of AllowedLeakSize in Run-Time Properties</h3>
+When "Show TestCases with RunTime Properties" is set, test cases with a
+non zero AllowedLeakSize value are highlighted in yellow after
+executing the test suite.<br>
+Test cases containing a range of allowed leak sizes established using
+the SetAllowedLeakArray statement are similarly highlighted.<br>
+
+The allowed leak size programmed by the developer is displayed as shown below.<br>
+
+<br>
+
+<img alt="Run-Time properties popup menu showing allowed memory leak size display" src="HIDUnit_files/Allowed%2520memory%2520leak%2520size%2520display.png" border="1" height="190" width="260"><br>
+
+<br>
+When more than one allowed leak size has been set using the
+SetAllowedLeakArray statement the "intelligent" display shows the value
+which allowed the test to pass or the lowest value in the set if the
+test failed.<br>
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="haltrepeatedtestsonfirstfailure"></a></p>
+
+
+<h3>Halt Repeated Tests on first failure.</h3>
+DUnit included several Test Decorator classes, which can provide group
+SetUp and TearDown procedures and the ability to run counted multiple
+tests. The latter has been expanded to allow a counted test to halt at
+the first failure, rather than continuing to execute N tests, with the
+subsequent N failure reports filling up the Failures View. <br>
+
+<br>
+
+<br>
+
+ 
+
+<hr>
+<p><a name="designgoals"></a></p>
+
+
+<h3>Design Goals.</h3>
+The overriding goal in designing the new high integrity additions has
+been to ensure that existing test suites do not break. This aim has
+been achieved. Note that no attempt has been made to invoke the new
+class of "Soft Failure" when the tests are run via TextTestRunner.<br>
+
+Empty Test failures behave exactly as before until the new GUI option "Fail TestCase in no checks executed" is selected.<br>
+For D5..D2005 the option to include FastMM is made by a global
+conditional define. Leak checking Options are disabled until FASTMM is
+defined.<br>
+Similarly post execption leak reporting is disabled until
+ManualLeakReportingControl is added to the project conditional defines
+and then corresponding "Report memory leak type on Shutdown" is
+selected.<br>
+Finally the DUnit test program requires additional code in the uses
+section of the project.dpr to access FastMM. Until FastMM is linked
+into your DUnit test suite and compiled the Options menu items relating
+to memory leak detection will remain disabled.<br>
+
+<br>
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="summaryofadditionalfeatures"></a></p>
+
+
+<h3>Summary of Additional Features.</h3>
+
+
+<ul>
+
+  <li>GUI selectable Memory Leak Detection at the test case level</li>
+
+
+  <li>GUI selectable Memory Leak display after shutdown</li>
+
+
+  <li>GUI selectable detection of test cases without effective call to Check()</li>
+
+
+  <li>Addition of Test Decorator to allow a failure to halt repeated test loops.</li>
+
+
+  <li>Retention of Results View data when individual test cases are clicked.</li>
+
+
+  <li>Run-Time Properties Menu property names are "copied-to-clipboard" when clicked to help with developer usage.</li>
+
+
+  <li>When Compiled as Dot Net test suite Leak Detection is excluded.</li>
+
+</ul>
+
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="downloads"></a></p>
+
+
+<h3>Download Links.</h3>
+
+
+DUnit code as described above is available for download from Sourceforge<br>
+<br>
+
+<a href="http://members.optusnet.com.au/mcnabp/Projects/HIDUnit/HIDUnit.zip"></a><a href="https://sourceforge.net/projects/dunit/">Full DUnit code is available at SourceForge.org</a><br>
+
+<br>
+
+<p>FastMM now provides Delphi with an advanced memory manager that
+coupled with the new DUnit code provides automated memory leak
+detection for every test case. BDS2006 already incorporates FastMM
+memory manager so Borland/CodeGear have recognized and endorsed it's
+validity as a memory manager.<br>
+Regardless of whether you make use of the upgraded DUnit code, the
+addition of FastMM to your DUnit test suites and applications may
+improve the execution time for reasons best spelled out in the FastMM
+documentation. For D6 users, you will need to add additional code to
+your .dpr as shown in the UnitTests.dpr from the HIDUnit.zip file.<br>
+
+<a href="http://sourceforge.net/projects/fastmm/">FastMM can be downloaded from sourceforge.net/projects/fastmm</a></p>
+<a href="#top">Back to Top</a> 
+
+<hr>
+<p><a name="termsused"></a></p>
+
+
+<h3>Terms Used.</h3>
+
+
+Within the context of this document a <strong>test case</strong> is the code which DUnit executes that the user has written deriving from TTestCase.<br>
+
+A specific test case may be referred to as <strong>TestCase</strong>, particularly in menus.<br>
+
+A test case always entails a test procedure and optionally include an associated SetUp and TearDown procedure.<br>
+
+A <strong>test suite</strong> is the collection of test cases associated with a specific derivation of TTestcase.<br>
+
+Similarly <strong>test suites</strong> are a collection of individual test suites.<br>
+
+<br>
+
+<strong>Run</strong> may sometimes be used in place of test procedure that executes between SetUp and TearDown.<br>
+
+The notion of <strong>Run-Time Properties</strong> has been introduced to DUnit to describe property values which may be applied to test cases at execution time.<br>
+Run time properties have no effect on the outcome of a test if the test
+encounters an exception or normal test failure. However they are
+examined by DUnit after the test has executed to optionally raise a <strong>Post Execution Failure</strong>.<br>
+Run time properties may be turned on by GUI options, in which case they
+are applied by DUnit immediately before SetUp is called. They may also
+be applied by the user anywhere within Setup or Run. However users
+cannot expect run time properties to behave as required if they are
+altered by user code within TearDown.<br>
+
+<strong>Soft Failure</strong> is sometimes used to describe the new class of failures selectively enabled by run time properties.<br>
+
+<br>
+
+<br>
+
+ <a href="#top">Back to Top</a><br>
+
+<p>Page last updated 13-Feb-2007<br>
+
+</p>
+
+<p><img src="HIDUnit_files/counter.gif" alt="Page Hit Counter" class="maincounter"></p>
+
+
+<p> <a href="http://validator.w3.org/check?uri=referer"> <img src="HIDUnit_files/valid-html40.png" alt="Valid HTML 4.0 Transitional" height="31" width="88"></a></p>
+
+</body></html>

@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestResults>
+<!--Generated using DUnit2 on 2008-01-20 23:17:52-->
+<TestListing><TestProject Name="DUnit2Test.exe" ElapsedTime="00:00:02.562" NumberOfErrors="0" NumberOfFailures="0" NumberOfRunTests="226" NumberOfWarnings="3" NumberOfChecksCalled="2489">
+<TestProject Name="Default Project" ElapsedTime="00:00:02.566" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="3" NumberOfRunTests="226">
+<TestSuite Name="TestTestProc" ElapsedTime="00:00:00.043" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="12">
+<TestCase Name="TTestITestProc" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="5">
+<Test Name="TestSet_Enabled" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestGet_Enabled" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestSet_Excluded" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestGet_Excluded" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestSupportedType" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestProcName" ElapsedTime="00:00:00.022" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="5">
+<Test Name="TestDisplayedNameEmpty" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDisplayedName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestGetNameReturnsDisplayedName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestParentPathEmpty" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestParentPath" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestProcCreatesNamed" ElapsedTime="00:00:00.010" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestTestProcCreatesEmptyNamed" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestProcCreatesNamed" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="ValidateTestCaseBehavior" ElapsedTime="00:00:02.517" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="3" NumberOfRunTests="219">
+<TestCase Name="TTestITestCaseExists" ElapsedTime="00:00:00.011" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestCreates" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDestroys" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestNamedTestCase" ElapsedTime="00:00:00.012" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestCreatesWithBlankString" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCreatesWithString" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestCase1" ElapsedTime="00:00:00.016" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestTestExceptionInRun" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestNonPublished" ElapsedTime="00:00:00.140" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="19">
+<TestCase Name="TTestATTestCase" ElapsedTime="00:00:00.036" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="5">
+<Test Name="TestCreateDestroyLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestSetUpRan" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTearDownRan" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestRunRan" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestATestProcRan" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTest2TTestCase" ElapsedTime="00:00:00.020" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestTestProcsRan" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestGetsNextEnabledTest" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestOnlyRunsEnabledTest" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestOnlyRunsSingleEnabledTest" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTest3LevelsCase" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestTestProcsRan" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TVerifyOverriddenGetNameIsAccessed" ElapsedTime="00:00:00.007" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="ABC VerifyCallbackTestCaseName" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestCaseCanCountAndRetrieveList" ElapsedTime="00:00:00.016" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="3">
+<Test Name="VerifyCountReturnsTotalEnabledTestMethodCount" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyPriorTestFetchesTestMethodsInReverseOrder" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyResetResetsTestMethodIterator" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestCase><TestSuite Name="VerifyAllChecksSignalPassAndFail" ElapsedTime="00:00:00.210" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<TestCase Name="TTestCheckTests" ElapsedTime="00:00:00.184" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestAllCheckCalls" Result="OK" ElapsedTime="00:00:00.172"/>
+</TestCase><TestCase Name="TTestChecksCount" ElapsedTime="00:00:00.020" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestAllChecksCount" Result="OK" ElapsedTime="00:00:00.011"/>
+</TestCase></TestSuite><TestSuite Name="ValidateTestSuiteBehaviour" ElapsedTime="00:00:00.303" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="35">
+<TestCase Name="TTestITestSuiteExists" ElapsedTime="00:00:00.021" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestCreates" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCreatesEmptyName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCreatesHasName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDestroys" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestSuiteAddMethods" ElapsedTime="00:00:00.011" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestCheckNameOnAddSuite" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestGetsNextEnabledTest" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestCreateNamedTest" ElapsedTime="00:00:00.016" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="3">
+<Test Name="TestCanEnable1stOfMultipleMethods" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCanEnable2ndOfMultipleMethods" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestCanExecuteNamedMethodSetup" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestSuiteParentPathPropagates" ElapsedTime="00:00:00.031" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestUnNamedTestSuitePath" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestNamedTestSuitePath" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestChangedNamedPropogatesParentPath" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestChangedParentPathPropogatesParentPath" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestSuiteRegistersTestCases" ElapsedTime="00:00:00.125" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<Test Name="TestTestSuiteRegistersSingleTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersSingleTestSuite" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersNamedSingleTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersTwoTestSuites" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersTwoTestCases" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersDifferentNamedTwoTestSuites" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteRegistersSameNamedTwoTestSuites" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestSuiteCanCountAndList" ElapsedTime="00:00:00.027" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="5">
+<Test Name="VerifyTestSuiteCanCountTestMethods" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyPriorTestFetchesTestMethodsInReverseOrder" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyTestSuiteCanBeReset" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyTestSuiteDoesNotCountDisabledTestMethods" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyTestSuiteDoesNotCountExcludedTestMethods" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTTestITestSuiteAddsTestCases" ElapsedTime="00:00:00.026" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="5">
+<Test Name="TestTestSuiteCreatesOnEmptyParams" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteCreatesOnNilTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteCreatesOnEmptyName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteCreatesOnOneTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTestSuiteCreatesOnMultipleTestCases" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestParentPathPopulatesTests" ElapsedTime="00:00:00.009" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestParentPathSet" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TVerifyGetNameInSuiteIsAccessed" ElapsedTime="00:00:00.013" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="LMN VerifyCallbackTestSuiteName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="LMN VerifyCallbackTestSuiteOverriddenName" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestLevelTestRunsFrom" ElapsedTime="00:00:00.013" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestMethodDepths" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestATestProcLevel" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="ValidateTestProjectBehavior" ElapsedTime="00:00:00.046" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="6">
+<TestCase Name="TTestITestProjectExists" ElapsedTime="00:00:00.012" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestCreates" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDestroys" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestProjectBehaviorOnRegisterFirstTestCase" ElapsedTime="00:00:00.012" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="VerifyTestProjectCreatedOnRegisterFirstTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyTestProjectIsNamedOnRegisterFirstTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestProjectAddMethods" ElapsedTime="00:00:00.012" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestCheckNameOnAddSuite" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCheckCountEnabledTests" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="ValidateProjectManagerBehavior" ElapsedTime="00:00:00.096" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="15">
+<TestCase Name="TestIProjectManager" ElapsedTime="00:00:00.007" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestProjectManagerCreates" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestProjectIterator" ElapsedTime="00:00:00.023" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TTestIterateOverSingleTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TTestIterateOverSingleRegisteredTestCase" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TTestIterateOverTwoTestCases" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TTestIterateOverThreeTestSuites" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestITestCanRunProject" ElapsedTime="00:00:00.047" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="8">
+<Test Name="TestCanRunOneTestProc" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestCanIndividuallyRunOneTestProc" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCanRunTwoTestProcs" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCanRunTwoSuites" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestMassClearStatus" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestStatusCallBack" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestPMLevelSingleProjectStatusCallBack" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestPMLevelMultiProjectStatusCallBack" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestMultiProjectCount" ElapsedTime="00:00:00.012" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestPMLevelSingleProjectCounts" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestPMLevelMultiProjectCounts" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="TestErrorHandling" ElapsedTime="00:00:00.164" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="23">
+<TestCase Name="TTestTestCaseHandlesFailCalls" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestITestCaseFailCalls" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestCaseHandlesHaltCall" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestITestCaseHalts" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestFailsOnOptimizedEmptyTest" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestITestEmptyTest" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestFailsOnCheckNotCalled" ElapsedTime="00:00:00.007" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestITestCheckNotCalled" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestExceptionHandled" ElapsedTime="00:00:00.024" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestITestHandlesUnknowExcept" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestITestHandlesUnExpectedExcept" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestITestHandlesAssert" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestITestHandlesExpectedExcept" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTearDownFailInTestSuite" ElapsedTime="00:00:00.010" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestTheWholeSuiteRuns" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestPeripheryExceptions" ElapsedTime="00:00:00.026" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="5">
+<Test Name="TestITestExceptionInDoSetUp" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestITestExceptionInSetUp" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestITestExceptionInSetUpReports" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestITestExceptionInTearDown" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestITestExceptionInDoTearDown" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestTestCaseHandlesNonMethodFailures" ElapsedTime="00:00:00.014" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="CheckSetupFailure" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckTeardownFailure" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestHandlesTestSuiteNonMethodFailures" ElapsedTime="00:00:00.014" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="VerifySetUpFailureInTTestSuiteHandled" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyTearDownFailureInTTestSuiteHandled" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestErrorReporting" ElapsedTime="00:00:00.022" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestErrorsReport" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestFailuresReport" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCheckWarningsReport" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestMemWarningsReport" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestExcludedTestReporting" ElapsedTime="00:00:00.007" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="VerifyExcludedTestGetReported" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase></TestSuite><TestSuite Name="TestProjectRegistration" ElapsedTime="00:00:00.056" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="8">
+<TestCase Name="TestRegisterTestToProjectDefault" ElapsedTime="00:00:00.009" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestProjectManagerOnNilITest" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TestRegisterTestToNamedProject" ElapsedTime="00:00:00.042" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<Test Name="TestProjectRegistersDefaultProject" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="TestProjectRegistersNamedProject" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestProjectRegistersSplitNamedProject" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestProjectsRegistersDefaultAndNamedProject" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDifferentNamedProjectsRegisterSameNamedTestSuitesSeparately" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestSingleNamedProjectRegistersSameNamedTestSuitesTogether" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestNamedProjectRegistersDifferentNamedTestSuitesSeparately" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="TestRecordElapsedTime" ElapsedTime="00:00:00.285" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<TestCase Name="TTestsElapsedTimes" ElapsedTime="00:00:00.281" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="TestElapsedTestCase" Result="OK" ElapsedTime="00:00:00.030"/>
+<Test Name="TestElapsedSuite" Result="OK" ElapsedTime="00:00:00.031"/>
+<Test Name="TestElapsedSuites" Result="OK" ElapsedTime="00:00:00.062"/>
+<Test Name="TestElapsedProject" Result="OK" ElapsedTime="00:00:00.127"/>
+</TestCase></TestSuite><TestCase Name="TTestSetUpDataAccess" ElapsedTime="00:00:00.007" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="CheckSetUpDataPassedDown" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestSuite Name="TestStatusReports" ElapsedTime="00:00:00.028" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="3">
+<TestCase Name="TTestStatusMessageCallback" ElapsedTime="00:00:00.013" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="CheckCallGetStatusMsg" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="CheckCallBackOnAssignStatusMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestStatusMessageAutoCallback" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="CheckAssignStatusMsgCallsback" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="TestSaveConfiguration" ElapsedTime="00:00:00.172" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="14">
+<TestCase Name="TestSaveEnableState" ElapsedTime="00:00:00.120" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="11">
+<Test Name="CallSaveConfigurationWithNoProjectsRegistered" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CallSaveConfigurationWithOneTestRegisteredEnabled" Result="OK" ElapsedTime="00:00:00.003"/>
+<Test Name="CallSaveConfigurationWithOneTestRegisteredDisabled" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="CallSaveConfigurationWithTwoTestsRegisteredEnabled" Result="OK" ElapsedTime="00:00:00.003"/>
+<Test Name="CallSaveConfigurationWithTwoTestsRegistered1stDisabled" Result="OK" ElapsedTime="00:00:00.003"/>
+<Test Name="CallSaveConfigurationWithTwoTestsRegistered2ndDisabled" Result="OK" ElapsedTime="00:00:00.006"/>
+<Test Name="CallSaveConfigurationWithOneTestSuiteRegisteredEnabled" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="CallSaveConfigurationWithOneTestSuiteRegisteredDisabled" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="CallSaveConfigurationWithTwoTestSuitesRegistered2ndDisabled" Result="OK" ElapsedTime="00:00:00.007"/>
+<Test Name="CallSaveConfigurationWithTwoTestSuitesRegistered2ndTestCaseDisabled" Result="OK" ElapsedTime="00:00:00.006"/>
+<Test Name="CallSaveConfigurationWithTwoTestSuitesRegistered2ndTestProcDisabled" Result="OK" ElapsedTime="00:00:00.007"/>
+</TestCase><TestCase Name="TestSaveProjectEnableState" ElapsedTime="00:00:00.047" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="3">
+<Test Name="CallSaveConfigurationWithOneRegisteredProjectDisabled" Result="OK" ElapsedTime="00:00:00.007"/>
+<Test Name="CallSaveConfigurationWith2ndRegisteredProjectDisabled" Result="OK" ElapsedTime="00:00:00.007"/>
+<Test Name="CallSaveConfigurationWithAllNamedProjectTestsDisabled" Result="OK" ElapsedTime="00:00:00.008"/>
+</TestCase></TestSuite><TestSuite Name="TestLoadConfiguration" ElapsedTime="00:00:00.311" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="16">
+<TestCase Name="TestLoadConfigurationDisablesTests" ElapsedTime="00:00:00.118" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="6">
+<Test Name="TestLoadSingleTestMethod" Result="OK" ElapsedTime="00:00:00.013"/>
+<Test Name="TestLoadDisablesSecondTestMethod" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="TestLoadDisablesSingleTestCase" Result="OK" ElapsedTime="00:00:00.006"/>
+<Test Name="TestLoadDisablesSecondTestCase" Result="OK" ElapsedTime="00:00:00.009"/>
+<Test Name="TestLoadDisablesSingleTestSuite" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="TestLoadDisablesSecondTestSuite" Result="OK" ElapsedTime="00:00:00.010"/>
+</TestCase><TestCase Name="TestLoadConfigurationDisablesProjects" ElapsedTime="00:00:00.035" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestLoadDisablesSingleTestProject" Result="OK" ElapsedTime="00:00:00.010"/>
+<Test Name="TestLoadDisablesSecondTestProject" Result="OK" ElapsedTime="00:00:00.011"/>
+</TestCase><TestCase Name="TestLoadConfigurationExcludesTests" ElapsedTime="00:00:00.084" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="6">
+<Test Name="TestLoadExcludesSingleTestMethod" Result="OK" ElapsedTime="00:00:00.007"/>
+<Test Name="TestLoadExcludesSecondTestMethod" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="TestLoadExcludesSingleTestCase" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="TestLoadExcludesSecondTestCase" Result="OK" ElapsedTime="00:00:00.007"/>
+<Test Name="TestLoadExcludesSingleTestSuite" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="TestLoadExcludesSecondTestSuite" Result="OK" ElapsedTime="00:00:00.013"/>
+</TestCase><TestCase Name="TestLoadConfigurationExcludesProjects" ElapsedTime="00:00:00.065" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="TestLoadExcludedSingleTestProject" Result="OK" ElapsedTime="00:00:00.016"/>
+<Test Name="TestLoadExcludedSecondTestProject" Result="OK" ElapsedTime="00:00:00.026"/>
+</TestCase></TestSuite><TestSuite Name="TestDecorator_Extentions" ElapsedTime="00:00:00.077" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="6">
+<TestCase Name="TTestDecoratorDecorates" ElapsedTime="00:00:00.018" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="CheckDecoratorPrefixAndNames" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckExecutionSequence" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TTestRepeatTest" ElapsedTime="00:00:00.027" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="CheckFailsAndExecutesNTimes" Result="OK" ElapsedTime="00:00:00.008"/>
+<Test Name="CheckFailsAndHalts" Result="OK" ElapsedTime="00:00:00.004"/>
+</TestCase><TestCase Name="TVerifyDecoratorReportsPeripheryFailures" ElapsedTime="00:00:00.011" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="1" NumberOfRunTests="1">
+<Test Name="VerifyDecoratedTestsFlagErrorsInPeripheryProcs" Result="OK" ElapsedTime="00:00:00.002"/>
+</TestCase><TestCase Name="TTestDecoratorRegistersTestSuite" ElapsedTime="00:00:00.010" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="CheckRegistersTestSuite" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestSuite><TestSuite Name="TestMemoryMonitor" ElapsedTime="00:00:00.221" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="38">
+<TestCase Name="TTestMemoryMonitor" ElapsedTime="00:00:00.068" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="11">
+<Test Name="TestAlloweLeakListIterator" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestNoLeaks" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestSetupLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestRunLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestTearDownLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestDefaultIsIgnoreLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestContainsAllowedTObjectLeak" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestContainsAllowedTObjectLeakByList" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="TestContainsAllowedTObjectLeakByEmptyList" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestContainsAllowedLeakArrayLongList" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="TestCaseIgnoresLeaksAtSetupTearDownLevel" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase><TestCase Name="TBasicMemMonitor" ElapsedTime="00:00:00.082" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="17">
+<Test Name="CheckMemManagerLoaded" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorCreates" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorDestroys" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorComparesEqual" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorRecoversMemOK" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorFailsOnMemoryLeak" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassOnMemRecovery" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorFailsOnMemRecovery" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassesOnAllowedMemRecovery" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassedOnAllowedPositiveLeak" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassOnListAllowedNoLeak0" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorFailOnEmptyListAndPositiveLeak" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassOnListAllowedPositiveLeak1" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorFailOnEmptyListAndNegativeLeak" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassOnListNegativeLeak" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMemMonitorPassOnListAllowedNegativeLeak1" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckOffsetProperty" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TMemMonitorGetErrorMessage" ElapsedTime="00:00:00.023" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="CheckGetMemoryUseMsgOK" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetRecoveredMemMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetAllowedRecoveredMemMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetLeakedMemMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TMemMonitorGetErrorMessageNew" ElapsedTime="00:00:00.020" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="4">
+<Test Name="CheckSumOfLeaks" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetMemoryUseMsgOK" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetRecoveredMemMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckGetLeakedMemMsg" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestSuccessiveLeaksReport" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestSuccessiveLeaksGetReported" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase><TestCase Name="TTestAllProcsRunAfterLeakyProcRuns" ElapsedTime="00:00:00.008" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="1">
+<Test Name="TestAllProcsInTestCaseRunAfterLeakyProc" Result="OK" ElapsedTime="00:00:00.001"/>
+</TestCase></TestSuite><TestSuite Name="Verify MultiProject handling below TestFrameWorkProxy" ElapsedTime="00:00:00.241" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<TestCase Name="TTestProjectAndDLLOrderIndependence" ElapsedTime="00:00:00.235" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<Test Name="LoadsAndUnloadsModuleTests" Result="OK" ElapsedTime="00:00:00.023"/>
+<Test Name="LoadsAndRunsDLLTestSuite" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="LoadsAndRunsDLLProject" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="CountsTestsAndTestsRunInProjectsThenDLL" Result="OK" ElapsedTime="00:00:00.037"/>
+<Test Name="CountsTestsAndTestsRunInDLLThenProjects" Result="OK" ElapsedTime="00:00:00.037"/>
+<Test Name="OnRunProjectsThenDLLReportsMinimally" Result="OK" ElapsedTime="00:00:00.039"/>
+<Test Name="OnRunDLLThenProjectsReportsMinimally" Result="OK" ElapsedTime="00:00:00.038"/>
+</TestCase></TestSuite><TestSuite Name="Validate_TestFrameworkProxy" ElapsedTime="00:00:00.104" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="10">
+<TestCase Name="TTestProxyFrameworkRegistersProjects" ElapsedTime="00:00:00.082" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="8">
+<Test Name="VerifyRegisteredProxyReturnsSameSingleAutoRegisteredEmptyProjectst" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyRegisteredProxyReturnsSameSingleAutoRegisteredEmptyProject" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyRegisteredProxyReturnsSameSingleAutoRegisteredSimpleProject" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="VerifyRegisteredProxyReturnsTwoRegisteredSimpleProjects" Result="OK" ElapsedTime="00:00:00.001"/>
+<Test Name="VerifyRegisteredProxyReturnsSameSingleCodeRegisteredDLL" Result="OK" ElapsedTime="00:00:00.024"/>
+<Test Name="VerifyRegisteredProxyReturnsSameSingleAutoRegisteredDLL" Result="OK" ElapsedTime="00:00:00.004"/>
+<Test Name="VerifyRegisteredProxyReturnsOneRegisteredProjectAndOneRegisteredDLL" Result="OK" ElapsedTime="00:00:00.005"/>
+<Test Name="VerifyRegisteredProxyReturnsOneRegisteredDLLAndOneRegisteredProject" Result="OK" ElapsedTime="00:00:00.004"/>
+</TestCase><TestCase Name="TTestMultiLeakHandling" ElapsedTime="00:00:00.017" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="2">
+<Test Name="ValidateMultiLeakHandling" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="ValidateXMLEffectOnMultiLeakHanding" Result="OK" ElapsedTime="00:00:00.003"/>
+</TestCase></TestSuite></TestSuite><TestProject Name="Test Multiple Projects" ElapsedTime="00:00:00.043" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<TestCase Name="TestMultiProject" ElapsedTime="00:00:00.039" NumberOfErrors="0" NumberOfFailures="0" NumberOfWarnings="0" NumberOfRunTests="7">
+<Test Name="CheckNoMultiProjectOnDefaultOnly" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectGetsGivenExeName" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectCountsAndIteratesTests" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectCountAndIterateTestCases" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectExecControl" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectCountSetsDepths" Result="OK" ElapsedTime="00:00:00.000"/>
+<Test Name="CheckMultiProjectRunsSingleThreaded" Result="OK" ElapsedTime="00:00:00.000"/>
+</TestCase></TestProject></TestProject></TestProject></TestListing>
+<Title>Dunit2 XML test report</Title>
+<NumberOfRunTests>226</NumberOfRunTests>
+<NumberOfErrors>0</NumberOfErrors>
+<NumberOfFailures>0</NumberOfFailures>
+<NumberOfWarnings>3</NumberOfWarnings>
+<NumberOfExcludedTests>1</NumberOfExcludedTests>
+<NumberOfChecksCalled>2489</NumberOfChecksCalled>
+<TotalElapsedTime>00:00:02.562</TotalElapsedTime>
+<DateTimeRan>2008-01-20 23:17:54</DateTimeRan>
+</TestResults>
