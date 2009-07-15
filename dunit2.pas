@@ -9,7 +9,8 @@ interface
 uses
     TestFrameworkIfaces, ProjectsManagerIface, TestListenerIface, 
   TestFrameworkProxyIfaces, ProjectsManager, EpikTimer, TimeManager, 
-  TestFramework, XMLListener, TestFrameworkProxy, LazarusPackageIntf;
+  TestFramework, XMLListener, TestFrameworkProxy, fpchelper, TextTestRunner, 
+  LazarusPackageIntf;
 
 implementation
 
