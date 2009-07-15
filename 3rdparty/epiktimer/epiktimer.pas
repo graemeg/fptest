@@ -767,11 +767,13 @@ constructor TEpikTimer.Create(AOwner: TComponent);
 
 begin
   inherited Create(AOwner);
-  StringPrecision:=6; FWantMS:=True; FWantDays:=True;
+  StringPrecision := 6;
+  FWantMS         := True;
+  FWantDays       := True;
   InitTimebases;
-  CorrelationMode:=OnTimebaseSelect;
+  CorrelationMode := OnTimebaseSelect;
   // Default is the safe, cross-platform but less precise system timebase
-  TimebaseSource:=SystemTimebase;
+  TimebaseSource  := SystemTimebase;
   Clear(BuiltInTimer)
 end;
 
