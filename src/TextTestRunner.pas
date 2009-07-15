@@ -55,7 +55,6 @@ type
     rxbHaltOnFailures
     );
 
-{ TTExtTestListener }
 type
   TTextTestListener = class(TInterfacedObject, ITestListener, ITestListenerX)
   private
@@ -67,8 +66,6 @@ type
     FRunTime: TDateTime;
     function FailedTestInfo(const AFailure: TTestFailure): string;
     class function IniFileName: string;
-//    class function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult; overload;
-//    class function RunRegisteredTests(exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
   protected
     property Errors: IInterfaceList read FErrors;
     property Failures: IInterfaceList read FFailures;
@@ -114,23 +111,17 @@ type
      @seeAlso <See Unit="TextTestRunner" Routine="RunRegisteredTests">
      }
 
-{: Run the given Test Suite
-}
+{ Run the given Test Suite }
 function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult; overload;
 function RunRegisteredTests: TTestResult; overload;
 function RunRegisteredTests(const AExitBehavior: TRunnerExitBehavior): TTestResult; overload;
 
 implementation
 uses
-  {$IFDEF SELFTEST}
-  RefTestFrameworkProxy,
-  {$ELSE}
   TestFrameworkProxy,
-  {$ENDIF}
   {$IFDEF XMLLISTENER}
     XMLListener,
   {$ENDIF}
-//  XPVistaSupport,
   SysUtils;
 
 const
@@ -144,12 +135,13 @@ class function TTextTestListener.IniFileName: string;
 const
   TEST_INI_FILE = 'dunit.ini';
 begin
+  { TODO : Find writeable output path }
   result := {LocalAppDataPath +} TEST_INI_FILE;
 end;
 
 procedure TTextTestListener.AddSuccess(Test: ITestProxy);
 begin
-// No display for successes
+  // No display for successes
 end;
 
 constructor TTextTestListener.Create;
@@ -186,9 +178,7 @@ begin
   write('W');
 end;
 
-{:
-   Prints failures to the standard output
- }
+{ Prints failures to the standard output }
 function TTextTestListener.Report(r: TTestResult): string;
 var
   LHeader: string;
@@ -209,13 +199,13 @@ end;
 
 function TTextTestListener.FailedTestInfo(const AFailure: TTestFailure): string;
 begin
-  Result := format('%s: %s'#13#10'     at %s'#13#10'      "%s"',
-                    [
-                    AFailure.failedTest.ParentPath + '.' + AFailure.failedTest.name,
-                    AFailure.thrownExceptionName,
-                    AFailure.LocationInfo,
-                    AFailure.thrownExceptionMessage
-                    ]) + CRLF + CRLF;
+  Result := format('%s: %s'+ CRLF +'     at %s'+ CRLF +'      "%s"',
+                [
+                AFailure.failedTest.ParentPath + '.' + AFailure.FailedTest.Name,
+                AFailure.thrownExceptionName,
+                AFailure.LocationInfo,
+                AFailure.thrownExceptionMessage
+                ]) + CRLF + CRLF;
 end;
 
 function TTextTestListener.PrintWarningItems(r :TTestResult): string;
@@ -257,9 +247,7 @@ begin
   end;
 end;
 
-{:
-   Prints the errors to the standard output
- }
+{ Prints the errors to the standard output }
 function TTextTestListener.PrintErrors(r: TTestResult): string;
 begin
   Result := '';
@@ -274,9 +262,7 @@ begin
   end
 end;
 
-{:
-   Prints failures to the standard output
-}
+{ Prints failures to the standard output }
 function TTextTestListener.PrintFailures(r: TTestResult): string;
 begin
   Result := '';
@@ -291,9 +277,7 @@ begin
   end
 end;
 
-{:
-   Prints warnings to the standard output
-}
+{ Prints warnings to the standard output }
 function TTextTestListener.PrintWarnings(r: TTestResult): string;
 begin
   Result := '';
@@ -308,9 +292,7 @@ begin
   end
 end;
 
-{:
-   Prints the setting used
- }
+{ Prints the setting used }
 function TTextTestListener.PrintSettings(r: TTestResult): string;
 begin
   Result := '';
@@ -331,9 +313,7 @@ begin
   Result := Result + CRLF;
 end;
 
-{:
-   Prints the header of the Report
- }
+{ Prints the header of the Report }
 function TTextTestListener.PrintHeader(r: TTestResult): string;
 begin
   Result := '';
@@ -362,7 +342,7 @@ end;
 
 procedure TTextTestListener.EndTest(Test: ITestProxy);
 begin
-// Nothing to do here
+  // Nothing to do here
 end;
 
 procedure TTextTestListener.TestingStarts;
@@ -384,38 +364,6 @@ begin
   writeln(Report(TestResult));
 end;
 
-(*
-class function TTextTestListener.RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
-begin
-  Suite.LoadConfiguration(TTextTestListener.IniFileName, False, True);
-  Result := Suite.Run([TTextTestListener.Create
-    {$IFDEF XMLLISTENER}, TXMLListener.Create(ParamStr(0){, 'type="text/xsl" href="fpcunit2.xsl"'}) {$ENDIF}]);
-  Result.ReleaseListeners;
-  case exitBehavior of
-    rxbPause:
-      try
-        writeln('Press <RETURN> to continue.');
-        readln
-      except
-      end;
-    rxbHaltOnFailures:
-{$IFNDEF CLR}
-      with Result do
-      begin
-        if not WasSuccessful then
-          System.Halt(ErrorCount+FailureCount);
-      end
-{$ENDIF}
-    // else fall through
-  end;
-end;
-
-class function TTextTestListener.RunRegisteredTests(exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
-begin
-  Result := RunTest(RegisteredTests, exitBehavior);
-end;
-*)
-
 function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
 begin
   Result := nil;
@@ -426,7 +374,7 @@ begin
     try
     Suite.LoadConfiguration(TTextTestListener.IniFileName, False, True);
       Result := RunTest(Suite,[TTextTestListener.Create
-      {$IFDEF XMLLISTENER}, TXMLListener.Create(LocalAppDataPath + Suite.Name{, 'type="text/xsl" href="fpcunit2.xsl"'}) {$ENDIF}]);
+      {$IFDEF XMLLISTENER}, TXMLListener.Create({LocalAppDataPath +} Suite.Name{, 'type="text/xsl" href="fpcunit2.xsl"'}) {$ENDIF}]);
     finally
       Result.ReleaseListeners;
       Suite.ReleaseTests;
@@ -439,21 +387,19 @@ begin
           readln;
         end;
       rxbHaltOnFailures:
-      {$IFNDEF CLR}
         if Assigned(Result) then
         with Result do
         begin
           if not WasSuccessful then
             System.Halt(ErrorCount+FailureCount);
         end
-      {$ENDIF}
     end;
   end;
 end;
 
 function RunRegisteredTests: TTestResult;
 var
-  LExitBehavior : TRunnerExitBehavior;
+  LExitBehavior: TRunnerExitBehavior;
 begin
   // To run with rxbPause, use -p switch
   // To run with rxbHaltOnFailures, use -h switch
@@ -473,7 +419,6 @@ begin
   Result := RunTest(RegisteredTests, AExitBehavior);
 end;
 
-{---------------}
 procedure TTextTestListener.Status(const ATest: ITestProxy; AMessage: string);
 begin
   writeln(Format('%s: %s', [ATest.Name, AMessage]));
@@ -488,12 +433,12 @@ end;
 
 procedure TTextTestListener.EndSuite(Suite: ITestProxy);
 begin
-// Nothing to do here
+  // Nothing to do here
 end;
 
 procedure TTextTestListener.StartSuite(Suite: ITestProxy);
 begin
-// Nothing to do here
+  // Nothing to do here
 end;
 
 end.
