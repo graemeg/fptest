@@ -8,8 +8,8 @@ interface
 
 uses
     TestFrameworkIfaces, ProjectsManagerIface, TestListenerIface, 
-  TestFrameworkProxyIfaces, ProjectsManager, TimeManager, XMLListener, 
-  LazarusPackageIntf;
+  TestFrameworkProxyIfaces, ProjectsManager, EpikTimer, TimeManager, 
+  TestFramework, XMLListener, TestFrameworkProxy, LazarusPackageIntf;
 
 implementation
 
