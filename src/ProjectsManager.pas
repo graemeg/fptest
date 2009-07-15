@@ -88,7 +88,6 @@ implementation
 
 uses
   SysUtils,
-  Math,
   {$IFDEF MSWINDOWS}
   XPVistaSupport,
   {$ENDIF}
