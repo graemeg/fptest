@@ -5,29 +5,38 @@
     <CompilerOptions>
       <Version Value="8"/>
       <SearchPaths>
-        <OtherUnitFiles Value="src/"/>
-        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+        <OtherUnitFiles Value="src/;3rdparty/epiktimer/"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="5">
+    <Files Count="6">
       <Item1>
         <Filename Value="src/TestFrameworkIfaces.pas"/>
+        <UnitName Value="TestFrameworkIfaces"/>
       </Item1>
       <Item2>
         <Filename Value="src/ProjectsManagerIface.pas"/>
+        <UnitName Value="ProjectsManagerIface"/>
       </Item2>
       <Item3>
         <Filename Value="src/TestListenerIface.pas"/>
+        <UnitName Value="TestListenerIface"/>
       </Item3>
       <Item4>
         <Filename Value="src/TestFrameworkProxyIfaces.pas"/>
+        <UnitName Value="TestFrameworkProxyIfaces"/>
       </Item4>
       <Item5>
         <Filename Value="src/ProjectsManager.pas"/>
+        <UnitName Value="ProjectsManager"/>
       </Item5>
+      <Item6>
+        <Filename Value="src/timemanager.pas"/>
+        <UnitName Value="timemanager"/>
+      </Item6>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="1">
