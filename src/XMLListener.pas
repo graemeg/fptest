@@ -1,13 +1,44 @@
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
+
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   All rights reserved.
+
+   Contributor(s):
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
+
+unit XMLListener;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ENDIF}
+
 {$ifdef selftest}
   {$define ShowClass}
 {$endif}
 
-unit XMLListener;
 interface
+
 uses
   Contnrs,
-  TestFrameworkProxyIfaces,
-  xdom;   // Chosen because it does not drag in any other units e.g. TComponent
+  {$IFDEF FPC}
+  dom,
+  {$ELSE}
+  // Chosen because it does not drag in any other units e.g. TComponent
+  xdom,
+  {$ENDIF}
+  TestFrameworkProxyIfaces;
 
 type
 
@@ -183,12 +214,15 @@ begin
   FAppPath := ExtractFilePath(ExePathFileName);
   FAppName := ExtractFileName(ExePathFileName);
   FDocName := ChangeFileExt(FAppName, cxmlExt);
-  FXMLDoc := TDOMDocument.create(nil);
+  FXMLDoc := TDOMDocument.Create{$IFNDEF FPC}(nil){$ENDIF};
+  { TODO -cFPC : XMLDoc needs an Encoding parameter. }
+  {$IFNDEF FPC}
   FXMLDoc.Encoding := cEncoding;
+  {$ENDIF}
   if PIContent <> '' then
-    FXMLDoc.appendChild(FXMLDoc.createProcessingInstruction(cxmlStylesheet, PIContent));
+    FXMLDoc.AppendChild(FXMLDoc.createProcessingInstruction(cxmlStylesheet, PIContent));
   LDomElement := FXMLDoc.createElement(cTestResults);
-  FXMLDoc.appendChild(LDomElement);
+  FXMLDoc.AppendChild(LDomElement);
   MakeElementCurrent(LDomElement);
   AppendLF;
   AppendComment(cGeneratedBy + FormatDateTime(cyyyymmddhhmmss, Now));
@@ -199,7 +233,11 @@ var
   Stream: TFileStream;
   S: string;
 begin
+  {$IFDEF FPC}
+  S := FXMLDoc.TextContent;
+  {$ELSE}
   S := FXMLDoc.code;
+  {$ENDIF}
   Stream := TFileStream.Create(FAppPath + FDocName, fmCreate or fmOpenWrite);
   try
 {$WARN UNSAFE_CODE OFF}
