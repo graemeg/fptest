@@ -48,6 +48,7 @@ pre-Delphi7 and Delphi.NET compilers."/>
       </Item7>
       <Item8>
         <Filename Value="src/TestFramework.pas"/>
+        <UnitName Value="TestFramework"/>
       </Item8>
       <Item9>
         <Filename Value="src/XMLListener.pas"/>
