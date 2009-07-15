@@ -1,26 +1,40 @@
 program project1;
 
-{$mode objfpc}{$H+}
+{$IFDEF FPC}
+  {$mode objfpc}{$H+}
+{$ELSE}
+  {$APPTYPE CONSOLE}
+{$ENDIF}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes,
-  sample_tests;
+  sample_tests, TextTestRunner;
 
 
+{.$Define RunManually}
 
+{$IFDEF RunManually}
 var
   t: TTestCaseFirst;
 begin
   t := TTestCaseFirst.Create;
   try
+    t.TestWarning;
     t.TestOne;
     t.TestTwo;
     t.TestThree;
   finally
     t.free;
   end;
+{$ELSE}
+begin
+  // Register all tests
+  sample_tests.RegisterTests;
+
+  RunRegisteredTests;
+{$ENDIF}
 end.
 
