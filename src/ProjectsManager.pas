@@ -397,8 +397,9 @@ begin
   else
     LFileName := ExtractFileName(FileName);
 
-  LFinalPathFileName := LocalAppDataPath + LFileName;
-{$IFNDEF LINUX}
+  { TODO -cregistry : Remove windows registry references }
+  LFinalPathFileName := {LocalAppDataPath +} LFileName;
+{$IFNDEF UNIX}
   if useRegistry then
     f := TRegistryIniFile.Create(DUnitRegistryKey + LFileName)
   else
@@ -432,8 +433,9 @@ begin
   else
     LFileName := ExtractFileName(FileName);
 
-  LFinalPathFileName := LocalAppDataPath + LFileName;
-{$IFNDEF LINUX}
+  { TODO -cregistry : Remove windows registry references }
+  LFinalPathFileName := {LocalAppDataPath +} LFileName;
+{$IFNDEF UNIX}
   if useRegistry then
     f := TRegistryIniFile.Create(DUnitRegistryKey + FileName)
   else

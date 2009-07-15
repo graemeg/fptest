@@ -47,9 +47,7 @@ uses
   SysUtils;
 
 type
-  {$IFNDEF FPC}
-  PtrInt = LongInt; // What this when Delphi gets 64bit support
-  {$ENDIF}
+  PtrType = Cardinal; // Watch this when Delphi gets 64bit support
   TExceptTestMethod = procedure of object;
 
   TTestMethod = procedure of object;
@@ -249,9 +247,9 @@ type
     function  IsTestMethod: boolean;
     function  SupportedIfaceType: TSupportedIface;
     function  InterfaceSupports(const Value: TSupportedIface): Boolean;
-    function  get_ElapsedTime: Int64;
-    procedure set_ElapsedTime(const Value: Int64);
-    property  ElapsedTime: Int64 read get_ElapsedTime write set_ElapsedTime;
+    function  get_ElapsedTime: Extended;
+    procedure set_ElapsedTime(const Value: Extended);
+    property  ElapsedTime: Extended read get_ElapsedTime write set_ElapsedTime;
     procedure SaveConfiguration(const iniFile: TCustomIniFile; const Section: string);
     procedure LoadConfiguration(const iniFile :TCustomIniFile; const Section :string);
     procedure BeginRun;
@@ -263,16 +261,16 @@ type
     function  UpdateOnFail(const ATest: ITest;
                            const NewStatus: TExecutionStatus;
                            const Excpt: Exception;
-                           const Addrs: PtrInt): TExecutionStatus;
+                           const Addrs: PtrType): TExecutionStatus;
     function  get_CheckCalled: boolean;
     procedure set_CheckCalled(const Value: boolean);
     property  CheckCalled: boolean read get_CheckCalled write set_CheckCalled;
     function  get_ErrorMessage: string;
     procedure set_ErrorMessage(const Value: string);
     property  ErrorMessage: string read get_ErrorMessage write set_ErrorMessage;
-    function  get_ErrorAddress: Cardinal;
-    procedure set_ErrorAddress(const Value: Cardinal);
-    property  ErrorAddress: Cardinal read get_ErrorAddress write set_ErrorAddress;
+    function  get_ErrorAddress: PtrType;
+    procedure set_ErrorAddress(const Value: PtrType);
+    property  ErrorAddress: PtrType read get_ErrorAddress write set_ErrorAddress;
     function  get_ExceptionClass: ExceptClass;
     procedure set_ExceptionClass(const Value: ExceptClass);
     property  ExceptionClass: ExceptClass read get_ExceptionClass

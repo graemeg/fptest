@@ -111,12 +111,12 @@ type
     FExecStatus: TExecutionStatus;
     FDepth: Integer;
     FCheckCalled: boolean;
-    FElapsedTime: Cardinal;
-    FStartTime: Int64;
-    FStopTime:  Int64;
+    FElapsedTime: Extended;
+    FStartTime: Extended;
+    FStopTime:  Extended;
     FExceptionIs: ExceptClass;
     FExpectedExcept: ExceptClass;
-    FErrorAddress: Cardinal;
+    FErrorAddress: PtrType;
     FErrorMessage: string;
     FFailsOnNoChecksExecuted: boolean;
     FStatusMsgs: TStrings;
@@ -130,7 +130,7 @@ type
     FFailsOnMemoryLeak: boolean;
     FIgnoresMemoryLeakInSetUpTearDown: boolean;
     function  CheckMethodCalledCheck(const ATest: ITest): TExecutionStatus;
-    function  ElapsedTestTime: Cardinal;
+    function  ElapsedTestTime: Extended;
     function  MethodCode(const MethodsName: string): TTestMethod;
     procedure CheckMethodIsNotEmpty(const AMethod: TTestMethod);
     procedure InitializeRunState; virtual;
@@ -172,8 +172,8 @@ type
     function  IsTestMethod: boolean;
     function  SupportedIfaceType: TSupportedIface;
     function  InterfaceSupports(const Value: TSupportedIface): Boolean;
-    function  get_ElapsedTime: Int64;
-    procedure set_ElapsedTime(const Value: Int64);
+    function  get_ElapsedTime: Extended;
+    procedure set_ElapsedTime(const Value: Extended);
     function  get_TestSetUpData: ITestSetUpData;
     procedure set_TestSetUpData(const IsTestSetUpData: ITestSetUpData);
     function  get_FailsOnNoChecksExecuted: boolean;
@@ -201,19 +201,19 @@ type
     procedure set_ExecStatus(const Value: TExecutionStatus);
     function  get_ErrorMessage: string;
     procedure set_ErrorMessage(const Value: string);
-    function  get_ErrorAddress: Cardinal;
+    function  get_ErrorAddress: PtrType;
     procedure set_ErrorAddress(const Value: Cardinal);
     procedure Warn(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil); overload;
     function  UpdateOnFail(const ATest: ITest;
                            const NewStatus: TExecutionStatus;
                            const Excpt: Exception;
-                           const Addrs: PtrInt): TExecutionStatus;
+                           const Addrs: PtrType): TExecutionStatus;
     function  UpdateOnError(const ATest: ITest;
                             const NewStatus: TExecutionStatus;
                             const ExceptnMsg: string;
                             const Excpt: Exception;
-                            const Addrs: PtrInt): TExecutionStatus;
+                            const Addrs: PtrType): TExecutionStatus;
     function  GetStatus: string;
     procedure Status(const Value: string);
     function  get_Proxy: IInterface;
@@ -349,7 +349,7 @@ type
     property  Enabled: boolean read get_Enabled write set_Enabled;
     property  Excluded: boolean read get_Excluded write set_Excluded;
     property  Depth: Integer read get_Depth write set_Depth;
-    property  ElapsedTime: Int64 read get_ElapsedTime write set_ElapsedTime;
+    property  ElapsedTime: Extended read get_ElapsedTime write set_ElapsedTime;
     property  TestSetUpData: ITestSetUpData read get_TestSetUpData
                                             write set_TestSetUpData;
     property  FailsOnNoChecksExecuted: boolean read get_FailsOnNoChecksExecuted
@@ -571,11 +571,11 @@ uses
 //    FastMM4,
   {$ENDIF}
   TypInfo,
-//  Windows,
   Math,
   ProjectsManagerIface,
   ProjectsManager,
-  TestListenerIface;
+  TestListenerIface,
+  TimeManager;
 
 {$STACKFRAMES ON} // Required to retrieve caller's address
 
@@ -1739,25 +1739,19 @@ begin
   FDisplayedName := AName;
 end;
 
-// returns TestTime in millisecs
-function TTestProc.ElapsedTestTime: Cardinal;
+// returns TestTime in seconds.millisecs
+function TTestProc.ElapsedTestTime: Extended;
 var
-  LFreq, LTime: Int64;
+  LTime: Extended;
 begin
-  LFreq := 1;
   if FStopTime > 0 then
     LTime := FStopTime
   else if FStartTime > 0 then
-    QueryPerformanceCounter(LTime)
+    LTime := gTimer.Elapsed
+//    QueryPerformanceCounter(LTime)
   else
     LTime := 0;
-
-  LTime := LTime - FStartTime;
-
-  if QueryPerformanceFrequency(LFreq) then
-    Result := (1000*LTime + 499) div LFreq // round up at and above 501 usecs
-  else
-    Result := 0;
+  Result := LTime - FStartTime;
 end;
 
 function TTestProc.get_Enabled: boolean;
@@ -2002,7 +1996,7 @@ begin
   Result := FTestSetUpData;
 end;
 
-procedure TTestProc.set_ElapsedTime(const Value: Int64);
+procedure TTestProc.set_ElapsedTime(const Value: Extended);
 begin
   FElapsedTime := Value;
 end;
@@ -2046,7 +2040,7 @@ begin
   self.set_Excluded(not iniFile.readBool(csExcluded + Section, self.DisplayedName, True));
 end;
 
-procedure TTestProc.set_ErrorAddress(const Value: Cardinal);
+procedure TTestProc.set_ErrorAddress(const Value: PtrType);
 begin
   FErrorAddress := Value;
 end;
@@ -2176,7 +2170,6 @@ begin
   Result := FMethodName;
 end;
 
-{$IFNDEF CLR}
 function TTestProc.MethodCode(const MethodsName: string): TTestMethod;
 var
   LMethod : TMethod;
@@ -2185,9 +2178,8 @@ begin
   LMethod.Data := self;
   Result := TTestMethod(LMethod);
 end;
-{$ENDIF}
 
-function TTestProc.get_ElapsedTime: Int64;
+function TTestProc.get_ElapsedTime: Extended;
 begin
   Result := FElapsedTime;
 end;
@@ -2248,25 +2240,20 @@ begin
       // Parent TTestCase, not in context of this ITest instance.
       if IsTestMethod then
       begin
-        QueryPerformanceCounter(FStartTime);
+        FStartTime := gTimer.Elapsed;
+//        QueryPerformanceCounter(FStartTime);
         FMethod;
       end
       else
       begin
-        QueryPerformanceCounter(FStartTime);
+        FStartTime := gTimer.Elapsed;
+//        QueryPerformanceCounter(FStartTime);
         RunTest;
       end;
     finally
-      QueryPerformanceCounter(FStopTime);
+      FStopTime := gTimer.Elapsed;
+//      QueryPerformanceCounter(FStopTime);
       FElapsedTime := ElapsedTestTime;
-      {$IFDEF USE_JEDI_JCL}
-      {$IFNDEF CLR}
-        if LTrackingStack then
-          JclStartExceptionTracking // Does nothing if already running. Re-enables tracking
-        else
-          JclStopExceptionTracking; // Does nothing if already stopped
-        {$ENDIF}
-      {$ENDIF}
     end;
 
     // Arrive here when there are no unhandled exceptions in Method's code.
@@ -2303,19 +2290,19 @@ begin
 
     on e: EStopTestsFailure do
     begin
-      ExecStatus := UpdateOnFail(Self, _Stopped, e, ExceptAddr);
+      ExecStatus := UpdateOnFail(Self, _Stopped, e, PtrType(ExceptAddr));
       Result := ExecStatus;
     end;
 
     on e: ETestFailure do
     begin
-      ExecStatus := UpdateOnFail(Self, _Failed, e, ExceptAddr);
+      ExecStatus := UpdateOnFail(Self, _Failed, e, PtrType(ExceptAddr));
       Result := ExecStatus;
     end;
 
     on e: EBreakingTestFailure do
     begin
-      ExecStatus := UpdateOnFail(Self, _Break, e, ExceptAddr);
+      ExecStatus := UpdateOnFail(Self, _Break, e, PtrType(ExceptAddr));
       Result := ExecStatus;
     end;
 
@@ -2334,12 +2321,8 @@ begin
       else
       begin
         FExceptionIs := ExceptClass(e.ClassType);
-        {$IFDEF CLR}
-          LMsg := e.Message + (CurrentTestCase as ITestCase).CLRExceptionLocation;
-        {$ELSE}
-          LMsg := e.Message;    // Unexpected exception
-        {$ENDIF}
-        ExecStatus := UpdateOnError(Self, _Error, LMsg, e, ExceptAddr); 
+        LMsg := e.Message;    // Unexpected exception
+        ExecStatus := UpdateOnError(Self, _Error, LMsg, e, PtrType(ExceptAddr));
         Result := ExecStatus;
       end;
     end;
@@ -2356,14 +2339,10 @@ function TTestProc.UpdateOnError(const ATest: ITest;
                                  const NewStatus: TExecutionStatus;
                                  const ExceptnMsg: string;
                                  const Excpt: Exception;
-                                 const Addrs: IntPtr): TExecutionStatus;
+                                 const Addrs: PtrType): TExecutionStatus;
 begin
   ATest.ErrorMessage := ExceptnMsg;
-  {$IFNDEF CLR}
-    ATest.ErrorAddress := Cardinal(Addrs);
-  {$ELSE}
-    ATest.ErrorAddress := 0;
-  {$ENDIF}
+  ATest.ErrorAddress := Addrs;
   ATest.ExceptionClass := ExceptClass(Excpt.ClassType);
   FExecControl.ErrorCount := FExecControl.ErrorCount + 1;
   Result := NewStatus; // This just passes through
@@ -2372,14 +2351,10 @@ end;
 function TTestProc.UpdateOnFail(const ATest: ITest;
                                 const NewStatus: TExecutionStatus;
                                 const Excpt: Exception;
-                                const Addrs: IntPtr): TExecutionStatus;
+                                const Addrs: PtrType): TExecutionStatus;
 begin
   ATest.ErrorMessage := Excpt.Message;
-  {$IFNDEF CLR}
-    ATest.ErrorAddress := Cardinal(Addrs);
-  {$ELSE}
-    ATest.ErrorAddress := 0;
-  {$ENDIF}
+  ATest.ErrorAddress := Addrs;
   ATest.ExceptionClass := ExceptClass(Excpt.ClassType);
   if (NewStatus = _Stopped) or
      (NewStatus = _Failed) or
@@ -2707,7 +2682,7 @@ end;
 
 function  TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;
 var
-  LStartTime: int64;
+  LStartTime: Extended;
   LMemUseComparitor: IMemUseComparator;
 
   function ExecuteTestMethod(const ATest: ITest): TExecutionStatus;
@@ -2732,11 +2707,11 @@ var
           LMemUseComparitor.RunTearDown(TearDown);
         except
           on E:Exception do
-            Result := UpdateOnError(ATest, _Error, 'TearDown failed: ' + E.Message, E, ExceptAddr);
+            Result := UpdateOnError(ATest, _Error, 'TearDown failed: ' + E.Message, E, PtrType(ExceptAddr));
         end;
       except
         on E:Exception do
-          Result := UpdateOnError(ATest, _Error, 'SetUp failed: ' + E.Message, E, ExceptAddr);
+          Result := UpdateOnError(ATest, _Error, 'SetUp failed: ' + E.Message, E, PtrType(ExceptAddr));
       end;
     finally
     if ExecControl.ErrorCount > LErrors then
@@ -2757,7 +2732,8 @@ var
   var
     LExecStatus: TExecutionStatus;
   begin
-    QueryPerformanceCounter(FStartTime);
+    FStartTime := gTimer.Elapsed;
+//    QueryPerformanceCounter(FStartTime);
     Result := ATest.ExecStatus;
 
     try
@@ -2771,7 +2747,7 @@ var
         begin
           (ATest as ITestCase).ReportErrorOnce := True;
           LExecStatus := UpdateOnError(ATest, _Error, 'TearDown failed: ' +
-            E.Message, E, ExceptAddr);
+              E.Message, E, PtrType(ExceptAddr));
           Result := TExecutionStatus(Max(ord(LExecStatus), Ord(Result)));
         end;
       end;
@@ -2781,12 +2757,13 @@ var
         ATest.ExecStatus := _Running;
         (ATest as ITestCase).ReportErrorOnce := True;
         LExecStatus := UpdateOnError(ATest, _Error, 'SetUp failed: ' +
-          E.Message, E, ExceptAddr);
+            E.Message, E, PtrType(ExceptAddr));
         Result := TExecutionStatus(Max(ord(LExecStatus), Ord(Result)));
       end;
     end;
 
-    QueryPerformanceCounter(FStopTime);
+    FStopTime := gTimer.Elapsed;
+//    QueryPerformanceCounter(FStopTime);
     ATest.ElapsedTime := ElapsedTestTime;
     ATest.ExecStatus := Result;
   end;
@@ -2804,7 +2781,8 @@ begin  {TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;}
     LMemUseComparitor := TBaseMemUseComparator.Create(Self, ExecControl);
   {$ENDIF}
 
-  QueryPerformanceCounter(LStartTime);
+  LStartTime := gTimer.Elapsed;
+//  QueryPerformanceCounter(LStartTime);
   FTestIterator.Reset;
   InitializeRunState;
   if not ReEntering then
@@ -2851,7 +2829,7 @@ begin  {TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;}
       begin
         FReportErrorOnce := True;
         LLExecStatus := UpdateOnError(Self, _Error, 'TearDownOnce failed: '+
-          E.Message, E, ExceptAddr);
+            E.Message, E, PtrType(ExceptAddr));
         Result := TExecutionStatus(Max(ord(LLExecStatus), Ord(Result)));
       end;
     end;
@@ -2861,13 +2839,14 @@ begin  {TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;}
     begin
       ReportErrorOnce := True;
       LLExecStatus := UpdateOnError(Self, _Error, 'SetUpOnce failed: ' +
-        E.Message, E, ExceptAddr);
+          E.Message, E, PtrType(ExceptAddr));
       Result := TExecutionStatus(Max(ord(LLExecStatus), Ord(Result)));
     end;
   end;
 
   FStartTime := LStartTime;
-  QueryPerformanceCounter(FStopTime);
+  FStopTime := gTimer.Elapsed;
+//  QueryPerformanceCounter(FStopTime);
   ElapsedTime := ElapsedTestTime;
 
   (FProgressSummary as IProgressSummary).UpdateSummary(ExecControl);
@@ -3642,7 +3621,7 @@ begin
                                     _Error,
                                     'TearDown  + LWhichOne + failed: ' + E.Message,
                                     E,
-                                    ExceptAddr);
+                                    PtrType(ExceptAddr));
       end;
     end;
   except
@@ -3653,7 +3632,7 @@ begin
                                   _Error,
                                   'SetUp' + LWhichOne + ' failed: ' + E.Message,
                                   E,
-                                  ExceptAddr);
+                                  PtrType(ExceptAddr));
     end;
   end;
 
@@ -4166,12 +4145,7 @@ begin
 end;
 
 initialization
-{$IFDEF USE_JEDI_JCL}
-  {$IFNDEF CLR}
-  JclStartExceptionTracking; // First time use uses 24 bytes.
-  JclStopExceptionTracking;
-  {$ENDIF}
-{$ENDIF}
+  gTimer.Clear;
 
 finalization
   UnRegisterProjectManager;
