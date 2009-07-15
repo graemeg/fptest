@@ -20,13 +20,13 @@ procedure GetMethodList(AClass: TClass; AList: TStrings); overload;
 implementation
 
 
-// Hack Alert! see objpas.inc
 //  Get a list of published methods for a given class or object
 procedure GetMethodList(AObject: TObject; AList: TStrings);
 begin
   GetMethodList(AObject.ClassType, AList);
 end;
 
+// Code copied form objpas.inc:  class function TObject.MethodAddress()
 procedure GetMethodList(AClass: TClass; AList: TStrings);
 type
   TMethodNameRec = packed record
