@@ -26,6 +26,7 @@ type
   published
     procedure TestClassA2; override;
     procedure TestClassB1;
+    procedure TestError;
   end;
 
 
@@ -48,7 +49,7 @@ end;
 
 procedure TTestCaseFirst.TestWarning;
 begin
-  Fail('Just because I can!');
+  // Do nothing here - should cause a Warning
 end;
 
 procedure TTestCaseFirst.TestOne;
@@ -73,26 +74,34 @@ end;
 
 procedure TClassA.TestClassA1;
 begin
-  Fail('TClassA.TestClassA1');
+  fail('TClassA.TestClassA1');
 end;
 
 procedure TClassA.TestClassA2;
 begin
-  Fail('TClassA.TestClassA2');
+  Fail('This virtual method should never appear.');
 end;
 
 { TClassB }
 
 procedure TClassB.TestClassA2;
 begin
-//  inherited TestClassA2;
-  sleep(2264);
-  Fail('TClassB.TestClassA2');
+  Fail('Test overridden method');
 end;
 
 procedure TClassB.TestClassB1;
 begin
-  Fail('TClassB.testClassB1');
+  sleep(2264);
+  Fail('Test sleep() causing extra time');
+end;
+
+procedure TClassB.TestError;
+var
+  x, y: integer;
+begin
+  x := 10;
+  y := 0;
+  Check(x / y = 0, 'Failed on 1');
 end;
 
 end.
