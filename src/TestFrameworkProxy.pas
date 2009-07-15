@@ -1,66 +1,60 @@
-{#(@)$Id: $ }
-{  DUnit: An XTreme testing framework for Delphi programs. }
-(*
- * The contents of this file are subject to the Mozilla Public
- * License Version 1.1 (the "License"); you may not use this file
- * except in compliance with the License. You may obtain a copy of
- * the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS
- * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
- * implied. See the License for the specific language governing
- * rights and limitations under the License.
- *
- * The Original Code is DUnit.
- *
- * The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
- * and Juancarlo Añez.
- * Portions created The Initial Developers are Copyright (C) 1999-2000.
- * Portions created by The DUnit Group are Copyright (C) 2000-2008.
- * All rights reserved.
- *
- * Contributor(s):
- * Kent Beck <kentbeck@csi.com>
- * Erich Gamma <Erich_Gamma@oti.com>
- * Juanco Añez <juanco@users.sourceforge.net>
- * Chris Morris <chrismo@users.sourceforge.net>
- * Jeff Moore <JeffMoore@users.sourceforge.net>
- * Uberto Barbini <uberto@usa.net>
- * Brett Shearer <BrettShearer@users.sourceforge.net>
- * Kris Golko <neuromancer@users.sourceforge.net>
- * The DUnit group at SourceForge <http://dunit.sourceforge.net>
- * Peter McNab <mcnabp@gmail.com>
- *
- *******************************************************************************
-*)
+{
+   DUnit: An XTreme testing framework for Delphi and Free Pascal programs.
 
-{$IFDEF CLR}
-  {$UNSAFECODE ON}
+   The contents of this file are subject to the Mozilla Public
+   License Version 1.1 (the "License"); you may not use this file
+   except in compliance with the License. You may obtain a copy of
+   the License at http://www.mozilla.org/MPL/
+
+   Software distributed under the License is distributed on an "AS
+   IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+   implied. See the License for the specific language governing
+   rights and limitations under the License.
+
+   The Original Code is DUnit.
+
+   The Initial Developers of the Original Code are Kent Beck, Erich Gamma,
+   and Juancarlo Añez.
+   Portions created The Initial Developers are Copyright (C) 1999-2000.
+   Portions created by The DUnit Group are Copyright (C) 2000-2007.
+   All rights reserved.
+
+   Contributor(s):
+   Kent Beck <kentbeck@csi.com>
+   Erich Gamma <Erich_Gamma@oti.com>
+   Juanco Añez <juanco@users.sourceforge.net>
+   Chris Morris <chrismo@users.sourceforge.net>
+   Jeff Moore <JeffMoore@users.sourceforge.net>
+   Uberto Barbini <uberto@usa.net>
+   Brett Shearer <BrettShearer@users.sourceforge.net>
+   Kris Golko <neuromancer@users.sourceforge.net>
+   The DUnit group at SourceForge <http://dunit.sourceforge.net>
+   Peter McNab <mcnabp@gmail.com>
+   Graeme Geldenhuys <graemeg@gmail.com>
+}
+
+{ Description:
+  This unit sits between the adapted GUITestRunner and TestFramework.
+  It provides an interface to look and behave like the original TestFramework.
+  When tests DUnit2 code has reached a mature stage a new GUITestRunner will be
+  introduced to interface directly with with a new TestRunner TestFramework.
+  This "Proxy" unit re-creates the Tests structure currently accessed by
+  the treeview. }
+unit TestFrameworkProxy;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
   {$UNDEF FASTMM}
-{$ENDIF}
-{$BOOLEVAL OFF}
-{$IFNDEF VER130}
+{$ELSE}
   {$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
 
-unit TestFrameworkProxy;
-// This unit sits between the adapted GUITestRunner and TestFramework.
-// It provides an interface to look and behave like the original TestFramework.
-// When tests DUnit2 code has reached a mature stage a new GUITestRunner will be
-// introduced to interface directly with with a new TestRunner TestFramework.
-// This "Proxy" unit re-creates the Tests structure currently accessed by
-// the treeview.
+{$BOOLEVAL OFF}
 
 interface
 uses
-{$IFDEF CLR}
-  System.Reflection,
-  System.Text,
-{$ENDIF}
   TestFrameworkProxyIfaces,
   TestFrameworkIfaces,
-  IniFiles,
-  Registry,
   Classes;
 
 function  RegisteredTests(const TestSuite: ITestCase): ITestSuiteProxy; overload;
@@ -71,33 +65,24 @@ function  GetDUnitRegistryKey: string;
 procedure ClearRegistry;
 function  GetTestResult: TTestResult;
 function  RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): TTestResult; overload;
-function  PointerToLocationInfo(Addrs: {$ifndef CLR} TestFrameworkIfaces. {$endif} IntPtr): string;
+function  PointerToLocationInfo(Addrs: PtrType): string;
 
 {==============================================================================}
 implementation
 uses
-  {$IFDEF VER130}
-    D5Support,
-  {$ENDIF}
   TestFramework,
   TestListenerIface,
   ProjectsManagerIface,
-  Windows,
-  {$IFNDEF VER130}
-  SHFolder,
-  {$ENDIF}
-{$IFDEF USE_JEDI_JCL}
-  JclDebug,
-{$ENDIF}
-  SysUtils;
+  SysUtils,
+  TimeManager;
 
 type
   TTestListenerProxy = class(TInterfacedObject, ITestListenerProxy)
   private
     FTestResult: TTestResult;
     FTestListeners: IInterfaceList;
-    FRunningStartTime: Int64;
-    FRunningStopTime: Int64;
+    FRunningStartTime: Extended;
+    FRunningStopTime: Extended;
     procedure UpdateTestResult;
     function  EndTestExec(const ATest: ITest):ITestProxy;
   protected
@@ -116,6 +101,7 @@ type
     destructor Destroy; override;
   end;
 
+
   {$M+}
   TTestProxy = class(TInterfacedObject, ITestProxy)
   private
@@ -125,10 +111,8 @@ type
     FExecutionStatus : TExecutionStatus;
     FIsOverridden: boolean;
     FIsWarning: boolean;
-    {$IFNDEF CLR}
     FFailsOnMemoryRecovery: boolean;
     FAllowedLeakList: TAllowedLeakArray;
-    {$ENDIF}
     FITestList: IInterfaceList;
     FErrors: Integer;
     FFailures: Integer;
@@ -166,7 +150,6 @@ type
     procedure set_InhibitSummaryLevelChecks(const Value: boolean);
     function  EarlyExit: boolean;
 
-    {$IFNDEF CLR}
     function  get_LeakAllowed: boolean;
     function  GetFailsOnMemoryLeak: Boolean;
     procedure SetFailsOnMemoryLeak(const Value: Boolean);
@@ -175,12 +158,11 @@ type
     function  GetAllowedMemoryLeakSize: Integer;
     procedure SetAllowedMemoryLeakSize(const NewSize: Integer);
     function  GetFailsOnMemoryRecovery: Boolean;
-    {$ENDIF}
 
     procedure SaveConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean);
     procedure LoadConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean); virtual;
     function  CountEnabledTestCases: Integer;
-    function  ElapsedTestTime: Cardinal;
+    function  ElapsedTestTime: Extended;
     function  Tests: IInterfaceList;
     procedure Run(const TestResult: TTestResult); overload;
     function  Run(const Listeners: array of ITestListener): TTestResult; overload;
@@ -193,37 +175,36 @@ type
   end;
   {$M-}
 
+
   TTestSuiteProxy = class(TTestProxy, ITestSuiteProxy)
-  private
-    constructor Create(const ATestProject: ITestProject;
-                       const CurrentTest: ITest;
-                       out   LTest: ITest); reintroduce; overload;
   protected
     FIsTestMethod: Boolean;
     FIsNotTestMethod: Boolean;
   public
+    constructor Create(const ATestProject: ITestProject); reintroduce; overload;
+    constructor Create(const ATestProject: ITestProject;
+                       const CurrentTest: ITest;
+                       out   LTest: ITest); reintroduce; overload;
     function Tests: IInterfaceList;
     procedure TestSuiteTitle(const ATitle: string);
-    constructor Create(const ATestProject: ITestProject); reintroduce; overload;
   end;
+
 
   TITestFailure = class(TInterfacedObject, TTestFailure)
   private
     FFailedTest: ITestProxy;
     FStackTrace: string;
-    FThrownExceptionAddress: Cardinal;
+    FThrownExceptionAddress: PtrType;
     FThrownExceptionMessage: string;
     FThrownExceptionClassName: string;
-
-    function ThrownExceptionAddress: Cardinal; virtual;
+    function ThrownExceptionAddress: PtrType; virtual;
     procedure CaptureStackTrace;
   public
     constructor Create(const FailedTest: ITestProxy;
                        const ThrownExceptionClass: ExceptClass;
                        const AMsg: string;
-                       const Addrs: Cardinal;
+                       const Addrs: PtrType;
                        const ShowStack: boolean); overload;
-
     function FailedTest: ITestProxy;         virtual;
     function ThrownExceptionName: string;    virtual;
     function ThrownExceptionMessage: string; virtual;
@@ -232,10 +213,10 @@ type
     function StackTrace:   string;           virtual;
   end;
 
-// This interfaced object replicates the reporting and control of the original
-// TTestResult object but unwinds some of the deeper convoluted involvement in
-// test execution.
 
+  { This interfaced object replicates the reporting and control of the original
+    TTestResult object but unwinds some of the deeper convoluted involvement in
+    test execution. }
   {$M+}
   TITestResult = class(TInterfacedObject, TTestResult)
   private
@@ -255,7 +236,7 @@ type
     FStop: Boolean;
     FWasStopped: Boolean;
     FTestListenerProxy: ITestListenerProxy;
-    FTotalTime: Int64;
+    FTotalTime: Extended;
     FExcludedCount: Integer;
     FInhibitSummaryLevelChecks: Boolean;
     function  GetFailure(idx: Integer): TTestFailure;
@@ -265,8 +246,8 @@ type
     function  GetWarning(idx :Integer) :TTestFailure;
     procedure SetWarning(idx: Integer; AFailure: TTestFailure);
   protected
-    function  get_TotalTime: Int64;
-    procedure set_TotalTime(const Value: Int64);
+    function  get_TotalTime: Extended;
+    procedure set_TotalTime(const Value: Extended);
     function  get_WarningCount: Integer;
     procedure set_WarningCount(const Value: Integer);
     function  get_ExcludedCount: Integer;
@@ -309,17 +290,15 @@ type
   end;
   {$M-}
 
-{-----------------------------------------------------------------------------}
+
 var
   DUnitRegistryKey: string = '';
 
-{-----------------------------------------------------------------------------}
+
 function GetTestResult: TTestResult;
 begin
   Result := TITestResult.Create;
 end;
-
-{-----------------------------------------------------------------------------}
 
 function RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): TTestResult; overload;
 var
@@ -345,7 +324,6 @@ begin
   end;
 end;
 
-{-----------------------------------------------------------------------------}
 function  RegisteredTests(const TestSuite: ITestCase): ITestSuiteProxy; overload;
 begin
   if TestSuite = nil then
@@ -397,7 +375,6 @@ begin
     Result := nil;
 end;
 
-{-----------------------------------------------------------------------------}
 { TTestResult }
 
 procedure TITestResult.AddListener(const Listener: ITestListener);
@@ -545,7 +522,7 @@ begin
   Result := FOverrides;
 end;
 
-function TITestResult.get_TotalTime: Int64;
+function TITestResult.get_TotalTime: Extended;
 begin
   Result := FTotalTime;
 end;
@@ -615,9 +592,9 @@ begin
   FRunTests := Value;
 end;
 
-procedure TITestResult.set_TotalTime(const Value: Int64);
+procedure TITestResult.set_TotalTime(const Value: Extended);
 begin
-  FTotalTime := Value
+  FTotalTime := Value;
 end;
 
 procedure TITestResult.set_WarningCount(const Value: Integer);
@@ -630,68 +607,36 @@ begin
   FWasStopped := Value;
 end;
 
-{-----------------------------------------------------------------------------}
-function PtrToStr(P: IntPtr): string;
+function PtrToStr(P: PtrType): string;
 begin
    Result := Format('%p', [P])
 end;
 
-function AddrsToStr(Addrs: IntPtr): string;
+function AddrsToStr(Addrs: PtrType): string;
 begin
-  if Assigned(Addrs) then
+// graeme: Would this work?
+//  if Assigned(Addrs) then
+  if Addrs > 0 then
     Result := '$'+PtrToStr(Addrs)
   else
     Result := 'n/a';
 end;
 
-function PointerToLocationInfo(Addrs: IntPtr): string;
-{$IFDEF USE_JEDI_JCL}
-var
-  _file,
-  _module,
-  _proc: String;
-  _line: Integer;
-{$ENDIF}
+function PointerToLocationInfo(Addrs: PtrType): string;
 begin
-  {$IFDEF USE_JEDI_JCL}
-    JclDebug.MapOfAddr(Addrs, _file, _module, _proc, _line);
-    if _file <> '' then
-      Result   := Format('%s:%d', [_file, _line])
-    else
-      Result   := _module;
-    if Trim(Result) = '' then
-      Result := AddrsToStr(Addrs) + '  <no map file>';
-  {$ELSE}
-    Result := AddrsToStr(Addrs);
-  {$ENDIF}
+  Result := AddrsToStr(Addrs);
 end;
 
-function PointerToAddressInfo(Addrs: IntPtr): string;
-{$IFDEF USE_JEDI_JCL}
-var
-  _file,
-  _module,
-  _proc: String;
-  _line: Integer;
-{$ENDIF}
+function PointerToAddressInfo(Addrs: PtrType): string;
 begin
-  {$IFDEF USE_JEDI_JCL}
-    Result := '$'+PtrToStr(Addrs);
-    JclDebug.MapOfAddr(Addrs, _file, _module, _proc, _line);
-    Result := Format(' <$%p>', [ Addrs]);
-    if Trim(Result) = '' then
-      Result := AddrsToStr(Addrs) + '  <no map file>';
-  {$ELSE}
-    Result := AddrsToStr(Addrs);
-  {$ENDIF}
+  Result := AddrsToStr(Addrs);
 end;
 
-{-----------------------------------------------------------------------------}
 { TITestFailure }
 
 function TITestFailure.AddressInfo: string;
 begin
-  Result := PointerToAddressInfo(IntPtr(ThrownExceptionAddress));
+  Result := PointerToAddressInfo(ThrownExceptionAddress);
 end;
 
 procedure TITestFailure.CaptureStackTrace;
@@ -700,6 +645,7 @@ var
 begin
   LTrace := TStringList.Create;
   try
+    { TODO -cStackTrace : Could we use FPC heaptrc unit here? }
     {$IFDEF USE_JEDI_JCL}
       JclDebug.JclLastExceptStackListToStrings(LTrace, true);
     {$ENDIF}
@@ -712,7 +658,7 @@ end;
 constructor TITestFailure.Create(const FailedTest: ITestProxy;
                                  const ThrownExceptionClass: ExceptClass;
                                  const AMsg: string;
-                                 const Addrs: Cardinal;
+                                 const Addrs: PtrType;
                                  const ShowStack: boolean);
 begin
   inherited Create;
@@ -736,7 +682,7 @@ end;
 
 function TITestFailure.LocationInfo: string;
 begin
-  Result := PointerToLocationInfo(IntPtr(ThrownExceptionAddress));
+  Result := PointerToLocationInfo(ThrownExceptionAddress);
 end;
 
 function TITestFailure.StackTrace: string;
@@ -744,7 +690,7 @@ begin
   Result := FStackTrace;
 end;
 
-function TITestFailure.ThrownExceptionAddress: Cardinal;
+function TITestFailure.ThrownExceptionAddress: PtrType;
 begin
   Result := FThrownExceptionAddress;
 end;
@@ -759,7 +705,6 @@ begin
   Result := FThrownExceptionClassName
 end;
 
-{-----------------------------------------------------------------------------}
 { TTestProxy }
 
 function TTestProxy.CountEnabledTestCases: Integer;
@@ -782,11 +727,10 @@ begin                // Delibarately release refs so tests go down early
   inherited;
 end;
 
-function TTestProxy.ElapsedTestTime: Cardinal;
+function TTestProxy.ElapsedTestTime: Extended;
 begin
   Result := FITest.ElapsedTime;
 end;
-
 
 function TTestProxy.GetEnabled: Boolean;
 begin
@@ -808,7 +752,6 @@ begin
   FITest.Excluded := Value;
 end;
 
-{$IFNDEF CLR}
 function TTestProxy.GetAllowedMemoryLeakSize: Integer;
 begin
   Result := 0;
@@ -845,7 +788,6 @@ procedure TTestProxy.SetAllowedMemoryLeakSize(const NewSize: Integer);
 begin
   FAllowedLeakList[0] := NewSize;
 end;
-{$ENDIF}
 
 procedure TTestProxy.SetFailsOnNoChecksExecuted(const Value: Boolean);
 begin
@@ -1049,12 +991,10 @@ begin
   Result := FIsWarning;
 end;
 
-{$IFNDEF CLR}
 function TTestProxy.get_LeakAllowed: boolean;
 begin
   Result := FITest.LeakAllowed;
 end;
-{$ENDIF}
 
 function TTestProxy.get_TestsExecuted: Integer;
 begin
@@ -1142,8 +1082,7 @@ begin
 end;
 
 constructor TTestSuiteProxy.Create(const ATestProject: ITestProject;
-                                   const CurrentTest: ITest;
-                                   out   LTest: ITest);
+    const CurrentTest: ITest; out LTest: ITest);
 var
   LNext: ITest;
   LTestProxy: ITestProxy;
@@ -1230,7 +1169,6 @@ end;
 procedure TTestListenerProxy.UpdateTestResult;
 var
   LExecControl: ITestExecControl;
-  LFreq: Int64;
 begin
   LExecControl := Projects.ExecutionControl;
   FTestResult.RunCount          := LExecControl.ExecutionCount;
@@ -1239,9 +1177,8 @@ begin
   FTestResult.WarningCount      := LExecControl.WarningCount;
   FTestResult.ChecksCalledCount := LExecControl.CheckCalledCount;
   FTestResult.ExcludedCount     := LExecControl.ExcludedCount;
-  QueryPerformanceCounter(FRunningStopTime);
-  if QueryPerformanceFrequency(LFreq) then
-    FTestResult.TotalTime := ((1000*(FRunningStopTime-FRunningStartTime)) div LFreq);
+  FRunningStopTime := gTimer.Elapsed;
+  FTestResult.TotalTime := FRunningStopTime-FRunningStartTime;
   LExecControl := nil;
 end;
 
@@ -1277,8 +1214,8 @@ begin
   for idx := 0 to FTestListeners.Count -1 do
     (FTestListeners.Items[idx] as ITestListener).TestingStarts;
 
-  FRunningStopTime := 0;
-  QueryPerformanceCounter(FRunningStartTime);
+  FRunningStopTime := 0.0;
+  FRunningStartTime := gTimer.Elapsed;
 end;
 
 procedure TTestListenerProxy.TestingEnds;
@@ -1436,10 +1373,5 @@ procedure TITestResult.set_InhibitSummaryLevelChecks(const Value: boolean);
 begin
   FInhibitSummaryLevelChecks := Value;
 end;
-
-initialization
-{$IFDEF LINUX}
-  InitPerformanceCounter;
-{$ENDIF}
 
 end.

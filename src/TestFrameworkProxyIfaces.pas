@@ -105,7 +105,7 @@ type
     procedure SaveConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean);
     procedure LoadConfiguration(const FileName: string; const useRegistry, useMemIni: Boolean);
     function  CountEnabledTestCases: integer;
-    function  ElapsedTestTime: Cardinal;
+    function  ElapsedTestTime: Extended;
     function  Tests: IInterfaceList;
     procedure Run(const TestResult: TTestResult); overload;
     function  Run(const Listeners: array of ITestListener): TTestResult; overload;
@@ -149,7 +149,7 @@ type
 
   TTestFailure = interface
   ['{C652E195-29DC-409D-B4EF-65B1EF1223F0}']
-    function ThrownExceptionAddress: Cardinal;
+    function ThrownExceptionAddress: PtrType;
     function FailedTest: ITestProxy;
     function ThrownExceptionName:    string;
     function ThrownExceptionMessage: string;
@@ -227,9 +227,9 @@ type
     function  get_Overrides: integer;
     procedure set_Overrides(const Value: integer);
     property  Overrides: integer read get_Overrides write set_Overrides;
-    function  get_TotalTime: Int64;
-    procedure set_TotalTime(const Value: Int64);
-    property  TotalTime: Int64 read get_TotalTime write set_TotalTime;
+    function  get_TotalTime: Extended;
+    procedure set_TotalTime(const Value: Extended);
+    property  TotalTime: Extended read get_TotalTime write set_TotalTime;
 
     function  get_BreakOnFailures: boolean;
     procedure set_BreakOnFailures(const Value: boolean);
