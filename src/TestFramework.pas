@@ -89,7 +89,8 @@ type
 
 
   TTestIterator = class(TReadOnlyIterator, ITestIterator)
-  protected //Adds entry and resets idx to 1st entry
+  protected
+    //Adds entry and resets idx to 1st entry
     procedure AddTest(const ATest: ITest);
   end;
 
@@ -563,15 +564,15 @@ procedure UnRegisterProjectManager;
 function  CallerAddr: Pointer; assembler;
 
 {$BOOLEVAL OFF}
-{==============================================================================}
+
 implementation
 uses
   StrUtils,
-  {$IFDEF FASTMM}
-//    FastMM4,
-  {$ENDIF}
   TypInfo,
   Math,
+  {$IFDEF FPC}
+  fpchelper,
+  {$ENDIF}
   ProjectsManagerIface,
   ProjectsManager,
   TestListenerIface,
@@ -1176,60 +1177,37 @@ begin
 end;
 
 constructor TMethodEnumerator.Create(AClass: TClass);
-{$IFDEF CLR}
+{$IFDEF FPC}
 var
-  i, L: Integer;
-  T: System.Type;
-  Methods: array of MethodInfo;
-
-  function IsTest(AMethod: MethodInfo): boolean;
-  var
-    CustomAttr: array of System.Object;
-    idx: Integer;
-  begin
-    Result := false;
-    if AMethod.IsPublic then
-    begin
-      CustomAttr := AMethod.GetCustomAttributes(false);
-
-      for idx := 0 to System.Array(CustomAttr).Length - 1 do
-      begin
-        if CustomAttr[idx].ClassNameIs('TestAttribute') then
-        begin
-          Result := true;
-          Break;
-        end;
-      end;
-    end;
+  ml: TStringList;
+  i: integer;
+  LName: string;
+begin
+  inherited Create;
+  ml := TStringList.Create;
+  try
+    GetMethodList(AClass, ml);
+    if ml.Count > 0 then
+      SetLength(FMethodNameList, ml.Count);
+    for i := 0 to ml.Count-1 do
+      FMethodNameList[i] := ml[i];
+  finally
+    ml.Free;
   end;
 {$ELSE}
-  type
-    TMethodTable = packed record
-      Count: SmallInt;
-    end;
+{ TODO -cRefactoring : Move this out into a DelphiHelper unit. }
+type
+  TMethodTable = packed record
+    Count: SmallInt;
+  end;
 
 var
   table: ^TMethodTable;
   AName:  ^ShortString;
   i, J:  Integer;
   LClass: TClass;
-{$ENDIF}
-
 begin
   inherited Create;
-{$IFDEF CLR}
-  T := AClass.ClassInfo;
-  Methods := T.GetMethods();
-  L := 0;
-  SetLength(FMethodNameList, L);
-  for i := 0 to System.Array(Methods).Length - 1 do
-    if IsTest(Methods[i]) then
-    begin
-      L := L + 1;
-      SetLength(FMethodNameList, L);
-      FMethodNameList[L-1] := Methods[i].Name;
-    end;
-{$ELSE}
   table := nil;
   LClass := AClass;
   while LClass <> nil do
@@ -1246,8 +1224,7 @@ begin
       begin
         // check if we've seen the method name
         J := Low(FMethodNameList);
-        while (J <= High(FMethodNameList))
-        and (string(AName^) <> FMethodNameList[J]) do
+        while (J <= High(FMethodNameList)) and (string(AName^) <> FMethodNameList[J]) do
           inc(J);
         // if we've seen the name, then the method has probably been overridden
         if J > High(FMethodNameList) then
@@ -2073,24 +2050,17 @@ begin
   FTestSetUpData := IsTestSetUpData;
 end;
 
-function IsBadPointer(const P: Pointer):boolean; {$IFNDEF CLR} register; {$ENDIF}
+function IsBadPointer(const P: Pointer):boolean; register;
 begin
   try
-    Result := (P = nil)
-{$IFNDEF CLR}
-              or ((Pointer(P^) <> P) and (Pointer(P^) = P));
-{$ENDIF}
+    Result := (P = nil) or
+              ((Pointer(P^) <> P) and (Pointer(P^) = P));
   except
     Result := true;
   end
 end;
 
-function CallerAddr: Pointer; {$IFNDEF CLR} assembler; {$ENDIF}
-{$IFDEF CLR}
-begin
-  Result := nil;
-end;
-{$ELSE}
+function CallerAddr: Pointer; assembler;
 const
   CallerIP = $4;
 asm
@@ -2112,7 +2082,6 @@ asm
    xor eax, eax
 @@Finish:
 end;
-{$ENDIF}
 
 function TTestProc.get_ExecStatus: TExecutionStatus;
 begin
@@ -2400,12 +2369,7 @@ begin
 
   if FailsOnNoChecksExecuted then
   begin
-    PostFail('No checks executed in TestCase',
-    {$IFDEF CLR}
-      nil);
-    {$ELSE}
-      TMethod(FMethod).Code);
-    {$ENDIF}
+    PostFail('No checks executed in TestCase', TMethod(FMethod).Code);
   end
   else
   begin
@@ -2430,15 +2394,15 @@ begin
   LMethod := nil;
   LMethodEnumerator := TMethodEnumerator.Create(Self.ClassType);
   try
+writeln('Debug: MethodCout=', LMethodEnumerator.MethodCount);
     if LMethodEnumerator.MethodCount > 0 then
     begin
       for i := 0 to LMethodEnumerator.MethodCount-1 do
       begin
         LNameOfMethod := LMethodEnumerator.NameOfMethod[i];
-        {$IFNDEF CLR}
+writeln('   NameOfMethod=', LNameOfMethod);
         LMethod := MethodCode(LNameOfMethod);
         Assert(Assigned(LMethod), 'Bad method address');
-        {$ENDIF}
         LParentStr := '';
         if (FParentPath <> '') then
           LParentStr := FParentPath + '.';
