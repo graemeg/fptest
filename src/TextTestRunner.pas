@@ -67,22 +67,27 @@ type
     function FailedTestInfo(const AFailure: TTestFailure): string;
     class function IniFileName: string;
   protected
-    property Errors: IInterfaceList read FErrors;
-    property Failures: IInterfaceList read FFailures;
-    property Warnings: IInterfaceList read FWarnings;
+    // implement the IStatusListener interface
+    procedure Status(const ATest: ITestProxy; AMessage: string);
+
     // implement the ITestListener interface
     procedure AddSuccess(Test: ITestProxy); virtual;
     procedure AddError(Error: TTestFailure); virtual;
     procedure AddFailure(Failure: TTestFailure); virtual;
     procedure AddWarning(AWarning: TTestFailure); virtual;
-    function  ShouldRunTest(const ATest :ITestProxy):boolean; virtual;
-    procedure StartSuite(Suite: ITestProxy); virtual;
-    procedure EndSuite(Suite: ITestProxy); virtual;
+    procedure TestingStarts; virtual;
     procedure StartTest(Test: ITestProxy); virtual;
     procedure EndTest(Test: ITestProxy); virtual;
-    procedure TestingStarts; virtual;
-    procedure TestingEnds(TestResult: TTestResult); virtual;
-    procedure Status(const ATest: ITestProxy; AMessage: string);
+    procedure TestingEnds(ATestResult: TTestResult); virtual;
+    function  ShouldRunTest(const ATest :ITestProxy):boolean; virtual;
+
+    // Implement the ITestListenerX interface
+    procedure StartSuite(Suite: ITestProxy); virtual;
+    procedure EndSuite(Suite: ITestProxy); virtual;
+
+    property  Errors: IInterfaceList read FErrors;
+    property  Failures: IInterfaceList read FFailures;
+    property  Warnings: IInterfaceList read FWarnings;
     function  Report(r: TTestResult): string;
     function  PrintErrors(r: TTestResult): string; virtual;
     function  PrintFailures(r: TTestResult): string; virtual;
@@ -186,10 +191,10 @@ var
   LFailures: string;
   LWarnings: string;
 begin
-  LHeader:= PrintHeader(r);
-  LErrors:= PrintErrors(r);
-  LFailures:= PrintFailures(r);
-  LWarnings:= PrintWarnings(r);
+  LHeader   := PrintHeader(r);
+  LErrors   := PrintErrors(r);
+  LFailures := PrintFailures(r);
+  LWarnings := PrintWarnings(r);
 
   Result := LHeader +
             LErrors +
@@ -227,10 +232,10 @@ var
   Failure: TTestFailure;
 begin
   Result := '';
-  for i := 0 to FFailures.Count-1 do
+  for i := 0 to r.FailureCount-1 do
   begin
-    Failure := FFailures.Items[i] as TTestFailure;
-    Result := Result + format('%3d) ', [i+1]) + FailedTestInfo(Failure);
+    Failure := r.Failures[i];
+    Result  := Result + format('%3d) ', [i+1]) + FailedTestInfo(Failure);
   end;
 end;
 
@@ -266,7 +271,8 @@ end;
 function TTextTestListener.PrintFailures(r: TTestResult): string;
 begin
   Result := '';
-  if (r.FailureCount <> 0) then begin
+  if (r.FailureCount <> 0) then
+  begin
     if (r.FailureCount = 1) then
       Result := Result + format('There was %d failure:', [r.FailureCount]) + CRLF
     else
@@ -352,7 +358,7 @@ begin
   FStartTime := now;
 end;
 
-procedure TTextTestListener.TestingEnds(TestResult: TTestResult);
+procedure TTextTestListener.TestingEnds(ATestResult: TTestResult);
 var
   H, M, S, L :Word;
 begin
@@ -361,7 +367,8 @@ begin
   writeln;
   DecodeTime(FRunTime, H,  M, S, L);
   writeln(Format('Time: %d:%2.2d:%2.2d.%d', [H, M, S, L]));
-  writeln(Report(TestResult));
+  if Assigned(ATestResult) then
+    writeln(Report(ATestResult));
 end;
 
 function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
