@@ -26,10 +26,13 @@
         <LaunchingApplication PathPlusParams="/usr/X11R6/bin/xterm -T 'Lazarus Run Output' -e $(LazarusDir)/tools/runwait.sh $(TargetCmdLine)"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="1">
+    <RequiredPackages Count="2">
       <Item1>
-        <PackageName Value="FCL"/>
+        <PackageName Value="dunit2"/>
       </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+      </Item2>
     </RequiredPackages>
     <Units Count="2">
       <Unit0>
@@ -38,9 +41,9 @@
         <UnitName Value="project1"/>
       </Unit0>
       <Unit1>
-        <Filename Value="utime.pas"/>
+        <Filename Value="sample_tests.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="utime"/>
+        <UnitName Value="sample_tests"/>
       </Unit1>
     </Units>
   </ProjectOptions>

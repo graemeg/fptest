@@ -6,9 +6,21 @@ uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
-  Classes, utime
-  { you can add units after this };
+  Classes,
+  sample_tests;
 
+
+
+var
+  t: TTestCaseFirst;
 begin
+  t := TTestCaseFirst.Create;
+  try
+    t.TestOne;
+    t.TestTwo;
+    t.TestThree;
+  finally
+    t.free;
+  end;
 end.
 
