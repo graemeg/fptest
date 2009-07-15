@@ -1673,7 +1673,7 @@ begin
   Create;
   FMethod := AMethod;
   {$IFNDEF CLR}
-    FErrorAddress := Cardinal(@FMethod);
+    FErrorAddress := PtrType(@FMethod);
     if Assigned(AMethod) then
   {$ENDIF}
     FMethodName := AMethodName;
