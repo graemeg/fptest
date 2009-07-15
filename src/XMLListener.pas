@@ -132,9 +132,12 @@ const
   cTestProject          = {$ifdef ShowClass} 'TestProject' {$else} cTestSuite {$endif};
 
 //Converts the test time (in millisecs) to 24 hours for formatting
-function PrecisionTimeToDateTimeStr(const SubSecs: Cardinal): string;
+function PrecisionTimeToDateTimeStr(const ATime: Extended): string;
 begin
-  Result := FormatDateTime(chhnnsszz, SubSecs * milliSecsToDays)
+//  Result := FormatDateTime(chhnnsszz, ATime * milliSecsToDays)
+  // graemeg: ATime is already in seconds.milliseconds format
+  { TODO -cFollow-up : Check that conversion works correctly }
+  Result := format('%.6f',[ATime]);
 end;
 
 { TXMLStack }
