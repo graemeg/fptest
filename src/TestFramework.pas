@@ -56,7 +56,7 @@ uses
   IniFiles,
   Registry;
 
-{ TODO : Remove Registry support - we want clean INI support only }
+{ TODO -cregistry : Remove Registry support - we want clean INI support only }
 
 type
   ETestFailure = class(EAbort)
