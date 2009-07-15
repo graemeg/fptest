@@ -609,13 +609,13 @@ end;
 
 function PtrToStr(P: PtrType): string;
 begin
-   Result := Format('%p', [P])
+  // 2009-07-15   graemeg
+  // I guess we can cast to Pointer here, even though the compiler complains.
+  Result := Format('%p', [Pointer(P)])
 end;
 
 function AddrsToStr(Addrs: PtrType): string;
 begin
-// graeme: Would this work?
-//  if Assigned(Addrs) then
   if Addrs > 0 then
     Result := '$'+PtrToStr(Addrs)
   else
