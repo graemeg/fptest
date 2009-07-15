@@ -2141,9 +2141,9 @@ end;
 
 function TTestProc.MethodCode(const MethodsName: string): TTestMethod;
 var
-  LMethod : TMethod;
+  LMethod: TMethod;
 begin
-  LMethod.code := MethodAddress(MethodsName);
+  LMethod.Code := MethodAddress(MethodsName);
   LMethod.Data := self;
   Result := TTestMethod(LMethod);
 end;
@@ -2155,13 +2155,13 @@ end;
 
 procedure TTestProc.InitializeRunState;
 begin
-  FEarlyExit   := False;
-  FCheckCalled := False;
-  FElapsedTime := 0;
-  FStartTime   := 0;
-  FStopTime    := 0;
-  FErrorMessage := '';
-  FExceptionIs := nil;
+  FEarlyExit      := False;
+  FCheckCalled    := False;
+  FElapsedTime    := 0;
+  FStartTime      := 0;
+  FStopTime       := 0;
+  FErrorMessage   := '';
+  FExceptionIs    := nil;
   FExpectedExcept := nil;
 end;
 
@@ -2938,27 +2938,19 @@ end;
 {--------- Fail exception generation ---------}
 procedure TTestProc.Fail(const ErrorMsg: string; const ErrorAddress: Pointer);
 begin
-{$IFDEF CLR}
-  raise ETestFailure.Create(ErrorMsg);
-{$ELSE}
+//  raise ETestFailure.Create(ErrorMsg);
   if ErrorAddress = nil then
     raise ETestFailure.Create(ErrorMsg) at CallerAddr
   else
     raise ETestFailure.Create(ErrorMsg) at ErrorAddress;
-{$ENDIF}
 end;
 
-procedure TTestProc.PostFail(const ErrorMsg: string;
-                             const ErrorAddress: Pointer = nil);
+procedure TTestProc.PostFail(const ErrorMsg: string; const ErrorAddress: Pointer);
 begin
-{$IFDEF CLR}
-  raise EPostTestFailure.Create(ErrorMsg);
-{$ELSE}
   if ErrorAddress = nil then
     raise EPostTestFailure.Create(ErrorMsg) at CallerAddr
   else
     raise EPostTestFailure.Create(ErrorMsg) at ErrorAddress;
-{$ENDIF}
 end;
 
 procedure TTestProc.FailEquals(const expected, actual: WideString;
@@ -3030,7 +3022,7 @@ begin
 end;
 
 procedure TTestProc.CheckEquals(const expected, actual: int64;
-                                const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (expected <> actual) then
@@ -3038,7 +3030,7 @@ begin
 end;
 
 procedure TTestProc.CheckNotEquals(const expected, actual: int64;
-                                   const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (expected = actual) then
@@ -3046,42 +3038,38 @@ begin
 end;
 
 procedure TTestProc.CheckEquals(const expected, actual: extended;
-                                const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   CheckEquals(expected, actual, 0, ErrorMsg);
 end;
 
 procedure TTestProc.CheckEquals(const expected, actual: extended;
-                                const delta: extended;
-                                const ErrorMsg: string);
+    const delta: extended; const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (abs(expected-actual) > delta) then
       FailNotEquals(FloatToStr(expected), FloatToStr(actual), ErrorMsg, CallerAddr);
 end;
 
-{$IFNDEF VER130}
 procedure TTestProc.CheckEquals(const expected, actual: string;
-                                const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected <> actual then
     FailNotEquals(expected, actual, ErrorMsg, CallerAddr);
 end;
-{$ENDIF}
 
 procedure TTestProc.CheckEqualsString(const expected, actual: string;
-                                      const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected <> actual then
     FailNotEquals(expected, actual, ErrorMsg, CallerAddr);
 end;
 
-{$IFNDEF CLR}
-  {$IFNDEF UNICODE}
+{$IFNDEF UNICODE}
 procedure TTestProc.CheckEquals(const expected, actual: WideString;
-                                const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected <> actual then
@@ -3089,8 +3077,7 @@ begin
 end;
 
 procedure TTestProc.CheckEqualsMem(const expected, actual: pointer;
-                                   const size: longword;
-                                   const ErrorMsg: string);
+    const size: longword; const ErrorMsg: string);
 begin
   OnCheckCalled;
   if not CompareMem(expected, actual, size) then
@@ -3098,7 +3085,7 @@ begin
 end;
 
 procedure TTestProc.CheckNotEquals(const expected, actual: WideString;
-                                   const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected = actual then
@@ -3106,8 +3093,7 @@ begin
 end;
 
 procedure TTestProc.CheckNotEqualsMem(const expected, actual: pointer;
-                                      const size: longword;
-                                      const ErrorMsg: string);
+    const size: longword; const ErrorMsg: string);
 begin
   OnCheckCalled;
   if CompareMem(expected, actual, size) then
@@ -3118,9 +3104,10 @@ begin
       Fail(ErrorMsg + 'Memory content was identical', CallerAddr)
   end;
 end;
-  {$ENDIF}
+{$ENDIF}
+
 procedure TTestProc.CheckEqualsWideString(const expected, actual: WideString;
-                                          const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected <> actual then
@@ -3128,16 +3115,15 @@ begin
 end;
 
 procedure TTestProc.CheckNotEqualsWideString(const expected, actual: WideString;
-                                             const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if expected = actual then
     FailEquals(expected, actual, ErrorMsg, CallerAddr);
 end;
-{$ENDIF}
 
 procedure TTestProc.CheckEquals(const expected, actual: boolean;
-                                const ErrorMsg: string);
+    const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (expected <> actual) then
