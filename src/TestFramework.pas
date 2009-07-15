@@ -2394,13 +2394,11 @@ begin
   LMethod := nil;
   LMethodEnumerator := TMethodEnumerator.Create(Self.ClassType);
   try
-writeln('Debug: MethodCout=', LMethodEnumerator.MethodCount);
     if LMethodEnumerator.MethodCount > 0 then
     begin
       for i := 0 to LMethodEnumerator.MethodCount-1 do
       begin
         LNameOfMethod := LMethodEnumerator.NameOfMethod[i];
-writeln('   NameOfMethod=', LNameOfMethod);
         LMethod := MethodCode(LNameOfMethod);
         Assert(Assigned(LMethod), 'Bad method address');
         LParentStr := '';
