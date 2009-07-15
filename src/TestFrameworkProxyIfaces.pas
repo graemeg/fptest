@@ -165,9 +165,9 @@ type
     procedure Status(const ATest: ITestProxy; AMessage: string);
   end;
 
+
   { ITestListeners get notified of testing events.
-    See ITestResult.AddListener()
-  }
+    See ITestResult.AddListener()  }
   ITestListener = interface(IStatusListener)
   ['{114185BC-B36B-4C68-BDAB-273DBD450F72}']
     procedure AddSuccess(Test: ITestProxy);
@@ -187,6 +187,7 @@ type
     procedure StartSuite(Suite: ITestProxy);
     procedure EndSuite(Suite: ITestProxy);
   end;
+
 
   TTestResult = interface
     procedure ReleaseListeners;
@@ -243,7 +244,7 @@ type
     procedure set_InhibitSummaryLevelChecks(const Value: boolean);
     property  InhibitSummaryLevelChecks: boolean read get_InhibitSummaryLevelChecks
                                                  write set_InhibitSummaryLevelChecks;
-    {$IFNDEF CLR}
+
     function  get_FailsIfMemoryLeaked: boolean;
     procedure set_FailsIfMemoryLeaked(const Value: boolean);
     property  FailsIfMemoryLeaked :Boolean read get_FailsIfMemoryLeaked
@@ -253,10 +254,9 @@ type
     property  IgnoresMemoryLeakInSetUpTearDown: Boolean
                 read get_IgnoresMemoryLeakInSetUpTearDown
                 write set_IgnoresMemoryLeakInSetUpTearDown;
-   {$ENDIF}
   end;
 
-{==============================================================================}
+
 implementation
 
 end.
