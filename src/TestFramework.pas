@@ -100,7 +100,6 @@ type
   private
     FUniqueID: Cardinal;
     FProjectID: Integer;
-    FDisplayedName: string;
     FEnabled: boolean;
     FExcluded: boolean;
     FTestSetUpData: ITestSetUpData;
@@ -140,6 +139,7 @@ type
                   const ExecControl: ITestExecControl): TExecutionStatus;
     function  IsValidTestMethod(const AProc: TTestMethod): boolean;
   protected
+    FDisplayedName: string;
     FExecControl: ITestExecControl;
     function  UniqueID: Cardinal;
     function  get_ProjectID: Integer;
