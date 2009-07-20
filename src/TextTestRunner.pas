@@ -127,7 +127,8 @@ uses
   {$IFDEF XMLLISTENER}
     XMLListener,
   {$ENDIF}
-  SysUtils;
+  SysUtils,
+  strutils;
 
 const
   {$IFDEF FPC}
@@ -135,6 +136,36 @@ const
   {$ELSE}
   CRLF = #13#10;
   {$ENDIF}
+
+var
+  uIndent: integer;
+
+function Indent: string;
+begin
+  Result := DupeString(' ', uIndent);
+end;
+
+procedure _PrintTestTree(ATest: ITestProxy);
+var
+  TestTests: IInterfaceList;
+  i: Integer;
+begin
+  if ATest = nil then
+    Exit; //==>
+  writeln(Indent + ATest.Name);
+  Inc(uIndent, 2);
+  TestTests := ATest.Tests;
+  for i := 0 to TestTests.count - 1 do
+    _PrintTestTree(TestTests[i] as ITestProxy);
+  Dec(uIndent, 2);
+end;
+
+procedure PrintTestTree;
+begin
+  uIndent := 0;
+  _PrintTestTree(RegisteredTests);
+end;
+
 
 class function TTextTestListener.IniFileName: string;
 const
@@ -417,6 +448,13 @@ begin
     LExitBehavior := rxbHaltOnFailures
   else
     LExitBehavior := rxbContinue;
+
+  // list the registered tests and exit
+  if FindCmdLineSwitch('l', ['-', '/'], True) then
+  begin
+    PrintTestTree;
+    Exit; //==>
+  end;
 
   Result := RunTest(RegisteredTests, LExitBehavior);
 end;
