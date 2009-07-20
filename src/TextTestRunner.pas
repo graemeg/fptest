@@ -169,7 +169,7 @@ end;
 
 class function TTextTestListener.IniFileName: string;
 const
-  TEST_INI_FILE = 'dunit.ini';
+  TEST_INI_FILE = 'dunit2.ini';
 begin
   { TODO : Find writeable output path }
   result := {LocalAppDataPath +} TEST_INI_FILE;
@@ -410,10 +410,15 @@ begin
       writeln('No tests registered')
     else
     try
-    Suite.LoadConfiguration(TTextTestListener.IniFileName, False, True);
+    Suite.LoadConfiguration(TTextTestListener.IniFileName, False, False);
       Result := RunTest(Suite,[TTextTestListener.Create
-      {$IFDEF XMLLISTENER}, TXMLListener.Create({LocalAppDataPath +} Suite.Name{, 'type="text/xsl" href="fpcunit2.xsl"'}) {$ENDIF}]);
+          {$IFDEF XMLLISTENER}
+            , TXMLListener.Create({LocalAppDataPath +} Suite.Name
+            {, 'type="text/xsl" href="fpcunit2.xsl"'})
+          {$ENDIF}
+          ]);
     finally
+      Suite.SaveConfiguration(TTextTestListener.IniFileName, False, False);
       Result.ReleaseListeners;
       Suite.ReleaseTests;
     end;
