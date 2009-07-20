@@ -67,8 +67,9 @@ function  GetTestResult: TTestResult;
 function  RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): TTestResult; overload;
 function  PointerToLocationInfo(Addrs: PtrType): string;
 
-{==============================================================================}
+
 implementation
+
 uses
   TestFramework,
   TestListenerIface,

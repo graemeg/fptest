@@ -564,7 +564,7 @@ function  CallerAddr: Pointer; assembler;
 
 implementation
 uses
-  StrUtils,
+//  StrUtils,
   TypInfo,
   Math,
   {$IFDEF FPC}
@@ -2888,7 +2888,7 @@ var
 begin
   inherited SaveConfiguration(iniFile, Section);
   FTestIterator.Reset;
-    LTestSection := Section + '.' + Self.DisplayedName;
+  LTestSection := Section + '.' + Self.DisplayedName;
   repeat
    LTest := FTestIterator.FindNextTest;
     if (LTest <> nil) then
@@ -2904,7 +2904,7 @@ var
 begin
   inherited LoadConfiguration(iniFile, Section);
   FTestIterator.Reset;
-    LTestSection := Section + '.' + Self.DisplayedName;
+  LTestSection := Section + '.' + Self.DisplayedName;
   LTest := FTestIterator.FindNextTest;
   while LTest <> nil do
   begin
