@@ -451,9 +451,6 @@ type
   TTestDecorator = class(TTestSuite, ITestDecorator)
   protected
     function  Run(const ExecControl: ITestExecControl): TExecutionStatus; reintroduce; override;
-    function  get_DisplayedName: string;  override;
-  published
-    property DisplayedName: string read get_DisplayedName write set_DisplayedName;
   public
     // Provides a decoratorated TestCase.
     class function Suite(const DecoratedTestCase: ITestCase): ITestSuite; reintroduce; overload;
@@ -3531,11 +3528,6 @@ begin
       LSuite.AddTest(DecoratedTestCases[idx]);
     Result.AddTest(LSuite);
   end;
-end;
-
-function TTestDecorator.get_DisplayedName: string;
-begin
-  Result := Format('(d) %s', [FDisplayedName]);
 end;
 
 function TTestDecorator.Run(const ExecControl: ITestExecControl): TExecutionStatus;
