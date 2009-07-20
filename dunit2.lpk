@@ -2,6 +2,7 @@
 <CONFIG>
   <Package Version="3">
     <Name Value="dunit2"/>
+    <AddToProjectUsesSection Value="False"/>
     <Author Value="Graeme Geldenhuys"/>
     <CompilerOptions>
       <Version Value="8"/>
