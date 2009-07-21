@@ -58,6 +58,12 @@ uses
 
 { TODO -cregistry : Remove Registry support - we want clean INI support only }
 
+{$IFNDEF FPC}
+const
+  LineEnding          = #13#10;
+  AllFilesMask        = '*.*';
+{$ENDIF}
+
 type
   ETestFailure = class(EAbort)
      constructor Create;                          overload;
@@ -719,10 +725,10 @@ begin
 end;
 
 const
-  sExpectedButWasFmt = 'Expected:'#13#10'"%s"'#13#10'But was:'#13#10'"%s"';
-  sExpectedButWasAndMessageFmt = '%s'#13#10 + sExpectedButWasFmt;
-  sMsgActualEqualsExpFmt = '%s'#13#10'Expected '#13#10'< %s > '#13#10'equals actual '#13#10'< %s >';
-  sActualEqualsExpFmt = 'Expected '#13#10'< %s > '#13#10'equals actual '#13#10'< %s >';
+  sExpectedButWasFmt = 'Expected:'+LineEnding+'"%s"'+LineEnding+'But was:'+LineEnding+'"%s"';
+  sExpectedButWasAndMessageFmt = '%s'+LineEnding + sExpectedButWasFmt;
+  sMsgActualEqualsExpFmt = '%s'+LineEnding+'Expected '+LineEnding+'< %s > '+LineEnding+'equals actual '+LineEnding+'< %s >';
+  sActualEqualsExpFmt = 'Expected '+LineEnding+'< %s > '+LineEnding+'equals actual '+LineEnding+'< %s >';
 
 type
   EStopTestsFailure = class(ETestFailure);
