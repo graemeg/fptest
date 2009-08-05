@@ -235,7 +235,7 @@ end;
 
 function TTextTestListener.FailedTestInfo(const AFailure: TTestFailure): string;
 begin
-  Result := format('%s: %s'+ CRLF +'     at %s'+ CRLF +'      "%s"',
+  Result := format('%s: %s'+ CRLF +'     at %s'+ CRLF +'%s',
                 [
                 AFailure.failedTest.ParentPath + '.' + AFailure.FailedTest.Name,
                 AFailure.thrownExceptionName,
