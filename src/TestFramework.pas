@@ -53,8 +53,8 @@ uses
   TestFrameworkIfaces,
   Classes,
   SysUtils,
-  IniFiles,
-  Registry;
+  IniFiles;
+//  Registry;
 
 { TODO -cregistry : Remove Registry support - we want clean INI support only }
 
