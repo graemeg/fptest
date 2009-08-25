@@ -564,7 +564,7 @@ function  RegisterProject(const AProject: ITestProject): Integer; overload;
 function  RegisterProject(const AName: string;
                           const AProject: ITestProject): Integer; overload;
 procedure UnRegisterProjectManager;
-function  CallerAddr: Pointer; assembler;
+function  CallerAddr: Pointer; {$IFNDEF FPC}assembler;{$ENDIF}
 
 {$BOOLEVAL OFF}
 
@@ -2053,6 +2053,7 @@ begin
   FTestSetUpData := IsTestSetUpData;
 end;
 
+{$IFNDEF FPC}
 function IsBadPointer(const P: Pointer):boolean; register;
 begin
   try
@@ -2085,6 +2086,14 @@ asm
    xor eax, eax
 @@Finish:
 end;
+{$ELSE}
+// FPC has a cross-platform implementation for this.
+function CallerAddr: Pointer;
+begin
+  Result := get_caller_addr(get_frame);
+end;
+
+{$ENDIF}
 
 function TTestProc.get_ExecStatus: TExecutionStatus;
 begin
