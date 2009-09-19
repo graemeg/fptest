@@ -1,4 +1,3 @@
-{#(@)$Id: $ }
 {  DUnit: An XTreme testing framework for Delphi programs. }
 (*
  * The contents of this file are subject to the Mozilla Public
@@ -30,20 +29,32 @@
  * Kris Golko <neuromancer@users.sourceforge.net>
  * The DUnit group at SourceForge <http://dunit.sourceforge.net>
  * Peter McNab <mcnabp@gmail.com>
+ * Graeme Geldenhuys <graemeg@gmail.com>
  *
  *******************************************************************************
 *)
 unit TestExtensions;
 
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 interface
+
 uses
   TestFrameworkIfaces,
   TestFramework,
-  IniFiles,
   Classes;
 
 type
-
   ITestSetup = interface(ITestDecorator)
   ['{68B30444-F03D-4F57-A10D-DCC45381B126}']
     function GetName: string;
@@ -54,10 +65,11 @@ type
     function GetName: string; override;
   end;
 
+
 implementation
+
 uses
   SysUtils;
-
 
 { TTestSetup }
 

@@ -1,4 +1,4 @@
-{ This file was automatically created by Lazarus. do not edit ! 
+{ This file was automatically created by Lazarus. do not edit!
   This source is only used to compile and install the package.
  }
 
@@ -10,7 +10,7 @@ uses
     TestFrameworkIfaces, ProjectsManagerIface, TestListenerIface, 
   TestFrameworkProxyIfaces, ProjectsManager, EpikTimer, TimeManager, 
   TestFramework, XMLListener, TestFrameworkProxy, fpchelper, TextTestRunner, 
-  LazarusPackageIntf;
+  TestExtensions, LazarusPackageIntf;
 
 implementation
 
