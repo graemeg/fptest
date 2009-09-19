@@ -16,11 +16,11 @@ on DUnit2. I applied some of my own ideas listed below:
  * With FPC support comes the idea that it must be cross-platform
    friendly as well.
  * Hence the next item - removing the idea of writing to the Windows
-   Registry. INI or XML config files to a great job, are easy to edit
+   Registry. INI or XML config files do a great job, are easy to edit
    and works for all OS platforms.
 
 
-In both DUnit and DUnit2, unit tests comprise classes derived from
+In both DUnit and DUnit2, unit tests comprise of classes derived from
 TTestCase, each containing one or more published test procedures as
 shown in the example below. TTestCase is now an interfaced object.
 
@@ -32,7 +32,7 @@ type
     procedure VerifyThatTheCommPortCloses;
   end;
 
-Through the magic of RTTI DUnit2 is able to execute the published test
+Through the magic of RTTI, DUnit2 is able to execute the published test
 procedures in an orderly fashion. Code written into test methods
 performs tests on user's code and calls one or more Check() procedures
 to signal pass or fail to the test framework.
