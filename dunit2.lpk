@@ -69,6 +69,7 @@ pre-Delphi7 and Delphi.NET compilers."/>
       </Item12>
       <Item13>
         <Filename Value="src/TestExtensions.pas"/>
+        <UnitName Value="TestExtensions"/>
       </Item13>
     </Files>
     <Type Value="RunAndDesignTime"/>

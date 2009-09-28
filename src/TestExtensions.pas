@@ -37,6 +37,7 @@ unit TestExtensions;
 
 {$IFDEF FPC}
   {$mode delphi}{$H+}
+  {$UNDEF FASTMM}
 {$ELSE}
   // If Delphi 7, turn off UNSAFE_* Warnings
   {$IFNDEF VER130}
@@ -57,7 +58,6 @@ uses
 type
   ITestSetup = interface(ITestDecorator)
   ['{68B30444-F03D-4F57-A10D-DCC45381B126}']
-    function GetName: string;
   end;
 
   TTestSetup = class(TTestDecorator, ITestSetup)
