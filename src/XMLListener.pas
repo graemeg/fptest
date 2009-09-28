@@ -223,8 +223,8 @@ begin
   FXMLDoc.Encoding := cEncoding;
   {$ENDIF}
   if PIContent <> '' then
-    FXMLDoc.AppendChild(FXMLDoc.createProcessingInstruction(cxmlStylesheet, PIContent));
-  LDomElement := FXMLDoc.createElement(cTestResults);
+    FXMLDoc.AppendChild(FXMLDoc.CreateProcessingInstruction(cxmlStylesheet, PIContent));
+  LDomElement := FXMLDoc.CreateElement(cTestResults);
   FXMLDoc.AppendChild(LDomElement);
   MakeElementCurrent(LDomElement);
   AppendLF;
