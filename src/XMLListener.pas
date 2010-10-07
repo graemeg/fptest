@@ -33,7 +33,7 @@ interface
 uses
   Contnrs,
   {$IFDEF FPC}
-  dom,
+  dom, XMLWrite,
   {$ELSE}
   // Chosen because it does not drag in any other units e.g. TComponent
   xdom,
@@ -211,8 +211,8 @@ begin
   FAppName := ExtractFileName(ExePathFileName);
   FDocName := ChangeFileExt(FAppName, cxmlExt);
   FXMLDoc := TDOMDocument.Create{$IFNDEF FPC}(nil){$ENDIF};
-  { TODO -cFPC : XMLDoc needs an Encoding parameter. }
   {$IFNDEF FPC}
+  { TODO -cFPC : XMLDoc needs an Encoding parameter. }
   FXMLDoc.Encoding := cEncoding;
   {$ENDIF}
   if PIContent <> '' then
@@ -228,20 +228,20 @@ destructor TXMLListener.Destroy;
 var
   Stream: TFileStream;
   S: string;
+  sl: TStringList;
 begin
   {$IFDEF FPC}
-  S := FXMLDoc.TextContent;
+  WriteXML(FXMLDoc, FAppPath + FDocName);
+//  S := FXMLDoc.TextContent;
   {$ELSE}
-  S := FXMLDoc.code;
-  {$ENDIF}
   Stream := TFileStream.Create(FAppPath + FDocName, fmCreate or fmOpenWrite);
   try
-{$WARN UNSAFE_CODE OFF}
-    Stream.Write(PChar(S)^, Length(S));
-{$WARN UNSAFE_CODE ON}
+    S := FXMLDoc.code;
+    Stream.Write(S[1], Length(S));
   finally
     FreeAndNil(Stream);
   end;
+  {$ENDIF}
   FStack := nil;
   FreeAndNil(FXMLDoc);
   inherited Destroy;
@@ -498,6 +498,7 @@ procedure TXMLListener.AddFailure(AnError: TTestFailure);
 begin
   AddFault(AnError, cFailed);
 end;
+
 
 end.
 
