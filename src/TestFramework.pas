@@ -4093,6 +4093,7 @@ end;
 
 initialization
   gTimer.Clear;
+  gTimer.Start;
 
 finalization
   UnRegisterProjectManager;
