@@ -128,7 +128,8 @@ uses
     XMLListener,
   {$ENDIF}
   SysUtils,
-  strutils;
+  strutils,
+  TimeManager;
 
 const
   {$IFDEF FPC}
@@ -390,16 +391,15 @@ begin
 end;
 
 procedure TTextTestListener.TestingEnds(ATestResult: TTestResult);
-var
-  H, M, S, L :Word;
 begin
   FEndTime := now;
   FRunTime := FEndTime - FStartTime;
   writeln;
-  DecodeTime(FRunTime, H,  M, S, L);
-  writeln(Format('Time: %d:%2.2d:%2.2d.%d', [H, M, S, L]));
   if Assigned(ATestResult) then
+  begin
+    writeln('Time: ' + ElapsedDHMS(ATestResult.TotalTime));
     writeln(Report(ATestResult));
+  end;
 end;
 
 function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;

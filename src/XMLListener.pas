@@ -93,7 +93,8 @@ implementation
 uses
   TestFrameworkIfaces,
   Classes,
-  SysUtils;
+  SysUtils,
+  TimeManager;
 
 const
   milliSecsToDays       = 1/86400000;
@@ -131,14 +132,6 @@ const
   cTestDecorator        = {$ifdef ShowClass} 'TestDecorator' {$else} cTestSuite {$endif};
   cTestProject          = {$ifdef ShowClass} 'TestProject' {$else} cTestSuite {$endif};
 
-//Converts the test time (in millisecs) to 24 hours for formatting
-function PrecisionTimeToDateTimeStr(const ATime: Extended): string;
-begin
-//  Result := FormatDateTime(chhnnsszz, ATime * milliSecsToDays)
-  // graemeg: ATime is already in seconds.milliseconds format
-  { TODO -cFollow-up : Check that conversion works correctly }
-  Result := format('%.6f',[ATime]);
-end;
 
 { TXMLStack }
 
@@ -412,7 +405,7 @@ begin
      _isTestProject,
      _isTestDecorator:
       begin
-        AddNamedValue(CurrentElement, cElapsedTime, PrecisionTimeToDateTimeStr(Test.ElapsedTestTime));
+        AddNamedValue(CurrentElement, cElapsedTime, ElapsedDHMS(Test.ElapsedTestTime));
         if Test.Updated then
         begin
           AddNamedValue(CurrentElement, cNumberOfErrors,   IntToStr(Test.Errors));
@@ -431,7 +424,7 @@ begin
   if not Assigned(TestResult) or (CurrentElement = nil) then
     Exit;
 
-  AddNamedValue(CurrentElement, cElapsedTime,       PrecisionTimeToDateTimeStr(TestResult.TotalTime));
+  AddNamedValue(CurrentElement, cElapsedTime,       ElapsedDHMS(TestResult.TotalTime));
   AddNamedValue(CurrentElement, cNumberOfErrors,    IntToStr(TestResult.ErrorCount));
   AddNamedValue(CurrentElement, cNumberOfFailures,  IntToStr(TestResult.FailureCount));
   AddNamedValue(CurrentElement, cNumberOfRunTests,  IntToStr(TestResult.RunCount));
@@ -448,7 +441,7 @@ begin
   AddResult(cNumberOfWarnings, IntToStr(TestResult.WarningCount));
   AddResult(cNumberOfExcludedTests, IntToStr(TestResult.ExcludedCount));
   AddResult(cNumberOfChecksCalled, IntToStr(TestResult.ChecksCalledCount));
-  AddResult(cTotalElapsedTime, PrecisionTimeToDateTimeStr(TestResult.TotalTime));
+  AddResult(cTotalElapsedTime, ElapsedDHMS(TestResult.TotalTime));
   AddResult(cDateTimeRan,      FormatDateTime(cyyyymmddhhmmss, Now));
 end;
 
@@ -464,7 +457,7 @@ begin
     LOKTest := FXMLDoc.createElement(cTest);
     AddNamedValue(LOKTest, cName, UnEscapeUnknownText(Test.Name));
     AddNamedValue(LOKTest, cResult, cOK);
-    AddNamedValue(LOKTest, cElapsedTime, PrecisionTimeToDateTimeStr(Test.ElapsedTestTime));
+    AddNamedValue(LOKTest, cElapsedTime, ElapsedDHMS(Test.ElapsedTestTime));
     CurrentElement.appendChild(LOKTest);
     AppendLF;
   end;
@@ -480,7 +473,7 @@ begin
   LBadTest := FXMLDoc.createElement(cTest);
   AddNamedValue(LBadTest, cName, UnEscapeUnknownText(AnError.FailedTest.Name));
   AddNamedValue(LBadTest, cResult, AFault);
-  AddNamedValue(LBadTest, cElapsedTime, PrecisionTimeToDateTimeStr(AnError.FailedTest.ElapsedTestTime));
+  AddNamedValue(LBadTest, cElapsedTime, ElapsedDHMS(AnError.FailedTest.ElapsedTestTime));
   AppendLF;
 
   AddNamedText(LBadTest, cMessage, AnError.FailedTest.ParentPath + '.' +
