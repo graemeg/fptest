@@ -1728,7 +1728,6 @@ begin
     LTime := FStopTime
   else if FStartTime > 0 then
     LTime := gTimer.Elapsed
-//    QueryPerformanceCounter(LTime)
   else
     LTime := 0;
   Result := LTime - FStartTime;
@@ -2222,18 +2221,15 @@ begin
       if IsTestMethod then
       begin
         FStartTime := gTimer.Elapsed;
-//        QueryPerformanceCounter(FStartTime);
         FMethod;
       end
       else
       begin
         FStartTime := gTimer.Elapsed;
-//        QueryPerformanceCounter(FStartTime);
         RunTest;
       end;
     finally
       FStopTime := gTimer.Elapsed;
-//      QueryPerformanceCounter(FStopTime);
       FElapsedTime := ElapsedTestTime;
     end;
 
@@ -2707,7 +2703,6 @@ var
     LExecStatus: TExecutionStatus;
   begin
     FStartTime := gTimer.Elapsed;
-//    QueryPerformanceCounter(FStartTime);
     Result := ATest.ExecStatus;
 
     try
@@ -2737,7 +2732,6 @@ var
     end;
 
     FStopTime := gTimer.Elapsed;
-//    QueryPerformanceCounter(FStopTime);
     ATest.ElapsedTime := ElapsedTestTime;
     ATest.ExecStatus := Result;
   end;
@@ -2756,7 +2750,6 @@ begin  {TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;}
   {$ENDIF}
 
   LStartTime := gTimer.Elapsed;
-//  QueryPerformanceCounter(LStartTime);
   FTestIterator.Reset;
   InitializeRunState;
   if not ReEntering then
@@ -2820,7 +2813,6 @@ begin  {TTestCase.Run(const ExecControl: ITestExecControl): TExecutionStatus;}
 
   FStartTime := LStartTime;
   FStopTime := gTimer.Elapsed;
-//  QueryPerformanceCounter(FStopTime);
   ElapsedTime := ElapsedTestTime;
 
   (FProgressSummary as IProgressSummary).UpdateSummary(ExecControl);
