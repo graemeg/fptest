@@ -88,9 +88,6 @@ implementation
 
 uses
   SysUtils,
-  {$IFDEF MSWINDOWS}
-  //XPVistaSupport,
-  {$ENDIF}
   TestFramework;
 
 var
