@@ -89,7 +89,7 @@ implementation
 uses
   SysUtils,
   {$IFDEF MSWINDOWS}
-  XPVistaSupport,
+  //XPVistaSupport,
   {$ENDIF}
   TestFramework;
 
