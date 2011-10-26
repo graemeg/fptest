@@ -36,8 +36,8 @@
 { Description:
   This unit sits between the adapted GUITestRunner and TestFramework.
   It provides an interface to look and behave like the original TestFramework.
-  When tests DUnit2 code has reached a mature stage a new GUITestRunner will be
-  introduced to interface directly with with a new TestRunner TestFramework.
+  When tests FPTest code has reached a mature stage a new GUITestRunner will be
+  introduced to interface directly with a new TestRunner TestFramework.
   This "Proxy" unit re-creates the Tests structure currently accessed by
   the treeview. }
 unit TestFrameworkProxy;

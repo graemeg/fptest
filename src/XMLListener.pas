@@ -124,8 +124,8 @@ const
   cWarning              = 'Warning';
   cOK                   = 'OK';
   cTitle                = 'Title';
-  cTitleText            = 'Dunit2 XML test report';
-  cGeneratedBy          = 'Generated using DUnit2 on ';
+  cTitleText            = 'FPTest XML test report';
+  cGeneratedBy          = 'Generated using FPTest on ';
   cEncoding             = 'UTF-8';
   cTestSuite            = 'TestSuite';
   cTestCase             = {$ifdef ShowClass} 'TestCase' {$else} cTestSuite {$endif};

@@ -170,7 +170,7 @@ end;
 
 class function TTextTestListener.IniFileName: string;
 const
-  TEST_INI_FILE = 'dunit2.ini';
+  TEST_INI_FILE = 'fptest.ini';
 begin
   { TODO : Find writeable output path }
   result := {LocalAppDataPath +} TEST_INI_FILE;
@@ -386,7 +386,7 @@ end;
 procedure TTextTestListener.TestingStarts;
 begin
   writeln;
-  writeln('DUnit2 / Testing');
+  writeln('FPTest / Testing');
   FStartTime := now;
 end;
 

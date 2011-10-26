@@ -34,7 +34,7 @@
 }
 
 unit TestFrameworkProxyIfaces;
-{ This unit sits between a modified GUITestRunner and the new DUnit2
+{ This unit sits between a modified GUITestRunner and the new FPTest
   TestFramework. It provides an interface to make the new TestFrameWork
   look and appear to behave like the old TestFramework. Once tests are
   running GUITestRunner will be gradually modified to interface more closely
