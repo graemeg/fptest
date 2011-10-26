@@ -6,12 +6,22 @@ program project1;
   {$APPTYPE CONSOLE}
 {$ENDIF}
 
+{.$Define TextRunner}
+{$Define GUIRunner}
+
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes,
-  sample_tests, TextTestRunner;
+  sample_tests
+  {$IFDEF TextRunner}
+  ,TextTestRunner
+  {$ENDIF}
+  {$IFDEF GUIRunner}
+  ,GUITestRunner
+  {$ENDIF}
+  ;
 
 
 {.$Define RunManually}
