@@ -38,7 +38,7 @@ type
     FSelectedTests: TInterfaceList;
     FTotalTime:     Int64;
     FNoChecksStr:   string;
-//    FUpdateTimer:   TTimer;
+    FUpdateTimer:   TfpgTimer;
     FTimerExpired:  Boolean;
     TotalTestsCount: Integer;
     FMemLeakStr:    string;
@@ -52,6 +52,8 @@ type
     FPopupX: Integer;
     FHoldOptions: boolean;
     FTestFailed: Boolean;
+    FImageList: TfpgImageList;
+    FStateImageList: TfpgImageList;
 
     SelectAllCommand: ICommand;
     miSelectAll: TfpgMenuItem;
@@ -94,6 +96,7 @@ type
   protected
     procedure InitTree; virtual;
   public
+    constructor Create(AOwner: TComponent); override;
     procedure AfterCreate; override;
   published
     { The Test Suite to be run in this runner }
@@ -129,7 +132,8 @@ implementation
 uses
   fpg_utils,
   dbugintf,
-  TestFrameworkProxy;
+  TestFrameworkProxy,
+  formimages;
 
 const
   TEST_INI_FILE = 'fptest.ini';
@@ -232,12 +236,23 @@ end;
 
 procedure TGUITestRunner.FormCreate(Sender: TObject);
 begin
-  FTests := TInterfaceList.Create;
 //  LoadConfiguration;
 end;
 
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
+var
+  i: integer;
 begin
+  TestTree.ImageList := nil;
+  for i := FImageList.Count-1 downto 0 do
+    FImageList[i].Image := nil; // clear the references
+  FImageList.Free;
+
+  TestTree.StateImageList := nil;
+  for i := FStateImageList.Count-1 downto 0 do
+    FStateImageList[i].Image := nil;  // clear the references
+  FStateImageList.Free;
+
 //  ClearResult;
 //  AutoSaveConfiguration;
   FreeAndNil(FTests); // Note this is an object full of Interface refs
@@ -342,8 +357,10 @@ begin
   else
     ARootNode := ARootNode.AppendText(ATest.Name);
 
+  ARootNode.StateImageIndex := 0;
+  ARootNode.ImageIndex := 0;
   // TODO: Graeme must review if this is the same as the commented line
-  ARootNode.Data := ATest;
+  ARootNode.Data := Pointer(ATest);
 //  ARootNode.Data := TObject(FTests.Add(ATest));
 
   TestTests := ATest.Tests;
@@ -375,6 +392,32 @@ begin
     ExpandAllNodesAction.Execute;
 }
   TestTree.Selection := TestTree.RootNode.FirstSubNode;
+end;
+
+constructor TGUITestRunner.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FTests := TInterfaceList.Create;
+
+  InitializeCustomImages;
+
+  FImageList := TfpgImageList.Create;
+  FImageList.AddImage(fpgImages.GetImage('usr.tree0'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree1'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree2'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree3'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree4'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree5'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree6'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree7'));
+  FImageList.AddImage(fpgImages.GetImage('usr.tree8'));
+
+  FStateImageList := TfpgImageList.Create;
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state0'));  // unchecked
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state1'));  // checked
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state2'));  // checked disabled
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state3'));  // exclude x
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state4'));  // exclude x disabled
 end;
 
 procedure TGUITestRunner.AfterCreate;
@@ -414,6 +457,9 @@ begin
     FontDesc := '#Label1';
     Hint := '';
     TabOrder := 8;
+    ShowImages := True;
+    ImageList := FImageList;
+    StateImageList := FStateImageList;
   end;
 
   mnuFile := TfpgPopupMenu.Create(self);
