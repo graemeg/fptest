@@ -765,7 +765,7 @@ end;
 
 function TGUITestRunner.IniFileName: string;
 const
-  TEST_INI_FILE = 'dunit.ini';
+  TEST_INI_FILE = 'fptest.ini';
 begin
   result := LocalAppDataPath  + TEST_INI_FILE;
 end;
