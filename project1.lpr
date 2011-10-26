@@ -21,7 +21,7 @@ uses
   {$IFDEF GUIRunner}
   ,GUITestRunner
   {$ENDIF}
-  ;
+  ,formimages;
 
 
 {.$Define RunManually}

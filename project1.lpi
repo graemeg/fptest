@@ -39,7 +39,7 @@
         <PackageName Value="FCL"/>
       </Item3>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -50,6 +50,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="sample_tests"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="src/fpGUI/formimages.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="formimages"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -63,6 +68,11 @@
         <UseAnsiStrings Value="False"/>
       </SyntaxOptions>
     </Parsing>
+    <Linking>
+      <Debugging>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
+    </Linking>
     <Other>
       <CompilerMessages>
         <UseMsgFile Value="True"/>
