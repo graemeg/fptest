@@ -79,6 +79,9 @@ type
     procedure CommandHandler(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
+    procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
     procedure SetSuite(const AValue: ITestProxy);
     function get_TestResult: TTestResult;
     procedure set_TestResult(const AValue: TTestResult);
@@ -93,6 +96,18 @@ type
     procedure FillTestTree(ARootNode: TfpgTreeNode; ATest: ITestProxy); overload;
     procedure FillTestTree(ATest: ITestProxy); overload;
     procedure SetUp;
+    function  NodeToTest(ANode: TfpgTreeNode): ITestProxy;
+    function  TestToNode(Test: ITestProxy): TfpgTreeNode;
+    procedure SwitchNodeState(ANode: TfpgTreeNode);
+    procedure UpdateTestTreeState;
+    procedure SetNodeState(ANode: TfpgTreeNode; AEnabled: boolean);
+    procedure UpdateNodeImage(ANode: TfpgTreeNode);
+    procedure UpdateNodeState(ANode: TfpgTreeNode);
+    procedure RefreshTestCount;
+    procedure SaveConfiguration;
+    procedure LoadConfiguration;
+    function HasParent(ANode: TfpgTreeNode): Boolean;
+    procedure SetupGUINodes;
   protected
     procedure InitTree; virtual;
   public
@@ -137,6 +152,32 @@ uses
 
 const
   TEST_INI_FILE = 'fptest.ini';
+
+  { Section of the dunit.ini file where GUI information will be stored }
+  cnConfigIniSection = 'GUITestRunner Config';
+
+  { Color constants for the progress bar and failure details panel }
+  clOK        = clGreen;
+  clFAILURE   = clFuchsia;
+  clERROR     = clRed;
+
+  { Indexes of the color images used in the Test tree and failure list }
+  imgNONE      = 0;
+  imgRUNNING   = 1;
+  imgRUN       = 2;
+  imgOVERRIDE  = 3;
+  imgWARNFAIL  = 4;
+  imgFAILED    = 5;
+  imgERROR     = 6;
+  imgWARNING   = 7;
+  imgEARLYEXIT = 8;
+
+  { Indexes of the images used for Test tree checkboxes }
+  imgDISABLED        = 0;
+  imgPARENT_DISABLED = 1;
+  imgENABLED         = 2;
+  imgEXCLUDED        = 3;
+  imgPARENT_EXCLUDED = 4;
 
 
 procedure RunTest(Test: ITestProxy);
@@ -236,7 +277,8 @@ end;
 
 procedure TGUITestRunner.FormCreate(Sender: TObject);
 begin
-//  LoadConfiguration;
+  LoadConfiguration;
+  Setup;
 end;
 
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
@@ -258,6 +300,31 @@ begin
   FreeAndNil(FTests); // Note this is an object full of Interface refs
   Suite := nil;       // Take down the test proxys
 //  ClearRegistry;      // Take down the Registered tests
+end;
+
+procedure TGUITestRunner.FormShow(Sender: TObject);
+begin
+  TestTree.FullExpand;
+  SetupGUINodes;
+  // TODO: graeme
+//  ResultsView.Columns[8].Width := ResultsView.Columns[8].Width;
+end;
+
+procedure TGUITestRunner.ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
+begin
+  if FRunning then
+    Exit;
+  SwitchNodeState(ANode);
+end;
+
+procedure TGUITestRunner.ProcessKeyPressOnTreeview(Sender: TObject;
+  var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
+begin
+  if (KeyCode = keySpace) and (TestTree.Selection <> nil) then
+  begin
+    SwitchNodeState(TestTree.Selection);
+    UpdateStatus(True);
+  end;
 end;
 
 function TGUITestRunner.get_TestResult: TTestResult;
@@ -307,7 +374,7 @@ end;
 
 function TGUITestRunner.IniFileName: TfpgString;
 begin
-  result := fpgGetAppConfigDir(False)  + TEST_INI_FILE;
+  result := fpgGetAppConfigDir(False) + TEST_INI_FILE;
   SendDebug('IniFileName = ' + Result);
 end;
 
@@ -357,11 +424,7 @@ begin
   else
     ARootNode := ARootNode.AppendText(ATest.Name);
 
-  ARootNode.StateImageIndex := 0;
-  ARootNode.ImageIndex := 0;
-  // TODO: Graeme must review if this is the same as the commented line
   ARootNode.Data := Pointer(ATest);
-//  ARootNode.Data := TObject(FTests.Add(ATest));
 
   TestTests := ATest.Tests;
   for i := 0 to TestTests.Count-1 do
@@ -376,8 +439,270 @@ begin
 end;
 
 procedure TGUITestRunner.SetUp;
+var
+  i: Integer;
+  Node: TfpgTreeNode;
+begin
+  // TODO: graemeg
+(*
+  FailureListView.Items.Clear;
+  ResetProgress;
+  Update;
+
+  with ResultsView.Items[0] do
+  begin
+    SubItems[0] := '';    //Test Count
+    SubItems[1] := '';    //Tests Run
+    SubItems[2] := '';    //Failures
+    SubItems[3] := '';    //Errors
+    SubItems[4] := '';    //Warnings
+    SubItems[5] := '';    //Test's Time
+    SubItems[6] := '';    //Total Test Time
+
+    if Suite <> nil then
+    begin
+      TotalTestsCount := Suite.countEnabledTestCases;
+      SubItems[0] := IntToStr(TotalTestsCount);
+      ProgressBar.Max := TotalTestsCount;
+    end
+    else
+      ProgressBar.Max:= 10000;
+
+    ScoreBar.Max := ProgressBar.Max;
+  end;
+*)
+  Node := TestTree.RootNode.FirstSubNode;
+  while Node <> nil do
+  begin
+    Node.ImageIndex := imgNone;
+    Node := TestTree.NextNode(Node);
+  end;
+  UpdateTestTreeState;
+end;
+
+function TGUITestRunner.NodeToTest(ANode: TfpgTreeNode): ITestProxy;
+begin
+  Result := nil;
+  if not Assigned(ANode) then
+    Exit;
+  Result := ITestProxy(ANode.Data);
+end;
+
+function TGUITestRunner.TestToNode(Test: ITestProxy): TfpgTreeNode;
+begin
+  Result := nil;
+  if not Assigned(Test) then
+    Exit;
+
+  if Assigned(Test.GUIObject) then
+    Result := Test.GUIObject as TfpgTreeNode;
+end;
+
+procedure TGUITestRunner.SwitchNodeState(ANode: TfpgTreeNode);
+begin
+   Assert(ANode <> nil);
+   SetNodeState(ANode, not NodeToTest(ANode).Enabled);
+end;
+
+procedure TGUITestRunner.UpdateTestTreeState;
+var
+  Node: TfpgTreeNode;
+begin
+  if TestTree.RootNode.Count > 0 then
+  begin
+    try
+      Node := TestTree.RootNode.FirstSubNode;
+      while Node <> nil do
+      begin
+        UpdateNodeState(Node);
+        Node := TestTree.NextNode(Node);
+      end
+    finally
+      TestTree.Invalidate;
+    end;
+  end;
+end;
+
+procedure TGUITestRunner.SetNodeState(ANode: TfpgTreeNode; AEnabled: boolean);
+var
+  MostSeniorChanged: TfpgTreeNode;
+  n: TfpgTreeNode;
+begin
+   Assert(ANode <> nil);
+
+   if (NodeToTest(ANode).Enabled <> AEnabled) then
+     NodeToTest(ANode).Enabled := AEnabled;
+
+   MostSeniorChanged := ANode;
+   if AEnabled then
+   begin
+     n := ANode;
+     while HasParent(n) do
+     begin
+       n := n.Parent;
+       if not NodeToTest(n).Enabled then
+       begin // changed
+          NodeToTest(n).Enabled := True;
+          MostSeniorChanged := n;
+          UpdateNodeImage(n);
+       end
+     end;
+   end;
+
+  UpdateNodeState(MostSeniorChanged);
+  TestTree.Invalidate;
+  RefreshTestCount;
+end;
+
+procedure TGUITestRunner.UpdateNodeImage(ANode: TfpgTreeNode);
+var
+  Test :ITestProxy;
+begin
+  Test := NodeToTest(ANode);
+  if not Test.Enabled then
+  begin
+    ANode.StateImageIndex := imgDISABLED;
+  end
+  else if HasParent(ANode) and (ANode.Parent.StateImageIndex <= imgPARENT_DISABLED) then
+  begin
+    ANode.StateImageIndex := imgPARENT_DISABLED;
+  end
+  else
+  begin
+    ANode.StateImageIndex := imgENABLED;
+  end;
+
+  if HasParent(ANode) and (ANode.Parent.StateImageIndex >= imgEXCLUDED) then
+      ANode.StateImageIndex := imgPARENT_EXCLUDED
+  else if Test.Excluded then
+    ANode.StateImageIndex := imgEXCLUDED;
+
+  TestTree.Invalidate;
+end;
+
+procedure TGUITestRunner.UpdateNodeState(ANode: TfpgTreeNode);
+var
+  Test: ITestProxy;
+  n: TfpgTreeNode;
+begin
+  Assert(Assigned(ANode));
+  Test := NodeToTest(ANode);
+  Assert(Assigned(Test));
+
+  UpdateNodeImage(ANode);
+
+  if ANode.Count > 0 then
+  begin
+    n := ANode.FirstSubNode;
+    while n <> nil do
+    begin
+      UpdateNodeState(n);
+      n := n.Next;
+    end;
+  end;
+end;
+
+procedure TGUITestRunner.RefreshTestCount;
+begin
+  TotalTestsCount := (FSuite as ITestProxy).CountEnabledTestCases;
+  // TODO: graeme
+{
+  if Assigned(Suite) then
+    ResultsView.Items[0].SubItems[0] := IntToStr(TotalTestsCount)
+  else
+    ResultsView.Items[0].SubItems[0] := '';
+}
+end;
+
+procedure TGUITestRunner.SaveConfiguration;
+var
+  i: Integer;
+begin
+  if Suite <> nil then
+    Suite.SaveConfiguration(IniFileName, False {UseRegistryAction.Checked}, True);
+  // TODO: graeme
+(*
+  SaveFormPlacement;
+  SaveRegistryAction;
+
+  with GetIniFile(IniFileName) do
+  try
+    { center splitter location }
+    WriteInteger(cnConfigIniSection, 'ResultsPanel.Height',
+      ResultsPanel.Height);
+
+    { error box }
+    WriteInteger(cnConfigIniSection, 'ErrorMessage.Height',
+      ErrorBoxPanel.Height);
+    WriteBool(cnConfigIniSection, 'ErrorMessage.Visible',
+      ErrorBoxVisibleAction.Checked);
+
+    { failure list configuration }
+    with FailureListView do begin
+      for i := 0 to Columns.Count-1 do
+      begin
+       WriteInteger(cnConfigIniSection,
+                     Format('FailureList.ColumnWidth[%d]', [i]),
+                     Columns[i].Width);
+      end;
+    end;
+
+    { other options }
+    WriteBool(cnConfigIniSection, 'HideTestNodesOnOpen',      HideTestNodesOnOpenAction.Checked);
+    WriteBool(cnConfigIniSection, 'BreakOnFailures',          BreakOnFailuresAction.Checked);
+    WriteBool(cnConfigIniSection, 'ReportMemoryLeakTypes',    ReportMemoryLeakTypeOnShutdownAction.Checked);
+    WriteBool(cnConfigIniSection, 'SelectTestedNode',         ShowTestedNodeAction.Checked);
+    WriteBool(cnConfigIniSection, 'ShowRunTimeProperties',    ShowTestCasesWithRunTimePropertiesAction.Checked);
+    WriteBool(cnConfigIniSection, 'ShowOverriddenFailures',   ShowOverriddenFailuresAction.Checked);
+    WriteBool(cnConfigIniSection, 'ShowEarlyExitTests',       ShowEarlyExitedTestAction.Checked);
+
+    WriteInteger(cnConfigIniSection, 'PopupX',                FPopupX);
+    WriteInteger(cnConfigIniSection, 'PopupY',                FPopupY);
+
+    // Settings common to all test runners
+    WriteBool(cnRunners, 'FailOnNoChecksExecuted',    FailIfNoChecksExecutedAction.Checked);
+    WriteBool(cnRunners, 'FailOnMemoryLeaked',        FailTestCaseIfMemoryLeakedAction.Checked);
+    WriteBool(cnRunners, 'EnableWarnings',            EnableWarningsAction.Checked);
+    WriteBool(cnRunners, 'IgnoreSetUpTearDownLeaks',  IgnoreMemoryLeakInSetUpTearDownAction.Checked);
+    WriteBool(cnRunners, 'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
+  finally
+    Free;
+  end;
+*)
+end;
+
+procedure TGUITestRunner.LoadConfiguration;
 begin
 
+end;
+
+function TGUITestRunner.HasParent(ANode: TfpgTreeNode): Boolean;
+begin
+  Result := (ANode.Parent <> nil) and (ANode.Parent <> TestTree.RootNode);
+end;
+
+procedure TGUITestRunner.SetupGUINodes;
+var
+  Node: TfpgTreeNode;
+  Test: ITestProxy;
+begin
+  { Set up the GUI nodes in the test nodes.
+    This method is also called after loading test libraries }
+
+  Node := TestTree.RootNode.FirstSubNode;
+  while Assigned(Node) do
+  begin
+    // Get and check the test for the tree node
+
+    Test := NodeToTest(Node);
+    assert(Assigned(Test));
+
+    // Save the tree node in the test and get the next tree node
+
+    Test.GUIObject := Node;
+
+    Node := TestTree.NextNode(Node);
+  end;
 end;
 
 procedure TGUITestRunner.InitTree;
@@ -414,8 +739,8 @@ begin
 
   FStateImageList := TfpgImageList.Create;
   FStateImageList.AddImage(fpgImages.GetImage('usr.state0'));  // unchecked
-  FStateImageList.AddImage(fpgImages.GetImage('usr.state1'));  // checked
   FStateImageList.AddImage(fpgImages.GetImage('usr.state2'));  // checked disabled
+  FStateImageList.AddImage(fpgImages.GetImage('usr.state1'));  // checked
   FStateImageList.AddImage(fpgImages.GetImage('usr.state3'));  // exclude x
   FStateImageList.AddImage(fpgImages.GetImage('usr.state4'));  // exclude x disabled
 end;
@@ -430,6 +755,7 @@ begin
   Hint := '';
   OnCreate := @FormCreate;
   OnDestroy := @FormDestroy;
+  OnShow := @FormShow;
 
   MainMenu := TfpgMenuBar.Create(self);
   with MainMenu do
@@ -460,6 +786,8 @@ begin
     ShowImages := True;
     ImageList := FImageList;
     StateImageList := FStateImageList;
+    OnStateImageClicked  := @ProcessClickOnStateIcon;
+    OnKeyPress  := @ProcessKeyPressOnTreeview;
   end;
 
   mnuFile := TfpgPopupMenu.Create(self);
