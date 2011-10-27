@@ -7,7 +7,8 @@ interface
 uses
   SysUtils, Classes, fpg_base, fpg_main, fpg_form, fpg_label, fpg_menu,
   fpg_progressbar, fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
-  fpg_panel, fpg_button,
+  fpg_panel, fpg_button, fpg_splitter, fpg_gauge, fpg_memo, fpg_basegrid,
+  fpg_scrollbar,
   TestFrameworkProxyIfaces;
 
 type
@@ -24,16 +25,55 @@ type
     {@VFD_HEAD_BEGIN: GUITestRunner}
     MainMenu: TfpgMenuBar;
     Toolbar: TfpgBevel;
-    TestTree: TfpgTreeView;
+    btnSelectAll: TfpgButton;
+    btnSelectNone: TfpgButton;
+    Bevel1: TfpgBevel;
+    Button3: TfpgButton;
+    Button4: TfpgButton;
+    Button5: TfpgButton;
+    Bevel2: TfpgBevel;
+    btnRunSelected: TfpgButton;
+    btnRunCurrent: TfpgButton;
+    Button8: TfpgButton;
+    Bevel3: TfpgBevel;
+    Button9: TfpgButton;
+    Button10: TfpgButton;
+    Button11: TfpgButton;
+    Bevel4: TfpgBevel;
+    Button12: TfpgButton;
+    Button13: TfpgButton;
+    Button14: TfpgButton;
+    Button15: TfpgButton;
+    Label1: TfpgLabel;
+    ClientArea: TfpgBevel;
+    bvlTreeAndProgress: TfpgBevel;
     mnuFile: TfpgPopupMenu;
     mnuTestTree: TfpgPopupMenu;
     mnuOptions: TfpgPopupMenu;
     mnuActions: TfpgPopupMenu;
     mnuHelp: TfpgPopupMenu;
-    btnRunAll: TfpgButton;
-    btnSelectAll: TfpgButton;
-    btnDeselectAll: TfpgButton;
+    Bevel5: TfpgBevel;
+    TestTree: TfpgTreeView;
+    Gauge1: TfpgGauge;
+    Gauge2: TfpgGauge;
+    Label2: TfpgLabel;
+    Label3: TfpgLabel;
+    Grid1: TfpgStringGrid;
+    Splitter2: TfpgSplitter;
+    Memo1: TfpgMemo;
     {@VFD_HEAD_END: GUITestRunner}
+    miAutoSaveConfiguration: TfpgMenuItem;
+    miErrorBoxVisible: TfpgMenuItem;
+    miAutoChangeFocus: TfpgMenuItem;
+    miHideTestNodesOnOpen: TfpgMenuItem;
+    miShowTestedNode: TfpgMenuItem;
+    miBreakOnFailure: TfpgMenuItem;
+    miShowTestCasesWithRuntimeProperties: TfpgMenuItem;
+    miShowOverriddenFailures: TfpgMenuItem;
+    miShowExitedEarly: TfpgMenuItem;
+    miFailTestIfNoChecks: TfpgMenuItem;
+    miEnableWarnings: TfpgMenuItem;
+    miInhibitSummaryLevelChecks: TfpgMenuItem;
     FSuite:         ITestProxy;
     FTestResult:    TTestResult;
     FRunning:       Boolean;
@@ -65,7 +105,7 @@ type
     procedure Status(const ATest: ITestProxy; AMessage: string);
 
     { implement the ITestListener interface }
-    procedure AddSuccess(Test: ITestProxy);
+    procedure AddSuccess(ATest: ITestProxy);
     procedure AddError(Error: TTestFailure);
     procedure AddFailure(Failure: TTestFailure);
     procedure AddWarning(AWarning: TTestFailure);
@@ -85,6 +125,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
     procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
+    procedure DrawGridCell(Sender: TObject; const ARow, ACol: Integer; const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
     procedure SetSuite(const AValue: ITestProxy);
     function get_TestResult: TTestResult;
     procedure set_TestResult(const AValue: TTestResult);
@@ -101,12 +142,15 @@ type
     procedure SetUp;
     function  NodeToTest(ANode: TfpgTreeNode): ITestProxy;
     function  TestToNode(Test: ITestProxy): TfpgTreeNode;
+    function  SelectedTest: ITestProxy;
+    procedure ListSelectedTests;
     procedure SwitchNodeState(ANode: TfpgTreeNode);
     procedure UpdateTestTreeState;
     procedure SetNodeState(ANode: TfpgTreeNode; AEnabled: boolean);
     procedure UpdateNodeImage(ANode: TfpgTreeNode);
     procedure UpdateNodeState(ANode: TfpgTreeNode);
     procedure RefreshTestCount;
+    procedure AutoSaveConfiguration;
     procedure SaveConfiguration;
     procedure LoadConfiguration;
     function HasParent(ANode: TfpgTreeNode): Boolean;
@@ -151,11 +195,16 @@ type
   end;
 
 
-  TRunExecuteCommand = class(TBaseCommand)
+  TRunSelectedCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
+
+  TRunCurrentCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
 
   TDeselectAllCommand = class(TBaseCommand)
   public
@@ -230,19 +279,98 @@ begin
 
 end;
 
-procedure TGUITestRunner.AddSuccess(Test: ITestProxy);
+procedure TGUITestRunner.AddSuccess(ATest: ITestProxy);
+var
+  LOverridesGUI: Boolean;
+  LHasRunTimePropsSet: Boolean;
 begin
-  SendDebug('success: ' + Test.Name);
+  SendDebug('success: ' + ATest.Name);
+  assert(assigned(ATest));
+  if not IsTestMethod(ATest) then
+    SetTreeNodeImage(TestToNode(ATest), imgRUN)
+  else
+  begin
+    FTestFailed := False;
+    if miShowOverriddenFailures.Checked then
+    begin
+      LOverridesGUI :=
+//        (
+        (miFailTestIfNoChecks.Checked and not ATest.FailsOnNoChecksExecuted);
+//         or (FailTestCaseIfMemoryLeakedMenuItem.Checked and not ATest.FailsOnMemoryLeak)) or
+//         (FailTestCaseIfMemoryLeakedMenuItem.Checked and
+//            IgnoreMemoryLeakInSetUpTearDownMenuItem.Checked and
+//              not ATest.IgnoreSetUpTearDownLeaks) or
+//        ATest.LeakAllowed;
+
+      ATest.IsOverridden := LOverridesGUI;
+
+      if LOverridesGUI then
+      begin
+        if ATest.IsWarning then
+          SetTreeNodeImage(TestToNode(ATest), imgWARNFAIL)
+        else
+          SetTreeNodeImage(TestToNode(ATest), imgOVERRIDE)
+      end
+      else
+        SetTreeNodeImage(TestToNode(ATest), imgRUN);
+    end
+    else if miShowOverriddenFailures.Checked then
+    begin
+      LHasRunTimePropsSet :=
+//        (
+         (ATest.FailsOnNoChecksExecuted and not miFailTestIfNoChecks.Checked);
+         //or (ATest.FailsOnMemoryLeak and not FailTestCaseIfMemoryLeakedMenuItem.Checked) or
+         //(FailTestCaseIfMemoryLeakedMenuItem.Checked and
+         // (not IgnoreMemoryLeakInSetUpTearDownMenuItem.Checked and
+         //   ATest.IgnoreSetUpTearDownLeaks)) or
+         //(ATest.AllowedMemoryLeakSize <> 0));
+
+      if LHasRunTimePropsSet then
+        SetTreeNodeImage(TestToNode(ATest), imgOVERRIDE)
+      else
+        SetTreeNodeImage(TestToNode(ATest), imgRUN);
+    end
+    // TODO: graeme
+    //else if ShowWarnedTestToolButton.Down and ATest.IsWarning then
+    //  SetTreeNodeImage(TestToNode(ATest), imgWARNING)
+    //else if ShowSummaryLevelExitsToolButton.Down and ATest.EarlyExit then
+    //  SetTreeNodeImage(TestToNode(ATest), imgEARLYEXIT)
+    else
+      SetTreeNodeImage(TestToNode(ATest), imgRUN);
+  end;
 end;
 
 procedure TGUITestRunner.AddError(Error: TTestFailure);
+//var
+//  ListItem: TListItem;
 begin
   SendDebug('error: ' + Error.FailedTest.Name);
+  FTestFailed := True;
+  // TODO: graemeg
+  //ListItem := AddFailureItem(Failure);
+  //ListItem.ImageIndex := imgERROR;
+  //TProgressBarCrack(ScoreBar).Color := clERROR;
+  //TProgressBarCrack(ScoreBar).RecreateWnd;
+  SetTreeNodeImage(TestToNode(Error.FailedTest), imgERROR);
+  UpdateStatus(True);
 end;
 
 procedure TGUITestRunner.AddFailure(Failure: TTestFailure);
+//var
+//  ListItem: TListItem;
 begin
   SendDebug('failure: ' + Failure.FailedTest.Name);
+  FTestFailed := True;
+  // TODO: graemeg
+  //ListItem := AddFailureItem(Failure);
+  //ListItem.ImageIndex := imgFAILED;
+  //if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
+  //begin
+  //  TProgressBarCrack(ScoreBar).Color := clFAILURE;
+  //  TProgressBarCrack(ScoreBar).RecreateWnd;
+  //end;
+  SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
+  UpdateStatus(True);
 end;
 
 procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
@@ -339,7 +467,7 @@ begin
   FStateImageList.Free;
 
 //  ClearResult;
-//  AutoSaveConfiguration;
+  AutoSaveConfiguration;
   FreeAndNil(FTests); // Note this is an object full of Interface refs
   Suite := nil;       // Take down the test proxys
 //  ClearRegistry;      // Take down the Registered tests
@@ -347,6 +475,14 @@ end;
 
 procedure TGUITestRunner.FormShow(Sender: TObject);
 begin
+  Grid1.Cells[0, 0] := 'Tests';
+  Grid1.Cells[1, 0] := 'Run';
+  Grid1.Cells[2, 0] := 'Failures';
+  Grid1.Cells[3, 0] := 'Errors';
+  Grid1.Cells[4, 0] := 'Warnings';
+  Grid1.Cells[5, 0] := 'Test Time';
+  Grid1.Cells[6, 0] := 'Total Time';
+
   TestTree.FullExpand;
   SetupGUINodes;
   // TODO: graeme
@@ -368,6 +504,16 @@ begin
   begin
     SwitchNodeState(TestTree.Selection);
     UpdateStatus(True);
+  end;
+end;
+
+procedure TGUITestRunner.DrawGridCell(Sender: TObject; const ARow, ACol: Integer;
+  const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
+begin
+  if ARow = 0 then
+  begin
+    Grid1.Canvas.SetColor(clDarkGray);
+    Grid1.Canvas.FillRectangle(ARect);
   end;
 end;
 
@@ -434,9 +580,10 @@ begin
   SelectAllCommand := TExitCommand.Create(self);
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
 
-  btnRunAll.SetCommand(TRunExecuteCommand.Create(self));
+  btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
+  btnRunCurrent.SetCommand(TRunCurrentCommand.Create(self));
   btnSelectAll.SetCommand(TSelectAllCommand.Create(self));
-  btnDeselectAll.SetCommand(TDeselectAllCommand.Create(self));
+  btnSelectNone.SetCommand(TDeselectAllCommand.Create(self));
 end;
 
 function TGUITestRunner.EnableTest(Test: ITestProxy): boolean;
@@ -574,6 +721,33 @@ begin
     Result := Test.GUIObject as TfpgTreeNode;
 end;
 
+function TGUITestRunner.SelectedTest: ITestProxy;
+begin
+  if TestTree.Selection = nil then
+    Result := nil
+  else
+    Result := NodeToTest(TestTree.Selection);
+end;
+
+procedure TGUITestRunner.ListSelectedTests;
+var
+  ATest: ITestProxy;
+  ANode: TfpgTreeNode;
+begin
+  FSelectedTests.Free;
+  FSelectedTests := nil;
+  FSelectedTests := TInterfaceList.Create;
+
+  ANode := TestTree.Selection;
+
+  while Assigned(ANode) do
+  begin
+    ATest := NodeToTest(ANode);
+    FSelectedTests.Add(ATest as ITestProxy);
+    ANode := ANode.Parent;
+  end;
+end;
+
 procedure TGUITestRunner.SwitchNodeState(ANode: TfpgTreeNode);
 begin
    Assert(ANode <> nil);
@@ -688,6 +862,13 @@ begin
   else
     ResultsView.Items[0].SubItems[0] := '';
 }
+end;
+
+procedure TGUITestRunner.AutoSaveConfiguration;
+begin
+  // TODO: graeme
+//  if AutoSaveAction.Checked then
+    SaveConfiguration;
 end;
 
 procedure TGUITestRunner.SaveConfiguration;
@@ -826,7 +1007,7 @@ begin
 //    StopAction.Enabled := True;
 //    CopyMessageToClipboardAction.Enabled := false;
     EnableUI(false);
-//    AutoSaveConfiguration;
+    AutoSaveConfiguration;
     ClearFailureMessage;
     TestResult := GetTestResult; // Replaces TTestResult.create
     try
@@ -915,9 +1096,10 @@ begin
   {%region 'Auto-generated GUI code' -fold}
   {@VFD_BODY_BEGIN: GUITestRunner}
   Name := 'GUITestRunner';
-  SetPosition(428, 213, 548, 542);
+  SetPosition(507, 209, 548, 542);
   WindowTitle := 'GUI Test Runner';
   Hint := '';
+  ShowHint := True;
   OnCreate := @FormCreate;
   OnDestroy := @FormDestroy;
   OnShow := @FormShow;
@@ -934,17 +1116,381 @@ begin
   with Toolbar do
   begin
     Name := 'Toolbar';
-    SetPosition(0, 24, 548, 28);
+    SetPosition(0, 24, 548, 30);
     Anchors := [anLeft,anRight,anTop];
     Hint := '';
+    Shape := bsBottomLine;
+    Style := bsLowered;
   end;
 
-  TestTree := TfpgTreeView.Create(self);
+  btnSelectAll := TfpgButton.Create(Toolbar);
+  with btnSelectAll do
+  begin
+    Name := 'btnSelectAll';
+    SetPosition(4, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := 'usr.selectall';
+    TabOrder := 1;
+    Focusable := False;
+  end;
+
+  btnSelectNone := TfpgButton.Create(Toolbar);
+  with btnSelectNone do
+  begin
+    Name := 'btnSelectNone';
+    SetPosition(28, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := 'usr.selectnone';
+    TabOrder := 2;
+    Focusable := False;
+  end;
+
+  Bevel1 := TfpgBevel.Create(Toolbar);
+  with Bevel1 do
+  begin
+    Name := 'Bevel1';
+    SetPosition(57, 2, 6, 24);
+    Hint := '';
+    Shape := bsLeftLine;
+    Style := bsLowered;
+  end;
+
+  Button3 := TfpgButton.Create(Toolbar);
+  with Button3 do
+  begin
+    Name := 'Button3';
+    SetPosition(64, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 4;
+    Focusable := False;
+  end;
+
+  Button4 := TfpgButton.Create(Toolbar);
+  with Button4 do
+  begin
+    Name := 'Button4';
+    SetPosition(88, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 5;
+    Focusable := False;
+  end;
+
+  Button5 := TfpgButton.Create(Toolbar);
+  with Button5 do
+  begin
+    Name := 'Button5';
+    SetPosition(112, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 6;
+    Focusable := False;
+  end;
+
+  Bevel2 := TfpgBevel.Create(Toolbar);
+  with Bevel2 do
+  begin
+    Name := 'Bevel2';
+    SetPosition(140, 2, 6, 24);
+    Hint := '';
+    Shape := bsLeftLine;
+    Style := bsLowered;
+  end;
+
+  btnRunSelected := TfpgButton.Create(Toolbar);
+  with btnRunSelected do
+  begin
+    Name := 'btnRunSelected';
+    SetPosition(148, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := 'usr.starttest';
+    TabOrder := 8;
+    Focusable := False;
+  end;
+
+  btnRunCurrent := TfpgButton.Create(Toolbar);
+  with btnRunCurrent do
+  begin
+    Name := 'btnRunCurrent';
+    SetPosition(172, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := 'usr.startselectedtest';
+    TabOrder := 9;
+    Focusable := False;
+  end;
+
+  Button8 := TfpgButton.Create(Toolbar);
+  with Button8 do
+  begin
+    Name := 'Button8';
+    SetPosition(196, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 10;
+    Focusable := False;
+  end;
+
+  Bevel3 := TfpgBevel.Create(Toolbar);
+  with Bevel3 do
+  begin
+    Name := 'Bevel3';
+    SetPosition(224, 2, 6, 24);
+    Hint := '';
+    Shape := bsLeftLine;
+    Style := bsLowered;
+  end;
+
+  Button9 := TfpgButton.Create(Toolbar);
+  with Button9 do
+  begin
+    Name := 'Button9';
+    SetPosition(232, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 12;
+    Focusable := False;
+  end;
+
+  Button10 := TfpgButton.Create(Toolbar);
+  with Button10 do
+  begin
+    Name := 'Button10';
+    SetPosition(256, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 13;
+    Focusable := False;
+  end;
+
+  Button11 := TfpgButton.Create(Toolbar);
+  with Button11 do
+  begin
+    Name := 'Button11';
+    SetPosition(280, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 14;
+    Focusable := False;
+  end;
+
+  Bevel4 := TfpgBevel.Create(Toolbar);
+  with Bevel4 do
+  begin
+    Name := 'Bevel4';
+    SetPosition(308, 2, 6, 24);
+    Hint := '';
+    Shape := bsLeftLine;
+    Style := bsLowered;
+  end;
+
+  Button12 := TfpgButton.Create(Toolbar);
+  with Button12 do
+  begin
+    Name := 'Button12';
+    SetPosition(316, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 16;
+    Focusable := False;
+  end;
+
+  Button13 := TfpgButton.Create(Toolbar);
+  with Button13 do
+  begin
+    Name := 'Button13';
+    SetPosition(340, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 17;
+    Focusable := False;
+  end;
+
+  Button14 := TfpgButton.Create(Toolbar);
+  with Button14 do
+  begin
+    Name := 'Button14';
+    SetPosition(364, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 18;
+    Focusable := False;
+  end;
+
+  Button15 := TfpgButton.Create(Toolbar);
+  with Button15 do
+  begin
+    Name := 'Button15';
+    SetPosition(388, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageMargin := 0;
+    ImageName := '';
+    TabOrder := 19;
+    Focusable := False;
+  end;
+
+  Label1 := TfpgLabel.Create(self);
+  with Label1 do
+  begin
+    Name := 'Label1';
+    SetPosition(4, 56, 176, 16);
+    FontDesc := '#Label1';
+    Hint := '';
+    Text := 'Test Hierarchy:';
+  end;
+
+  ClientArea := TfpgBevel.Create(self);
+  with ClientArea do
+  begin
+    Name := 'ClientArea';
+    SetPosition(4, 74, 541, 464);
+    Anchors := [anLeft,anRight,anTop,anBottom];
+    Hint := '';
+    Shape := bsSpacer;
+  end;
+
+  bvlTreeAndProgress := TfpgBevel.Create(ClientArea);
+  with bvlTreeAndProgress do
+  begin
+    Name := 'bvlTreeAndProgress';
+    SetPosition(2, 2, 537, 350);
+    Align := alTop;
+    Hint := '';
+    Shape := bsSpacer;
+    Style := bsLowered;
+    MinHeight := 150;
+  end;
+
+  mnuFile := TfpgPopupMenu.Create(self);
+  with mnuFile do
+  begin
+    Name := 'mnuFile';
+    SetPosition(400, 84, 120, 20);
+    AddMenuItem('Quit', 'Ctrl+Q', nil);
+  end;
+
+  mnuTestTree := TfpgPopupMenu.Create(self);
+  with mnuTestTree do
+  begin
+    Name := 'mnuTestTree';
+    SetPosition(400, 108, 120, 20);
+    miSelectAll := AddMenuItem('Select All', 'Ctrl+Alt+A', nil);
+  end;
+
+  mnuOptions := TfpgPopupMenu.Create(self);
+  with mnuOptions do
+  begin
+    Name := 'mnuOptions';
+    SetPosition(400, 132, 120, 20);
+    miAutoSaveConfiguration := AddMenuItem('Auto Save Configuration', '', nil);
+    miErrorBoxVisible := AddMenuItem('Error Box Visible', '', nil);
+    miAutoChangeFocus := AddMenuItem('Auto Change Focus', '', nil);
+    miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', nil);
+    miShowTestedNode := AddMenuItem('Show Tested Node', '', nil);
+    miBreakOnFailure := AddMenuItem('Break On Failures', '', nil);
+    AddMenuItem('-', '', nil);
+    miShowTestCasesWithRuntimeProperties := AddMenuItem('Show TestCases with RunTime Properties', '', nil);
+    miShowOverriddenFailures := AddMenuItem('Show Overridden Failures', '', nil);
+    miShowExitedEarly := AddMenuItem('Show passing Summary Level Tests which exited early', '', nil);
+    AddMenuItem('-', '', nil);
+    miFailTestIfNoChecks := AddMenuItem('Fail TestCase if no checks performed', '', nil);
+    miEnableWarnings := AddMenuItem('Enable Warnings', '', nil);
+    miInhibitSummaryLevelChecks := AddMenuItem('Inhibit Summary Level Checking', '', nil);
+  end;
+
+  mnuActions := TfpgPopupMenu.Create(self);
+  with mnuActions do
+  begin
+    Name := 'mnuActions';
+    SetPosition(400, 156, 120, 20);
+    AddMenuItem('[todo]', '', nil);
+  end;
+
+  mnuHelp := TfpgPopupMenu.Create(self);
+  with mnuHelp do
+  begin
+    Name := 'mnuHelp';
+    SetPosition(400, 180, 120, 20);
+    AddMenuItem('About fpGUI Toolkit', '', nil);
+    AddMenuItem('About FPTest...', '', nil);
+  end;
+
+  Bevel5 := TfpgBevel.Create(bvlTreeAndProgress);
+  with Bevel5 do
+  begin
+    Name := 'Bevel5';
+    SetPosition(2, 265, 533, 83);
+    Align := alBottom;
+    Hint := '';
+    Shape := bsSpacer;
+    Style := bsLowered;
+  end;
+
+  TestTree := TfpgTreeView.Create(bvlTreeAndProgress);
   with TestTree do
   begin
     Name := 'TestTree';
-    SetPosition(4, 56, 540, 296);
-    Anchors := [anLeft,anRight,anTop,anBottom];
+    SetPosition(2, 2, 533, 263);
+    Align := alClient;
     FontDesc := '#Label1';
     Hint := '';
     ShowImages := True;
@@ -955,83 +1501,102 @@ begin
     OnKeyPress  := @ProcessKeyPressOnTreeview;
   end;
 
-  mnuFile := TfpgPopupMenu.Create(self);
-  with mnuFile do
+  Gauge1 := TfpgGauge.Create(Bevel5);
+  with Gauge1 do
   begin
-    Name := 'mnuFile';
-    SetPosition(396, 36, 120, 20);
-    AddMenuItem('Quit', 'Ctrl+Q', nil);
+    Name := 'Gauge1';
+    SetPosition(96, 5, 424, 15);
+    Color := TfpgColor($C4C4C4);
+    Hint := '';
+    Progress := 90;
   end;
 
-  mnuTestTree := TfpgPopupMenu.Create(self);
-  with mnuTestTree do
+  Gauge2 := TfpgGauge.Create(Bevel5);
+  with Gauge2 do
   begin
-    Name := 'mnuTestTree';
-    SetPosition(396, 60, 120, 20);
-    miSelectAll := AddMenuItem('Select All', 'Ctrl+Alt+A', nil);
+    Name := 'Gauge2';
+    SetPosition(96, 24, 424, 15);
+    Color := TfpgColor($C4C4C4);
+    Hint := '';
+    Progress := 75;
   end;
 
-  mnuOptions := TfpgPopupMenu.Create(self);
-  with mnuOptions do
+  Label2 := TfpgLabel.Create(Bevel5);
+  with Label2 do
   begin
-    Name := 'mnuOptions';
-    SetPosition(396, 84, 120, 20);
-  end;
-
-  mnuActions := TfpgPopupMenu.Create(self);
-  with mnuActions do
-  begin
-    Name := 'mnuActions';
-    SetPosition(396, 108, 120, 20);
-  end;
-
-  mnuHelp := TfpgPopupMenu.Create(self);
-  with mnuHelp do
-  begin
-    Name := 'mnuHelp';
-    SetPosition(396, 132, 120, 20);
-  end;
-
-  btnRunAll := TfpgButton.Create(self);
-  with btnRunAll do
-  begin
-    Name := 'btnRunAll';
-    SetPosition(4, 356, 98, 24);
-    Text := 'Run Tests';
+    Name := 'Label2';
+    SetPosition(4, 3, 80, 16);
+    Alignment := taRightJustify;
     FontDesc := '#Label1';
     Hint := '';
-    ImageName := '';
-    TabOrder := 10;
+    Text := 'Progress:';
   end;
 
-  btnSelectAll := TfpgButton.Create(self);
-  with btnSelectAll do
+  Label3 := TfpgLabel.Create(Bevel5);
+  with Label3 do
   begin
-    Name := 'btnSelectAll';
-    SetPosition(108, 356, 80, 24);
-    Text := 'Select All';
+    Name := 'Label3';
+    SetPosition(4, 20, 80, 16);
+    Alignment := taRightJustify;
     FontDesc := '#Label1';
     Hint := '';
-    ImageName := '';
-    TabOrder := 11;
+    Text := 'Score:';
   end;
 
-  btnDeselectAll := TfpgButton.Create(self);
-  with btnDeselectAll do
+  Grid1 := TfpgStringGrid.Create(Bevel5);
+  with Grid1 do
   begin
-    Name := 'btnDeselectAll';
-    SetPosition(194, 356, 80, 24);
-    Text := 'Deselect All';
-    FontDesc := '#Label1';
+    Name := 'Grid1';
+    SetPosition(6, 44, 514, 37);
+    BackgroundColor := TfpgColor($80000002);
+    AddColumn('Tests', 70, taCenter);
+    AddColumn('Run', 60, taCenter);
+    AddColumn('Failures', 60, taCenter);
+    AddColumn('Errors', 60, taCenter);
+    AddColumn('Warnings', 60, taCenter);
+    AddColumn('Test Time', 99, taCenter);
+    AddColumn('Total Time', 99, taCenter);
+    FontDesc := '#Grid';
+    HeaderFontDesc := '#GridHeader';
     Hint := '';
-    ImageName := '';
-    TabOrder := 12;
+    RowCount := 2;
+    RowSelect := False;
+    ShowHeader := False;
+    TabOrder := 5;
+    Focusable := False;
+    ScrollBarStyle := ssNone;
+    OnDrawCell  := @DrawGridCell;
+  end;
+
+  Splitter2 := TfpgSplitter.Create(ClientArea);
+  with Splitter2 do
+  begin
+    Name := 'Splitter2';
+    SetPosition(2, 352, 537, 7);
+    Align := alTop;
+    AutoSnap := False;
+  end;
+
+  Memo1 := TfpgMemo.Create(ClientArea);
+  with Memo1 do
+  begin
+    Name := 'Memo1';
+    SetPosition(2, 359, 537, 103);
+    Align := alClient;
+    FontDesc := '#Edit1';
+    Hint := '';
+    TabOrder := 5;
+    MinHeight := 80;
   end;
 
   {@VFD_BODY_END: GUITestRunner}
   {%endregion}
 
   MainMenu.AddMenuItem('File', nil).SubMenu := mnuFile;
+  MainMenu.AddMenuItem('Test Tree', nil).SubMenu := mnuTestTree;
+  MainMenu.AddMenuItem('Options', nil).SubMenu := mnuOptions;
+  MainMenu.AddMenuItem('Actions', nil).SubMenu := mnuActions;
+  MainMenu.AddMenuItem('Help', nil).SubMenu := mnuHelp;
 
   InitCommands;
 end;
@@ -1062,9 +1627,9 @@ begin
   end;
 end;
 
-{ TRunExecuteCommand }
+{ TRunSelectedCommand }
 
-procedure TRunExecuteCommand.Execute;
+procedure TRunSelectedCommand.Execute;
 begin
   with FForm do
   begin
@@ -1077,6 +1642,27 @@ begin
       RunTheTest(Suite);
     finally
       HoldOptions(False);
+    end;
+  end;
+end;
+
+{ TRunCurrentCommand }
+
+procedure TRunCurrentCommand.Execute;
+begin
+  with FForm do
+  begin
+    SetUp;
+    ListSelectedTests;
+//    ProgressBar.Max := 1;
+//    ScoreBar.Max    := 1;
+    HoldOptions(True);
+    try
+      RunTheTest(Suite);
+    finally
+      HoldOptions(False);
+      FSelectedTests.Free;
+      FSelectedTests := nil;
     end;
   end;
 end;
