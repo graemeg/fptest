@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes, fpg_base, fpg_main, fpg_form, fpg_label, fpg_menu,
   fpg_progressbar, fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
-  fpg_panel, fpg_button, fpg_edit,
+  fpg_panel, fpg_button,
   TestFrameworkProxyIfaces;
 
 type
@@ -787,8 +787,19 @@ begin
 end;
 
 procedure TGUITestRunner.SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
+var
+  n: TfpgTreeNode;
 begin
-
+  n := Node;
+  while n <> nil do
+  begin
+    if imgIndex > n.ImageIndex then
+       n.ImageIndex    := imgIndex;
+    if imgIndex = imgRUNNING then
+      n := nil
+    else
+      n := n.Parent;
+  end;
 end;
 
 procedure TGUITestRunner.ClearStatusMessage;
@@ -980,7 +991,6 @@ begin
     Name := 'mnuHelp';
     SetPosition(396, 132, 120, 20);
   end;
-
 
   btnRunAll := TfpgButton.Create(self);
   with btnRunAll do
