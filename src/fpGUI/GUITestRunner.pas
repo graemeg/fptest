@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes, fpg_base, fpg_main, fpg_form, fpg_label, fpg_menu,
   fpg_progressbar, fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
-  fpg_panel,
+  fpg_panel, fpg_button, fpg_edit,
   TestFrameworkProxyIfaces;
 
 type
@@ -30,6 +30,9 @@ type
     mnuOptions: TfpgPopupMenu;
     mnuActions: TfpgPopupMenu;
     mnuHelp: TfpgPopupMenu;
+    btnRunAll: TfpgButton;
+    btnSelectAll: TfpgButton;
+    btnDeselectAll: TfpgButton;
     {@VFD_HEAD_END: GUITestRunner}
     FSuite:         ITestProxy;
     FTestResult:    TTestResult;
@@ -108,6 +111,13 @@ type
     procedure LoadConfiguration;
     function HasParent(ANode: TfpgTreeNode): Boolean;
     procedure SetupGUINodes;
+    procedure MakeNodeVisible(Node: TfpgTreeNode);
+    procedure SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
+    procedure ClearStatusMessage;
+    procedure RunTheTest(ATest: ITestProxy);
+    procedure HoldOptions(const AValue: boolean);
+    procedure ClearResult;
+    procedure ClearFailureMessage;
   protected
     procedure InitTree; virtual;
   public
@@ -121,23 +131,36 @@ type
   end;
 
 
-  TExitCommand = class(TInterfacedObject, ICommand)
-  private
+  TBaseCommand = class(TInterfacedObject, ICommand)
+  protected
     FForm: TGUITestRunner;
   public
     constructor Create(AForm: TGUITestRunner); reintroduce;
-    procedure   Execute;
+    procedure Execute; virtual; abstract;
   end;
 
-
-  TSelectAllCommand = class(TInterfacedObject, ICommand)
-  private
-    FForm: TGUITestRunner;
+  TExitCommand = class(TBaseCommand)
   public
-    constructor Create(AForm: TGUITestRunner); reintroduce;
-    procedure Execute;
+    procedure   Execute; override;
   end;
 
+
+  TSelectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+
+  TRunExecuteCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+
+  TDeselectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
 
 procedure RunRegisteredTests;
 
@@ -209,32 +232,51 @@ end;
 
 procedure TGUITestRunner.AddSuccess(Test: ITestProxy);
 begin
-
+  SendDebug('success: ' + Test.Name);
 end;
 
 procedure TGUITestRunner.AddError(Error: TTestFailure);
 begin
-
+  SendDebug('error: ' + Error.FailedTest.Name);
 end;
 
 procedure TGUITestRunner.AddFailure(Failure: TTestFailure);
 begin
-
+  SendDebug('failure: ' + Failure.FailedTest.Name);
 end;
 
 procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
 begin
-
+  SendDebug('warning: ' + AWarning.FailedTest.Name);
 end;
 
 procedure TGUITestRunner.TestingStarts;
 begin
-
+  SendDebug('*** Testing Starts ****');
+  FTotalTime := 0;
+  UpdateStatus(True);
+//  TProgressBarCrack(ScoreBar).Color := clOK;
+//  TProgressBarCrack(ScoreBar).RecreateWnd;
+  ClearStatusMessage;
 end;
 
 procedure TGUITestRunner.StartTest(Test: ITestProxy);
+var
+  Node: TfpgTreeNode;
 begin
-
+  assert(assigned(TestResult));
+  assert(assigned(Test));
+  Node := TestToNode(Test);
+  assert(assigned(Node));
+  SetTreeNodeImage(Node, imgRUNNING);
+  // TODO: graeme
+//  if ShowTestedNodeAction.Checked then
+//  begin
+    MakeNodeVisible(Node);
+    TestTree.Invalidate;
+//  end;
+//  ErrorMessageRTF.Lines.Clear;
+  UpdateStatus(False);
 end;
 
 procedure TGUITestRunner.EndTest(Test: ITestProxy);
@@ -244,7 +286,7 @@ end;
 
 procedure TGUITestRunner.TestingEnds(TestResult: TTestResult);
 begin
-
+  SendSeparator;
 end;
 
 function TGUITestRunner.ShouldRunTest(const ATest: ITestProxy): Boolean;
@@ -279,6 +321,7 @@ procedure TGUITestRunner.FormCreate(Sender: TObject);
 begin
   LoadConfiguration;
   Setup;
+  HoldOptions(False);
 end;
 
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
@@ -308,6 +351,7 @@ begin
   SetupGUINodes;
   // TODO: graeme
 //  ResultsView.Columns[8].Width := ResultsView.Columns[8].Width;
+  TestTree.SetFocus;
 end;
 
 procedure TGUITestRunner.ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
@@ -329,7 +373,7 @@ end;
 
 function TGUITestRunner.get_TestResult: TTestResult;
 begin
-
+  Result := FTestResult;
 end;
 
 procedure TGUITestRunner.SetSuite(const AValue: ITestProxy);
@@ -350,7 +394,7 @@ end;
 
 procedure TGUITestRunner.set_TestResult(const AValue: TTestResult);
 begin
-
+  FTestResult := AValue;
 end;
 
 procedure TGUITestRunner.LoadSuiteConfiguration;
@@ -389,21 +433,53 @@ begin
 
   SelectAllCommand := TExitCommand.Create(self);
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
+
+  btnRunAll.SetCommand(TRunExecuteCommand.Create(self));
+  btnSelectAll.SetCommand(TSelectAllCommand.Create(self));
+  btnDeselectAll.SetCommand(TDeselectAllCommand.Create(self));
 end;
 
 function TGUITestRunner.EnableTest(Test: ITestProxy): boolean;
 begin
-
+  Test.Enabled := True;
+  Result := True;
 end;
 
 function TGUITestRunner.DisableTest(Test: ITestProxy): boolean;
 begin
-
+  Test.Enabled := False;
+  Result := True;
 end;
 
 procedure TGUITestRunner.ApplyToTests(root: TfpgTreeNode; const func: TTestFunc);
-begin
 
+  procedure DoApply(RootNode: TfpgTreeNode);
+  var
+    Test: ITestProxy;
+    Node: TfpgTreeNode;
+  begin
+    if RootNode <> nil then
+    begin
+      Test := NodeToTest(RootNode);
+      if func(Test) then
+      begin
+        Node := RootNode.FirstSubNode;
+        while Node <> nil do
+        begin
+          DoApply(Node);
+          Node := Node.Next;
+        end;
+      end;
+    end;
+  end;
+begin
+  try
+    DoApply(root)
+  finally
+    TestTree.Invalidate;
+  end;
+  TotalTestsCount := (FSuite as ITestProxy).CountEnabledTestCases;
+  UpdateTestTreeState;
 end;
 
 procedure TGUITestRunner.UpdateStatus(const FullUpdate: Boolean);
@@ -705,6 +781,84 @@ begin
   end;
 end;
 
+procedure TGUITestRunner.MakeNodeVisible(Node: TfpgTreeNode);
+begin
+//  TestTree.NextVisualNode()
+end;
+
+procedure TGUITestRunner.SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
+begin
+
+end;
+
+procedure TGUITestRunner.ClearStatusMessage;
+begin
+//  ErrorMessageRTF.Lines.Clear;
+end;
+
+procedure TGUITestRunner.RunTheTest(ATest: ITestProxy);
+begin
+  if ATest = nil then
+    Exit;
+  if FRunning then
+  begin
+    // warning: we're reentering this method if FRunning is true
+    Assert(FTestResult <> nil);
+    TestResult.Stop;
+    Exit;
+  end;
+
+  FRunning := True;
+  try
+// TODO: graemeg
+//    RunAction.Enabled  := False;
+//    StopAction.Enabled := True;
+//    CopyMessageToClipboardAction.Enabled := false;
+    EnableUI(false);
+//    AutoSaveConfiguration;
+    ClearFailureMessage;
+    TestResult := GetTestResult; // Replaces TTestResult.create
+    try
+      {$IFDEF XMLLISTENER}
+      TestResult.AddListener(
+        TXMLListener.Create(LocalAppDataPath + Suite.Name
+          {, 'type="text/xsl" href="fpcunit2.xsl"'}));
+      {$ENDIF}
+      TestResult.AddListener(self);
+//      TestResult.BreakOnFailures := BreakOnFailuresAction.Checked;
+      LoadSuiteConfiguration;
+      ATest.Run(TestResult);
+    finally
+      TestResult.ReleaseListeners;
+      TestResult := nil;
+    end;
+  finally
+    FRunning := false;
+    EnableUI(true);
+  end;
+end;
+
+procedure TGUITestRunner.HoldOptions(const AValue: boolean);
+{ Prevents selected options from being changed while executing tests
+  but preserves enabled image. }
+begin
+  FHoldOptions := AValue;
+end;
+
+procedure TGUITestRunner.ClearResult;
+begin
+  if FTestResult <> nil then
+  begin
+    FTestResult := nil;
+    ClearFailureMessage;
+  end;
+end;
+
+procedure TGUITestRunner.ClearFailureMessage;
+begin
+
+end;
+
 procedure TGUITestRunner.InitTree;
 begin
   FTests.Clear;
@@ -782,8 +936,8 @@ begin
     Anchors := [anLeft,anRight,anTop,anBottom];
     FontDesc := '#Label1';
     Hint := '';
-    TabOrder := 8;
     ShowImages := True;
+    TabOrder := 8;
     ImageList := FImageList;
     StateImageList := FStateImageList;
     OnStateImageClicked  := @ProcessClickOnStateIcon;
@@ -827,6 +981,43 @@ begin
     SetPosition(396, 132, 120, 20);
   end;
 
+
+  btnRunAll := TfpgButton.Create(self);
+  with btnRunAll do
+  begin
+    Name := 'btnRunAll';
+    SetPosition(4, 356, 98, 24);
+    Text := 'Run Tests';
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageName := '';
+    TabOrder := 10;
+  end;
+
+  btnSelectAll := TfpgButton.Create(self);
+  with btnSelectAll do
+  begin
+    Name := 'btnSelectAll';
+    SetPosition(108, 356, 80, 24);
+    Text := 'Select All';
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageName := '';
+    TabOrder := 11;
+  end;
+
+  btnDeselectAll := TfpgButton.Create(self);
+  with btnDeselectAll do
+  begin
+    Name := 'btnDeselectAll';
+    SetPosition(194, 356, 80, 24);
+    Text := 'Deselect All';
+    FontDesc := '#Label1';
+    Hint := '';
+    ImageName := '';
+    TabOrder := 12;
+  end;
+
   {@VFD_BODY_END: GUITestRunner}
   {%endregion}
 
@@ -835,13 +1026,15 @@ begin
   InitCommands;
 end;
 
-{ TExitCommand }
+{ TBaseCommand }
 
-constructor TExitCommand.Create(AForm: TGUITestRunner);
+constructor TBaseCommand.Create(AForm: TGUITestRunner);
 begin
   inherited Create;
   FForm := AForm;
 end;
+
+{ TExitCommand }
 
 procedure TExitCommand.Execute;
 begin
@@ -850,19 +1043,45 @@ end;
 
 { TSelectAllCommand }
 
-constructor TSelectAllCommand.Create(AForm: TGUITestRunner);
-begin
-  inherited Create;
-  FForm := AForm;
-end;
-
 procedure TSelectAllCommand.Execute;
 begin
   with FForm do
   begin
-    ApplyToTests(TestTree.RootNode, @EnableTest);
+    ApplyToTests(TestTree.RootNode.FirstSubNode, @EnableTest);
     UpdateStatus(True);
   end;
 end;
+
+{ TRunExecuteCommand }
+
+procedure TRunExecuteCommand.Execute;
+begin
+  with FForm do
+  begin
+    if Suite = nil then
+      Exit;
+
+    HoldOptions(True);
+    try
+      SetUp;
+      RunTheTest(Suite);
+    finally
+      HoldOptions(False);
+    end;
+  end;
+end;
+
+{ TDeselectAllCommand }
+
+procedure TDeselectAllCommand.Execute;
+begin
+  with FForm do
+  begin
+    ApplyToTests(TestTree.RootNode.FirstSubNode, @DisableTest);
+    UpdateStatus(True);
+  end;
+end;
+
+
 
 end.
