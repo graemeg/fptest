@@ -7,7 +7,7 @@ unit fptest_fpgui;
 interface
 
 uses
-  GUITestRunner;
+  GUITestRunner, formimages;
 
 implementation
 

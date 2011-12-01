@@ -6,7 +6,7 @@
       <Version Value="11"/>
       <SearchPaths>
         <OtherUnitFiles Value="src/fpGUI"/>
-        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>
@@ -15,11 +15,15 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="1">
+    <Files Count="2">
       <Item1>
         <Filename Value="src/fpGUI/GUITestRunner.pas"/>
         <UnitName Value="GUITestRunner"/>
       </Item1>
+      <Item2>
+        <Filename Value="src/fpGUI/formimages.pas"/>
+        <UnitName Value="formimages"/>
+      </Item2>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
