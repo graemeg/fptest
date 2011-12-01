@@ -84,7 +84,7 @@ type
     FRunning:       Boolean;
     FTests:         TInterfaceList;
     FSelectedTests: TInterfaceList;
-    FTotalTime:     Int64;
+    FTotalTime:     Extended;
     FNoChecksStr:   string;
     FUpdateTimer:   TfpgTimer;
     FTimerExpired:  Boolean;
@@ -229,6 +229,7 @@ uses
   fpg_utils,
   dbugintf,
   TestFrameworkProxy,
+  TimeManager,
   formimages;
 
 const
