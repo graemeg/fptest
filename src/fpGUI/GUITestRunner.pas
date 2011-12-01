@@ -397,8 +397,7 @@ begin
   SendDebug('*** Testing Starts ****');
   FTotalTime := 0;
   UpdateStatus(True);
-//  TProgressBarCrack(ScoreBar).Color := clOK;
-//  TProgressBarCrack(ScoreBar).RecreateWnd;
+  SetProgressBarColor(clOK);
   ClearStatusMessage;
 end;
 
