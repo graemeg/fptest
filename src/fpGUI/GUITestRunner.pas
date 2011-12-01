@@ -949,19 +949,15 @@ end;
 procedure TGUITestRunner.RefreshTestCount;
 begin
   TotalTestsCount := (FSuite as ITestProxy).CountEnabledTestCases;
-  // TODO: graeme
-{
   if Assigned(Suite) then
-    ResultsView.Items[0].SubItems[0] := IntToStr(TotalTestsCount)
+    ResultsView.Cells[0, 1] := IntToStr(TotalTestsCount)
   else
-    ResultsView.Items[0].SubItems[0] := '';
-}
+    ResultsView.Cells[0, 1] := '';
 end;
 
 procedure TGUITestRunner.AutoSaveConfiguration;
 begin
-  // TODO: graeme
-//  if AutoSaveAction.Checked then
+  if miAutoSaveConfiguration.Checked then
     SaveConfiguration;
 end;
 
