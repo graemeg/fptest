@@ -59,11 +59,11 @@ type
     mnuHelp: TfpgPopupMenu;
     Bevel5: TfpgBevel;
     TestTree: TfpgTreeView;
-    Gauge1: TfpgGauge;
-    Gauge2: TfpgGauge;
+    ProgressBar: TfpgGauge;
+    ScoreBar: TfpgGauge;
     Label2: TfpgLabel;
     Label3: TfpgLabel;
-    Grid1: TfpgStringGrid;
+    ResultsView: TfpgStringGrid;
     Splitter2: TfpgSplitter;
     Memo1: TfpgMemo;
     {@VFD_HEAD_END: GUITestRunner}
@@ -480,13 +480,13 @@ end;
 
 procedure TGUITestRunner.FormShow(Sender: TObject);
 begin
-  Grid1.Cells[0, 0] := 'Tests';
-  Grid1.Cells[1, 0] := 'Run';
-  Grid1.Cells[2, 0] := 'Failures';
-  Grid1.Cells[3, 0] := 'Errors';
-  Grid1.Cells[4, 0] := 'Warnings';
-  Grid1.Cells[5, 0] := 'Test Time';
-  Grid1.Cells[6, 0] := 'Total Time';
+  ResultsView.Cells[0, 0] := 'Tests';
+  ResultsView.Cells[1, 0] := 'Run';
+  ResultsView.Cells[2, 0] := 'Failures';
+  ResultsView.Cells[3, 0] := 'Errors';
+  ResultsView.Cells[4, 0] := 'Warnings';
+  ResultsView.Cells[5, 0] := 'Test Time';
+  ResultsView.Cells[6, 0] := 'Total Time';
 
   TestTree.FullExpand;
   SetupGUINodes;
@@ -517,8 +517,8 @@ procedure TGUITestRunner.DrawGridCell(Sender: TObject; const ARow, ACol: Integer
 begin
   if ARow = 0 then
   begin
-    Grid1.Canvas.SetColor(clDarkGray);
-    Grid1.Canvas.FillRectangle(ARect);
+    ResultsView.Canvas.SetColor(clDarkGray);
+    ResultsView.Canvas.FillRectangle(ARect);
   end;
 end;
 
@@ -1110,6 +1110,8 @@ begin
   WindowTitle := 'GUI Test Runner';
   Hint := '';
   ShowHint := True;
+  MinWidth := 540;
+  MinHeight := 450;
   OnCreate := @FormCreate;
   OnDestroy := @FormDestroy;
   OnShow := @FormShow;
@@ -1511,20 +1513,20 @@ begin
     OnKeyPress  := @ProcessKeyPressOnTreeview;
   end;
 
-  Gauge1 := TfpgGauge.Create(Bevel5);
-  with Gauge1 do
+  ProgressBar := TfpgGauge.Create(Bevel5);
+  with ProgressBar do
   begin
-    Name := 'Gauge1';
+    Name := 'ProgressBar';
     SetPosition(96, 5, 424, 15);
     Color := TfpgColor($C4C4C4);
     Hint := '';
     Progress := 90;
   end;
 
-  Gauge2 := TfpgGauge.Create(Bevel5);
-  with Gauge2 do
+  ScoreBar := TfpgGauge.Create(Bevel5);
+  with ScoreBar do
   begin
-    Name := 'Gauge2';
+    Name := 'ScoreBar';
     SetPosition(96, 24, 424, 15);
     Color := TfpgColor($C4C4C4);
     Hint := '';
@@ -1553,10 +1555,10 @@ begin
     Text := 'Score:';
   end;
 
-  Grid1 := TfpgStringGrid.Create(Bevel5);
-  with Grid1 do
+  ResultsView := TfpgStringGrid.Create(Bevel5);
+  with ResultsView do
   begin
-    Name := 'Grid1';
+    Name := 'ResultsView';
     SetPosition(6, 44, 514, 37);
     BackgroundColor := TfpgColor($80000002);
     AddColumn('Tests', 70, taCenter);
