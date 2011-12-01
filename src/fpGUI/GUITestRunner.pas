@@ -1080,7 +1080,7 @@ end;
 
 procedure TGUITestRunner.ClearStatusMessage;
 begin
-//  ErrorMessageRTF.Lines.Clear;
+  Memo1.Clear;
 end;
 
 procedure TGUITestRunner.RunTheTest(ATest: ITestProxy);
@@ -1143,6 +1143,7 @@ end;
 
 procedure TGUITestRunner.ClearFailureMessage;
 begin
+  Memo1.Clear;
 end;
 
 procedure TGUITestRunner.ResetProgress;
