@@ -169,6 +169,8 @@ type
     procedure ClearFailureMessage;
     procedure ResetProgress;
     procedure SetProgressBarColor(const AColor: TfpgColor);
+    procedure AutoSaveActionExecute(Sender: TObject);
+    procedure EnableWarningsActionExecute(Sender: TObject);
   protected
     procedure InitTree; virtual;
   public
@@ -1548,7 +1550,7 @@ begin
   begin
     Name := 'mnuOptions';
     SetPosition(400, 132, 120, 20);
-    miAutoSaveConfiguration := AddMenuItem('Auto Save Configuration', '', nil);
+    miAutoSaveConfiguration := AddMenuItem('Auto Save Configuration', '', @AutoSaveActionExecute);
     miErrorBoxVisible := AddMenuItem('Error Box Visible', '', nil);
     miAutoChangeFocus := AddMenuItem('Auto Change Focus', '', nil);
     miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', nil);
@@ -1560,7 +1562,7 @@ begin
     miShowExitedEarly := AddMenuItem('Show passing Summary Level Tests which exited early', '', nil);
     AddMenuItem('-', '', nil);
     miFailTestIfNoChecks := AddMenuItem('Fail TestCase if no checks performed', '', nil);
-    miEnableWarnings := AddMenuItem('Enable Warnings', '', nil);
+    miEnableWarnings := AddMenuItem('Enable Warnings', '', @EnableWarningsActionExecute);
     miInhibitSummaryLevelChecks := AddMenuItem('Inhibit Summary Level Checking', '', nil);
   end;
 
@@ -1706,6 +1708,21 @@ begin
   MainMenu.AddMenuItem('Help', nil).SubMenu := mnuHelp;
 
   InitCommands;
+end;
+
+procedure TGUITestRunner.AutoSaveActionExecute(Sender: TObject);
+begin
+  with miAutoSaveConfiguration do
+    Checked := not Checked;
+  AutoSaveConfiguration;
+end;
+
+procedure TGUITestRunner.EnableWarningsActionExecute(Sender: TObject);
+begin
+  if FHoldOptions then
+    Exit;
+  with miEnableWarnings do
+    Checked := not Checked;
 end;
 
 { TBaseCommand }
