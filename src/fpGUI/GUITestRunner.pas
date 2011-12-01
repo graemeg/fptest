@@ -368,11 +368,10 @@ begin
   // TODO: graemeg
   //ListItem := AddFailureItem(Failure);
   //ListItem.ImageIndex := imgFAILED;
-  //if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
-  //begin
-  //  TProgressBarCrack(ScoreBar).Color := clFAILURE;
-  //  TProgressBarCrack(ScoreBar).RecreateWnd;
-  //end;
+  if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
+  begin
+    SetProgressBarColor(clFAILURE);
+  end;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
   UpdateStatus(True);
 end;
