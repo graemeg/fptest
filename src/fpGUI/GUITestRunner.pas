@@ -897,7 +897,7 @@ end;
 
 procedure TGUITestRunner.UpdateNodeImage(ANode: TfpgTreeNode);
 var
-  Test :ITestProxy;
+  Test: ITestProxy;
 begin
   Test := NodeToTest(ANode);
   if not Test.Enabled then
@@ -1069,7 +1069,7 @@ begin
   while n <> nil do
   begin
     if imgIndex > n.ImageIndex then
-       n.ImageIndex    := imgIndex;
+       n.ImageIndex := imgIndex;
     if imgIndex = imgRUNNING then
       n := nil
     else
