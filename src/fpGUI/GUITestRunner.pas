@@ -749,40 +749,39 @@ var
   i: Integer;
   Node: TfpgTreeNode;
 begin
-  // TODO: graemeg
-(*
-  FailureListView.Items.Clear;
+//  FailureListView.Items.Clear;
   ResetProgress;
-  Update;
+  fpgApplication.ProcessMessages;
 
-  with ResultsView.Items[0] do
+  with ResultsView do
   begin
-    SubItems[0] := '';    //Test Count
-    SubItems[1] := '';    //Tests Run
-    SubItems[2] := '';    //Failures
-    SubItems[3] := '';    //Errors
-    SubItems[4] := '';    //Warnings
-    SubItems[5] := '';    //Test's Time
-    SubItems[6] := '';    //Total Test Time
+    Cells[0, 1] := '';    //Test Count
+    Cells[1, 1] := '';    //Tests Run
+    Cells[2, 1] := '';    //Failures
+    Cells[3, 1] := '';    //Errors
+    Cells[4, 1] := '';    //Warnings
+    Cells[5, 1] := '';    //Test's Time
+    Cells[6, 1] := '';    //Total Test Time
 
     if Suite <> nil then
     begin
-      TotalTestsCount := Suite.countEnabledTestCases;
-      SubItems[0] := IntToStr(TotalTestsCount);
-      ProgressBar.Max := TotalTestsCount;
+      TotalTestsCount := Suite.CountEnabledTestCases;
+      Cells[0, 1] := IntToStr(TotalTestsCount);
+      ProgressBar.MaxValue := TotalTestsCount;
     end
     else
-      ProgressBar.Max:= 10000;
+      ProgressBar.MaxValue := 10000;
 
-    ScoreBar.Max := ProgressBar.Max;
+    ScoreBar.MaxValue := ProgressBar.MaxValue;
   end;
-*)
+
   Node := TestTree.RootNode.FirstSubNode;
   while Node <> nil do
   begin
     Node.ImageIndex := imgNone;
     Node := TestTree.NextNode(Node);
   end;
+
   UpdateTestTreeState;
 end;
 
