@@ -167,6 +167,7 @@ type
     procedure HoldOptions(const AValue: boolean);
     procedure ClearResult;
     procedure ClearFailureMessage;
+    procedure ResetProgress;
   protected
     procedure InitTree; virtual;
   public
@@ -1131,6 +1132,15 @@ end;
 
 procedure TGUITestRunner.ClearFailureMessage;
 begin
+end;
+
+procedure TGUITestRunner.ResetProgress;
+begin
+  SetProgressBarColor(TfpgColor($c4c4c4));
+  ScoreBar.Progress := 0;
+  ProgressBar.Progress := 0;
+//  LbProgress.Caption := '';
+end;
 
 end;
 
