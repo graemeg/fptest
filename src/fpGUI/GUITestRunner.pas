@@ -354,8 +354,7 @@ begin
   // TODO: graemeg
   //ListItem := AddFailureItem(Failure);
   //ListItem.ImageIndex := imgERROR;
-  //TProgressBarCrack(ScoreBar).Color := clERROR;
-  //TProgressBarCrack(ScoreBar).RecreateWnd;
+  SetProgressBarColor(clERROR);
   SetTreeNodeImage(TestToNode(Error.FailedTest), imgERROR);
   UpdateStatus(True);
 end;
