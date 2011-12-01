@@ -379,8 +379,19 @@ begin
 end;
 
 procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
+//var
+//  ListItem: TListItem;
 begin
   SendDebug('warning: ' + AWarning.FailedTest.Name);
+  if miEnableWarnings.Checked then
+  begin
+//    ListItem := AddFailureItem(AWarning);
+//    ListItem.ImageIndex := imgWARNING;
+    SetTreeNodeImage(TestToNode(AWarning.failedTest), imgWARNING);
+    UpdateStatus(True);
+  end
+  else
+    AddSuccess(AWarning.FailedTest);
 end;
 
 procedure TGUITestRunner.TestingStarts;
