@@ -833,13 +833,19 @@ begin
   {$IFDEF DEBUG}
   Assert(ANode <> nil);
   {$ENDIF}
-   SetNodeState(ANode, not NodeToTest(ANode).Enabled);
+  TestTree.BeginUpdate;
+  try
+    SetNodeState(ANode, not NodeToTest(ANode).Enabled);
+  finally
+    TestTree.EndUpdate;
+  end;
 end;
 
 procedure TGUITestRunner.UpdateTestTreeState;
 var
   Node: TfpgTreeNode;
 begin
+  TestTree.BeginUpdate;
   if TestTree.RootNode.Count > 0 then
   begin
     try
@@ -853,6 +859,7 @@ begin
       TestTree.Invalidate;
     end;
   end;
+  TestTree.EndUpdate;
 end;
 
 procedure TGUITestRunner.SetNodeState(ANode: TfpgTreeNode; AEnabled: boolean);
