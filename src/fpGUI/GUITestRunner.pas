@@ -1075,6 +1075,7 @@ begin
     else
       n := n.Parent;
   end;
+  TestTree.Invalidate;
 end;
 
 procedure TGUITestRunner.ClearStatusMessage;
