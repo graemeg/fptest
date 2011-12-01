@@ -855,7 +855,7 @@ begin
       while Node <> nil do
       begin
         UpdateNodeState(Node);
-        Node := TestTree.NextNode(Node);
+        Node := Node.Next;
       end
     finally
       TestTree.Invalidate;
