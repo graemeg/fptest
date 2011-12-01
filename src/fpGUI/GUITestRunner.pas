@@ -2,6 +2,11 @@ unit GUITestRunner;
 
 {$mode objfpc}{$H+}
 
+{.$define DEBUG}
+{$IFDEF DEBUG}
+  {$ASSERTIONS ON}
+{$ENDIF}
+
 interface
 
 uses
@@ -750,7 +755,9 @@ end;
 
 procedure TGUITestRunner.SwitchNodeState(ANode: TfpgTreeNode);
 begin
-   Assert(ANode <> nil);
+  {$IFDEF DEBUG}
+  Assert(ANode <> nil);
+  {$ENDIF}
    SetNodeState(ANode, not NodeToTest(ANode).Enabled);
 end;
 
@@ -835,9 +842,12 @@ var
   Test: ITestProxy;
   n: TfpgTreeNode;
 begin
+  {$IFDEF DEBUG}
   Assert(Assigned(ANode));
   Test := NodeToTest(ANode);
   Assert(Assigned(Test));
+  SendDebug(ANode.Text);
+  {$ENDIF}
 
   UpdateNodeImage(ANode);
 
