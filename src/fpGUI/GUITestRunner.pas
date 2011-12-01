@@ -643,8 +643,73 @@ begin
 end;
 
 procedure TGUITestRunner.UpdateStatus(const FullUpdate: Boolean);
+var
+  i: Integer;
+  TestNumber: Integer;
 begin
+//  if ResultsView.Items.Count = 0 then
+//    Exit;
 
+  if fullUpdate then
+    if Assigned(Suite) then
+      ResultsView.Cells[0, 1] := IntToStr(TotalTestsCount)
+    else
+      ResultsView.Cells[0, 1] := '';
+
+  if TestResult <> nil then
+  begin
+    // Save the test number as we use it a lot
+    TestNumber := TestResult.RunCount;
+    FTotalTime := TestResult.TotalTime;
+    if fullUpdate or FTimerExpired or ((TestNumber and 15) = 0) or FTestFailed then
+    begin
+      with ResultsView do
+      begin
+        Cells[1, 1] := IntToStr(TestNumber);
+        Cells[2, 1] := IntToStr(TestResult.FailureCount);
+        Cells[3, 1] := IntToStr(TestResult.ErrorCount);
+        Cells[4, 1] := IntToStr(TestResult.WarningCount + TestResult.Overrides);
+        Cells[5, 1] := ElapsedDHMS(TestResult.TotalTime);
+        Cells[6, 1] := ElapsedDHMS(FTotalTime);
+      end;
+      with TestResult do
+      begin
+        ScoreBar.Progress  := TestNumber - (FailureCount + ErrorCount);
+        ProgressBar.Progress := TestNumber;
+
+        // There is a possibility for zero tests
+        //if (TestNumber = 0) and (TotalTestsCount = 0) then
+        //  LbProgress.Caption := '100%'
+        //else
+        //  LbProgress.Caption := IntToStr((100 * ScoreBar.Position) div ScoreBar.Max) + '%';
+      end;
+      if (TestNumber < TotalTestsCount) then
+      begin
+        FTimerExpired := False;
+//        FUpdateTimer.Enabled := True;
+      end;
+    end;
+  end
+  else
+  begin  {TestResult = nil}
+    with ResultsView do
+    begin
+      if (Cells[0, 1] = '0') or (Cells[0, 1] = '') then
+      begin
+        for i := 1 to 6 do
+          Cells[i, 1] := ''
+      end
+      else
+      begin
+        Cells[5, 1] := ElapsedDHMS(SelectedTest.ElapsedTestTime);
+        Cells[6, 1] := ElapsedDHMS(FTotalTime);
+      end;
+    end;
+
+    ResetProgress;
+  end;
+
+  fpgApplication.ProcessMessages;
 end;
 
 procedure TGUITestRunner.FillTestTree(ARootNode: TfpgTreeNode; ATest: ITestProxy);
