@@ -827,6 +827,8 @@ begin
     ATest := NodeToTest(ANode);
     FSelectedTests.Add(ATest as ITestProxy);
     ANode := ANode.Parent;
+    if ANode = TestTree.RootNode then
+      ANode := nil;
   end;
 end;
 
