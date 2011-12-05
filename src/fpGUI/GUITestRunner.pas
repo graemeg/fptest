@@ -1335,7 +1335,7 @@ begin
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Run selected tests';
     ImageMargin := 0;
     ImageName := 'usr.starttest';
     TabOrder := 8;
@@ -1350,7 +1350,7 @@ begin
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Run the current test';
     ImageMargin := 0;
     ImageName := 'usr.startselectedtest';
     TabOrder := 9;
@@ -1656,10 +1656,11 @@ begin
   with ResultsView do
   begin
     Name := 'ResultsView';
-    SetPosition(6, 44, 514, 37);
+    SetPosition(7, 44, 512, 36);
     BackgroundColor := TfpgColor($80000002);
-    AddColumn('Tests', 70, taCenter);
-    AddColumn('Run', 60, taCenter);
+    BorderStyle := ebsNone;
+    AddColumn('Tests', 65, taCenter);
+    AddColumn('Run', 65, taCenter);
     AddColumn('Failures', 60, taCenter);
     AddColumn('Errors', 60, taCenter);
     AddColumn('Warnings', 60, taCenter);
