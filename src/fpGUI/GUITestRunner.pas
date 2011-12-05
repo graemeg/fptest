@@ -437,7 +437,9 @@ end;
 
 function TGUITestRunner.ShouldRunTest(const ATest: ITestProxy): Boolean;
 begin
-
+  Result := not ATest.Excluded;
+  if Result and (FSelectedTests <> nil) then
+    Result := FSelectedTests.IndexOf(ATest as ITestProxy) >= 0;
 end;
 
 procedure TGUITestRunner.StartSuite(Suite: ITestProxy);
