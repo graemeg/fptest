@@ -553,7 +553,7 @@ begin
     InitTree;
   end
   else
-    EnableUI(False)
+    EnableUI(False);
 end;
 
 procedure TGUITestRunner.set_TestResult(const AValue: TTestResult);
