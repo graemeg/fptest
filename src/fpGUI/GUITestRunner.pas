@@ -1779,15 +1779,14 @@ begin
   begin
     SetUp;
     ListSelectedTests;
-//    ProgressBar.Max := 1;
-//    ScoreBar.Max    := 1;
+    ProgressBar.MaxValue := 1;
+    ScoreBar.MaxValue := 1;
     HoldOptions(True);
     try
       RunTheTest(Suite);
     finally
       HoldOptions(False);
-      FSelectedTests.Free;
-      FSelectedTests := nil;
+      FreeAndNil(FSelectedTests);
     end;
   end;
 end;
