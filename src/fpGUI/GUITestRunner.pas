@@ -39,7 +39,7 @@ type
     Bevel2: TfpgBevel;
     btnRunSelected: TfpgButton;
     btnRunCurrent: TfpgButton;
-    Button8: TfpgButton;
+    btnStopTests: TfpgButton;
     Bevel3: TfpgBevel;
     Button9: TfpgButton;
     Button10: TfpgButton;
@@ -197,18 +197,15 @@ type
     procedure   Execute; override;
   end;
 
-
   TSelectAllCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
-
   TRunSelectedCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
-
 
   TRunCurrentCommand = class(TBaseCommand)
   public
@@ -219,6 +216,12 @@ type
   public
     procedure Execute; override;
   end;
+
+  TStopTestsCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
 
 procedure RunRegisteredTests;
 
@@ -602,6 +605,7 @@ begin
 
   btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
   btnRunCurrent.SetCommand(TRunCurrentCommand.Create(self));
+  btnStopTests.SetCommand(TStopTestsCommand.Create(self));
   btnSelectAll.SetCommand(TSelectAllCommand.Create(self));
   btnSelectNone.SetCommand(TDeselectAllCommand.Create(self));
 end;
@@ -1359,17 +1363,17 @@ begin
     Focusable := False;
   end;
 
-  Button8 := TfpgButton.Create(Toolbar);
-  with Button8 do
+  btnStopTests := TfpgButton.Create(Toolbar);
+  with btnStopTests do
   begin
-    Name := 'Button8';
+    Name := 'btnStopTests';
     SetPosition(196, 2, 24, 24);
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Stop Testing';
     ImageMargin := 0;
-    ImageName := '';
+    ImageName := 'usr.stoptests';
     TabOrder := 10;
     Focusable := False;
   end;
@@ -1673,10 +1677,10 @@ begin
     Hint := '';
     RowCount := 2;
     RowSelect := False;
+    ScrollbarStyle := ssNone;
     ShowHeader := False;
     TabOrder := 5;
     Focusable := False;
-    ScrollBarStyle := ssNone;
     OnDrawCell  := @DrawGridCell;
   end;
 
@@ -1803,6 +1807,17 @@ begin
     UpdateStatus(True);
   end;
 end;
+
+{ TStopTestsCommand }
+
+procedure TStopTestsCommand.Execute;
+begin
+  with FForm do
+  begin
+    Suite.HaltTesting;
+  end;
+end;
+
 
 
 
