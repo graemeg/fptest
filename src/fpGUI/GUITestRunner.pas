@@ -492,7 +492,7 @@ begin
     MakeNodeVisible(Node);
     TestTree.Invalidate;
 //  end;
-//  ErrorMessageRTF.Lines.Clear;
+  ClearFailureMessage;
   UpdateStatus(False);
 end;
 
@@ -557,7 +557,7 @@ begin
     FStateImageList[i].Image := nil;  // clear the references
   FStateImageList.Free;
 
-//  ClearResult;
+  ClearResult;
   AutoSaveConfiguration;
   FreeAndNil(FTests); // Note this is an object full of Interface refs
   Suite := nil;       // Take down the test proxys
@@ -850,7 +850,7 @@ var
   i: Integer;
   Node: TfpgTreeNode;
 begin
-//  FailureListView.Items.Clear;
+  ClearFailureGrid;
   ResetProgress;
   fpgApplication.ProcessMessages;
 
