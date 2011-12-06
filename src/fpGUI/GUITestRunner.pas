@@ -347,8 +347,8 @@ var
   LOverridesGUI: Boolean;
   LHasRunTimePropsSet: Boolean;
 begin
-//  SendDebug('success: ' + ATest.Name);
   {$IFDEF DEBUG}
+  SendDebug('success: ' + ATest.Name);
   Assert(Assigned(ATest));
   {$ENDIF}
   if not IsTestMethod(ATest) then
@@ -409,7 +409,9 @@ procedure TGUITestRunner.AddError(AError: TTestFailure);
 var
   newrow: integer;
 begin
-//  SendDebug('error: ' + Error.FailedTest.Name);
+  {$IFDEF DEBUG}
+  SendDebug('error: ' + Error.FailedTest.Name);
+  {$ENDIF}
   FTestFailed := True;
 
   newrow := AddFailureItem(AError);
@@ -424,7 +426,9 @@ procedure TGUITestRunner.AddFailure(AFailure: TTestFailure);
 var
   newrow: integer;
 begin
-//  SendDebug('failure: ' + Failure.FailedTest.Name);
+  {$IFDEF DEBUG}
+  SendDebug('failure: ' + Failure.FailedTest.Name);
+  {$ENDIF}
   FTestFailed := True;
 
   newrow := AddFailureItem(AFailure);
@@ -442,7 +446,9 @@ procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
 var
   newrow: integer;
 begin
-//  SendDebug('warning: ' + AWarning.FailedTest.Name);
+  {$IFDEF DEBUG}
+  SendDebug('warning: ' + AWarning.FailedTest.Name);
+  {$ENDIF}
   if miEnableWarnings.Checked then
   begin
     newrow := AddFailureItem(AWarning);
@@ -457,7 +463,9 @@ end;
 
 procedure TGUITestRunner.TestingStarts;
 begin
+  {$IFDEF DEBUG}
   SendDebug('*** Testing Starts ****');
+  {$ENDIF}
   FTotalTime := 0;
   UpdateStatus(True);
   SetProgressBarColor(clOK);
@@ -468,10 +476,14 @@ procedure TGUITestRunner.StartTest(Test: ITestProxy);
 var
   Node: TfpgTreeNode;
 begin
+  {$IFDEF DEBUG}
   assert(assigned(TestResult));
   assert(assigned(Test));
+  {$ENDIF}
   Node := TestToNode(Test);
+  {$IFDEF DEBUG}
   assert(assigned(Node));
+  {$ENDIF}
   SetTreeNodeImage(Node, imgRUNNING);
   // TODO: graeme
 //  if ShowTestedNodeAction.Checked then
@@ -563,8 +575,6 @@ begin
 
   TestTree.FullExpand;
   SetupGUINodes;
-  // TODO: graeme
-//  ResultsView.Columns[8].Width := ResultsView.Columns[8].Width;
   TestTree.SetFocus;
 end;
 
@@ -643,15 +653,13 @@ end;
 function TGUITestRunner.IniFileName: TfpgString;
 begin
   result := fpgGetAppConfigDir(False) + TEST_INI_FILE;
+  {$IFDEF DEBUG}
   SendDebug('IniFileName = ' + Result);
+  {$ENDIF}
 end;
 
 procedure TGUITestRunner.InitCommands;
 begin
-  // instantiate the Command classes
-//  btnAdd.SetCommand(TAddCommand.Create(memName1));
-//  btnQuit.SetCommand(TExitCommand.Create);
-
   // The menu item File|Quit shares the command of btnQuit
   mnuFile.MenuItemByName('Quit').SetCommand(TExitCommand.Create(self));
 
@@ -747,9 +755,6 @@ var
   i: Integer;
   TestNumber: Integer;
 begin
-//  if ResultsView.Items.Count = 0 then
-//    Exit;
-
   if fullUpdate then
     if Assigned(Suite) then
       ResultsView.Cells[0, 1] := IntToStr(TotalTestsCount)
@@ -966,7 +971,9 @@ var
   MostSeniorChanged: TfpgTreeNode;
   n: TfpgTreeNode;
 begin
-   Assert(ANode <> nil);
+  {$IFDEF DEBUG}
+  Assert(ANode <> nil);
+  {$ENDIF}
 
    if (NodeToTest(ANode).Enabled <> AEnabled) then
      NodeToTest(ANode).Enabled := AEnabled;
