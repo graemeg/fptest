@@ -33,7 +33,7 @@ type
     btnSelectAll: TfpgButton;
     btnSelectNone: TfpgButton;
     Bevel1: TfpgBevel;
-    Button3: TfpgButton;
+    btnSelectedFailed: TfpgButton;
     btnDeselectCurrent: TfpgButton;
     btnSelectCurrent: TfpgButton;
     Bevel2: TfpgBevel;
@@ -213,6 +213,11 @@ type
   end;
 
   TSelectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+  TSelectFailedTestsCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
@@ -650,6 +655,7 @@ begin
   SelectAllCommand := TExitCommand.Create(self);
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
 
+  btnSelectedFailed.SetCommand(TSelectFailedTestsCommand.Create(self));
   btnDeselectCurrent.SetCommand(TDeselectCurrentCommand.Create(self));
   btnSelectCurrent.SetCommand(TSelectCurrentCommand.Create(self));
   btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
@@ -1450,17 +1456,17 @@ begin
     Style := bsLowered;
   end;
 
-  Button3 := TfpgButton.Create(Toolbar);
-  with Button3 do
+  btnSelectedFailed := TfpgButton.Create(Toolbar);
+  with btnSelectedFailed do
   begin
-    Name := 'Button3';
+    Name := 'btnSelectedFailed';
     SetPosition(64, 2, 24, 24);
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Select all failed tests';
     ImageMargin := 0;
-    ImageName := '';
+    ImageName := 'usr.selectfailedtests';
     TabOrder := 4;
     Focusable := False;
   end;
@@ -2021,6 +2027,30 @@ begin
   with FForm do
   begin
     Suite.HaltTesting;
+  end;
+end;
+
+{ TSelectFailedTestsCommand }
+
+procedure TSelectFailedTestsCommand.Execute;
+var
+  i: Integer;
+  ANode: TfpgTreeNode;
+begin
+  with FForm do
+  begin
+    { deselect all }
+    ApplyToTests(TestTree.RootNode.FirstSubNode, @DisableTest);
+
+    { select failed }
+(*
+    for i := 0 to FailureListView.Items.Count - 1 do
+    begin
+      ANode := TTreeNode(FailureListView.Items[i].Data);
+      SetNodeState(ANode, true);
+    end;
+    UpdateStatus(True);
+*)
   end;
 end;
 
