@@ -498,7 +498,7 @@ end;
 
 procedure TGUITestRunner.EndTest(Test: ITestProxy);
 begin
-
+  UpdateStatus(False);
 end;
 
 procedure TGUITestRunner.TestingEnds(TestResult: TTestResult);
@@ -515,12 +515,12 @@ end;
 
 procedure TGUITestRunner.StartSuite(Suite: ITestProxy);
 begin
-
+  // nothing needed to be done
 end;
 
 procedure TGUITestRunner.EndSuite(Suite: ITestProxy);
 begin
-
+  // nothing needed to be done
 end;
 
 { A single event handler that handles all Command based events. }
