@@ -112,8 +112,8 @@ type
 
     { implement the ITestListener interface }
     procedure AddSuccess(ATest: ITestProxy);
-    procedure AddError(Error: TTestFailure);
-    procedure AddFailure(Failure: TTestFailure);
+    procedure AddError(AError: TTestFailure);
+    procedure AddFailure(AFailure: TTestFailure);
     procedure AddWarning(AWarning: TTestFailure);
     procedure TestingStarts;
     procedure StartTest(Test: ITestProxy);
@@ -393,46 +393,49 @@ begin
   end;
 end;
 
-procedure TGUITestRunner.AddError(Error: TTestFailure);
-//var
-//  ListItem: TListItem;
+procedure TGUITestRunner.AddError(AError: TTestFailure);
+var
+  newrow: integer;
 begin
-  SendDebug('error: ' + Error.FailedTest.Name);
+//  SendDebug('error: ' + Error.FailedTest.Name);
   FTestFailed := True;
-  // TODO: graemeg
-  //ListItem := AddFailureItem(Failure);
-  //ListItem.ImageIndex := imgERROR;
+
+  newrow := AddFailureItem(AError);
+  TFailureDataObject(FailureGrid.Objects[0, newrow]).ImageIndex := imgERROR;
+
   SetProgressBarColor(clERROR);
-  SetTreeNodeImage(TestToNode(Error.FailedTest), imgERROR);
+  SetTreeNodeImage(TestToNode(AError.FailedTest), imgERROR);
   UpdateStatus(True);
 end;
 
-procedure TGUITestRunner.AddFailure(Failure: TTestFailure);
-//var
-//  ListItem: TListItem;
+procedure TGUITestRunner.AddFailure(AFailure: TTestFailure);
+var
+  newrow: integer;
 begin
-  SendDebug('failure: ' + Failure.FailedTest.Name);
+//  SendDebug('failure: ' + Failure.FailedTest.Name);
   FTestFailed := True;
-  // TODO: graemeg
-  //ListItem := AddFailureItem(Failure);
-  //ListItem.ImageIndex := imgFAILED;
-  if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
-  begin
+
+  newrow := AddFailureItem(AFailure);
+  TFailureDataObject(FailureGrid.Objects[0, newrow]).ImageIndex := imgFAILED;
+
+  // Override higher priority error colour if needed
+  if TestResult.ErrorCount = 0 then
     SetProgressBarColor(clFAILURE);
-  end;
-  SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
+
+  SetTreeNodeImage(TestToNode(AFailure.FailedTest), imgFAILED);
   UpdateStatus(True);
 end;
 
 procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
-//var
-//  ListItem: TListItem;
+var
+  newrow: integer;
 begin
-  SendDebug('warning: ' + AWarning.FailedTest.Name);
+//  SendDebug('warning: ' + AWarning.FailedTest.Name);
   if miEnableWarnings.Checked then
   begin
-//    ListItem := AddFailureItem(AWarning);
-//    ListItem.ImageIndex := imgWARNING;
+    newrow := AddFailureItem(AWarning);
+    TFailureDataObject(FailureGrid.Objects[0, newrow]).ImageIndex := imgWARNING;
+
     SetTreeNodeImage(TestToNode(AWarning.failedTest), imgWARNING);
     UpdateStatus(True);
   end
