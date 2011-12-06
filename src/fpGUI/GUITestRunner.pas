@@ -336,7 +336,10 @@ end;
 
 procedure TGUITestRunner.Status(const ATest: ITestProxy; AMessage: string);
 begin
+  if meErrorMessage.Lines.Count = 0 then
+    meErrorMessage.Lines.Add(ATest.Name + ':');
 
+  meErrorMessage.Lines.Add(AMessage);
 end;
 
 procedure TGUITestRunner.AddSuccess(ATest: ITestProxy);
