@@ -34,8 +34,8 @@ type
     btnSelectNone: TfpgButton;
     Bevel1: TfpgBevel;
     Button3: TfpgButton;
-    Button4: TfpgButton;
     Button5: TfpgButton;
+    btnDeselectCurrent: TfpgButton;
     Bevel2: TfpgBevel;
     btnRunSelected: TfpgButton;
     btnRunCurrent: TfpgButton;
@@ -198,6 +198,11 @@ type
   end;
 
   TSelectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+  TDeselectCurrentCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
@@ -603,6 +608,7 @@ begin
   SelectAllCommand := TExitCommand.Create(self);
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
 
+  btnDeselectCurrent.SetCommand(TDeselectCurrentCommand.Create(self));
   btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
   btnRunCurrent.SetCommand(TRunCurrentCommand.Create(self));
   btnStopTests.SetCommand(TStopTestsCommand.Create(self));
@@ -1293,17 +1299,17 @@ begin
     Focusable := False;
   end;
 
-  Button4 := TfpgButton.Create(Toolbar);
-  with Button4 do
+  btnDeselectCurrent := TfpgButton.Create(Toolbar);
+  with btnDeselectCurrent do
   begin
-    Name := 'Button4';
+    Name := 'btnDeselectCurrent';
     SetPosition(88, 2, 24, 24);
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Deselect current test';
     ImageMargin := 0;
-    ImageName := '';
+    ImageName := 'usr.state0';
     TabOrder := 5;
     Focusable := False;
   end;
@@ -1815,6 +1821,18 @@ begin
   with FForm do
   begin
     Suite.HaltTesting;
+  end;
+end;
+
+{ TDeselectCurrentCommand }
+
+procedure TDeselectCurrentCommand.Execute;
+begin
+  with FForm do
+  begin
+    ApplyToTests(TestTree.Selection, @DisableTest);
+    SetNodeState(TestTree.Selection, False);
+    UpdateStatus(True);
   end;
 end;
 
