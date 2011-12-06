@@ -1159,7 +1159,7 @@ end;
 
 procedure TGUITestRunner.MakeNodeVisible(Node: TfpgTreeNode);
 begin
-//  TestTree.NextVisualNode()
+  TestTree.Selection := Node;
 end;
 
 procedure TGUITestRunner.SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
