@@ -976,24 +976,24 @@ begin
   Assert(ANode <> nil);
   {$ENDIF}
 
-   if (NodeToTest(ANode).Enabled <> AEnabled) then
-     NodeToTest(ANode).Enabled := AEnabled;
+  if (NodeToTest(ANode).Enabled <> AEnabled) then
+    NodeToTest(ANode).Enabled := AEnabled;
 
-   MostSeniorChanged := ANode;
-   if AEnabled then
-   begin
-     n := ANode;
-     while HasParent(n) do
-     begin
-       n := n.Parent;
-       if not NodeToTest(n).Enabled then
-       begin // changed
-          NodeToTest(n).Enabled := True;
-          MostSeniorChanged := n;
-          UpdateNodeImage(n);
-       end
-     end;
-   end;
+  MostSeniorChanged := ANode;
+  if AEnabled then
+  begin
+    n := ANode;
+    while HasParent(n) do
+    begin
+      n := n.Parent;
+      if not NodeToTest(n).Enabled then
+      begin // changed
+        NodeToTest(n).Enabled := True;
+        MostSeniorChanged := n;
+        UpdateNodeImage(n);
+      end
+    end;
+  end;
 
   UpdateNodeState(MostSeniorChanged);
   TestTree.Invalidate;
