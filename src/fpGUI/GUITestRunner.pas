@@ -66,6 +66,7 @@ type
     ResultsView: TfpgStringGrid;
     Splitter2: TfpgSplitter;
     meErrorMessage: TfpgMemo;
+    FailureGrid: TfpgStringGrid;
     {@VFD_HEAD_END: GUITestRunner}
     miAutoSaveConfiguration: TfpgMenuItem;
     miErrorBoxVisible: TfpgMenuItem;
@@ -1221,7 +1222,7 @@ begin
   {%region 'Auto-generated GUI code' -fold}
   {@VFD_BODY_BEGIN: GUITestRunner}
   Name := 'GUITestRunner';
-  SetPosition(507, 209, 548, 542);
+  SetPosition(507, 209, 548, 581);
   WindowTitle := 'GUI Test Runner';
   Hint := '';
   ShowHint := True;
@@ -1529,7 +1530,7 @@ begin
   with ClientArea do
   begin
     Name := 'ClientArea';
-    SetPosition(4, 74, 541, 464);
+    SetPosition(4, 74, 541, 503);
     Anchors := [anLeft,anRight,anTop,anBottom];
     Hint := '';
     Shape := bsSpacer;
@@ -1539,7 +1540,7 @@ begin
   with bvlTreeAndProgress do
   begin
     Name := 'bvlTreeAndProgress';
-    SetPosition(2, 2, 537, 350);
+    SetPosition(2, 2, 537, 394);
     Align := alTop;
     Hint := '';
     Shape := bsSpacer;
@@ -1605,7 +1606,7 @@ begin
   with Bevel5 do
   begin
     Name := 'Bevel5';
-    SetPosition(2, 265, 533, 83);
+    SetPosition(2, 201, 533, 191);
     Align := alBottom;
     Hint := '';
     Shape := bsSpacer;
@@ -1616,7 +1617,7 @@ begin
   with TestTree do
   begin
     Name := 'TestTree';
-    SetPosition(2, 2, 533, 263);
+    SetPosition(2, 2, 533, 199);
     Align := alClient;
     FontDesc := '#Label1';
     Hint := '';
@@ -1700,7 +1701,7 @@ begin
   with Splitter2 do
   begin
     Name := 'Splitter2';
-    SetPosition(2, 352, 537, 7);
+    SetPosition(2, 396, 537, 7);
     Align := alTop;
     AutoSnap := False;
   end;
@@ -1709,12 +1710,31 @@ begin
   with meErrorMessage do
   begin
     Name := 'meErrorMessage';
-    SetPosition(2, 359, 537, 103);
+    SetPosition(2, 403, 537, 98);
     Align := alClient;
     FontDesc := '#Edit1';
     Hint := '';
     TabOrder := 5;
     MinHeight := 80;
+  end;
+
+  FailureGrid := TfpgStringGrid.Create(Bevel5);
+  with FailureGrid do
+  begin
+    Name := 'FailureGrid';
+    SetPosition(0, 84, 533, 106);
+    Anchors := [anLeft,anRight,anTop];
+    BackgroundColor := TfpgColor($80000002);
+    AddColumn('Test Name', 125, taLeftJustify);
+    AddColumn('Type', 100, taLeftJustify);
+    AddColumn('Message', 288, taLeftJustify);
+    FontDesc := '#Grid';
+    HeaderFontDesc := '#GridHeader';
+    Hint := '';
+    RowCount := 0;
+    RowSelect := True;
+    TabOrder := 6;
+    Options := [go_SmoothScroll];
   end;
 
   {@VFD_BODY_END: GUITestRunner}
