@@ -142,6 +142,7 @@ type
     function  EnableTest(Test: ITestProxy): boolean;
     function  DisableTest(Test: ITestProxy): boolean;
     procedure ApplyToTests(root: TfpgTreeNode; const func: TTestFunc);
+    function  AddFailureItem(Failure: TTestFailure): integer;
     procedure UpdateStatus(const FullUpdate: Boolean);
     procedure FillTestTree(ARootNode: TfpgTreeNode; ATest: ITestProxy); overload;
     procedure FillTestTree(ATest: ITestProxy); overload;
@@ -184,6 +185,17 @@ type
     property TestResult : TTestResult read get_TestResult write set_TestResult;
   end;
 
+  TFailureDataObject = class(TObject)
+  public
+    TreeNode: TfpgTreeNode;
+    ImageIndex: integer;
+    Caption: TfpgString;
+    ThrownExceptionName: string;
+    FilteredErrorMessage: string;
+    LocationInfo: string;
+    FullTestPath: string;
+    ErrorMessage: string;
+  end;
 
   TBaseCommand = class(TInterfacedObject, ICommand)
   protected
@@ -296,6 +308,23 @@ end;
 procedure RunRegisteredTests;
 begin
   RunTest(RegisteredTests);
+end;
+
+function DeControl(const AString: string): string;
+var
+  i: Integer;
+  LChr: Char;
+begin
+  Result := '';
+  if AString = '' then
+    Exit;
+
+  for i:= 1 to Length(AString) do
+  begin
+    LChr := AString[i];
+    if Ord(LChr) > $1F then
+      Result := Result + LChr;
+  end;
 end;
 
 procedure TGUITestRunner.Status(const ATest: ITestProxy; AMessage: string);
@@ -664,6 +693,37 @@ begin
   end;
   TotalTestsCount := (FSuite as ITestProxy).CountEnabledTestCases;
   UpdateTestTreeState;
+end;
+
+function TGUITestRunner.AddFailureItem(Failure: TTestFailure): integer;
+var
+  obj: TFailureDataObject;
+begin
+  {$IFDEF DEBUG}
+  Assert(Assigned(Failure));
+  {$ENDIF}
+  Result := FailureGrid.RowCount;
+  FailureGrid.RowCount := Result + 1;
+
+  obj := TFailureDataObject.Create;
+  obj.ImageIndex := -1;
+  obj.TreeNode := TestToNode(Failure.FailedTest);
+  obj.Caption := Failure.FailedTest.Name;                                // Caption
+  obj.ThrownExceptionName := Failure.ThrownExceptionName;               // exception type
+  obj.FilteredErrorMessage := DeControl(Failure.ThrownExceptionMessage); // filtered errormessage
+  obj.LocationInfo := Failure.LocationInfo;                              // unit name and line number
+  // These are not shown in display
+  obj.FullTestPath := Failure.FailedTest.ParentPath + '.';               // full path to test method
+  obj.ErrorMessage := Failure.ThrownExceptionMessage;                    // unfiltered errormessage
+
+  FailureGrid.Objects[0, Result] := obj;
+  FailureGrid.Cells[0, Result] := obj.Caption;
+  FailureGrid.Cells[1, Result] := obj.ThrownExceptionName;
+  FailureGrid.Cells[2, Result] := obj.FilteredErrorMessage;
+
+//  {$IFDEF USE_JEDI_JCL}
+//    Item.SubItems.Add(Failure.StackTrace);                      // 5 stack trace if collected
+//  {$ENDIF}
 end;
 
 procedure TGUITestRunner.UpdateStatus(const FullUpdate: Boolean);
