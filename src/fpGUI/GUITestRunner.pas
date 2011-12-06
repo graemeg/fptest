@@ -175,6 +175,7 @@ type
     procedure AutoSaveActionExecute(Sender: TObject);
     procedure EnableWarningsActionExecute(Sender: TObject);
     procedure FailureGridRowChanged(Sender: TObject; ARow: Integer);
+    procedure ClearFailureGrid;
   protected
     procedure InitTree; virtual;
   public
@@ -1238,6 +1239,7 @@ begin
   begin
     FTestResult := nil;
     ClearFailureMessage;
+    ClearFailureGrid;
   end;
 end;
 
@@ -1952,6 +1954,15 @@ begin
     ClearFailureMessage
   else
     DisplayFailureMessage(ARow);
+end;
+
+procedure TGUITestRunner.ClearFailureGrid;
+var
+  i: integer;
+begin
+  for i := 0 to FailureGrid.RowCount-1 do
+    TFailureDataObject(FailureGrid.Objects[0,i]).Free;
+  FailureGrid.RowCount := 0;
 end;
 
 { TBaseCommand }
