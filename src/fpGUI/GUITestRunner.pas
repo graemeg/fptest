@@ -65,7 +65,7 @@ type
     Label3: TfpgLabel;
     ResultsView: TfpgStringGrid;
     Splitter2: TfpgSplitter;
-    Memo1: TfpgMemo;
+    meErrorMessage: TfpgMemo;
     {@VFD_HEAD_END: GUITestRunner}
     miAutoSaveConfiguration: TfpgMenuItem;
     miErrorBoxVisible: TfpgMenuItem;
@@ -1096,7 +1096,7 @@ end;
 
 procedure TGUITestRunner.ClearStatusMessage;
 begin
-  Memo1.Clear;
+  meErrorMessage.Clear;
 end;
 
 procedure TGUITestRunner.RunTheTest(ATest: ITestProxy);
@@ -1159,7 +1159,7 @@ end;
 
 procedure TGUITestRunner.ClearFailureMessage;
 begin
-  Memo1.Clear;
+  meErrorMessage.Clear;
 end;
 
 procedure TGUITestRunner.ResetProgress;
@@ -1705,10 +1705,10 @@ begin
     AutoSnap := False;
   end;
 
-  Memo1 := TfpgMemo.Create(ClientArea);
-  with Memo1 do
+  meErrorMessage := TfpgMemo.Create(ClientArea);
+  with meErrorMessage do
   begin
-    Name := 'Memo1';
+    Name := 'meErrorMessage';
     SetPosition(2, 359, 537, 103);
     Align := alClient;
     FontDesc := '#Edit1';
