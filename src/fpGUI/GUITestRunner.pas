@@ -168,6 +168,7 @@ type
     procedure RunTheTest(ATest: ITestProxy);
     procedure HoldOptions(const AValue: boolean);
     procedure ClearResult;
+    procedure DisplayFailureMessage(ARow: integer);
     procedure ClearFailureMessage;
     procedure ResetProgress;
     procedure SetProgressBarColor(const AColor: TfpgColor);
@@ -1219,6 +1220,98 @@ begin
     FTestResult := nil;
     ClearFailureMessage;
   end;
+end;
+
+procedure TGUITestRunner.DisplayFailureMessage(ARow: integer);
+var
+  hlColor :TfpgColor;
+  Test    :ITestProxy;
+  lStatus  :string;
+  obj: TFailureDataObject;
+begin
+//  TestTree.Selected := TTreeNode(Item.data);
+  obj := TFailureDataObject(FailureGrid.Objects[0, ARow]);
+  Test := NodeToTest(obj.TreeNode);
+  case Ord(Test.ExecutionStatus) of
+    0 {_Ready}     : hlColor := clGray;
+    1 {_Running}   : hlColor := clNavy;
+    2 {_HaltTest}  : hlColor := clBlack;
+    3 {_Passed}    : hlColor := clLime;
+    4 {_Warning}   : hlColor := clGreen;
+    5 {_Stopped}   : hlColor := clBlack ;
+    6 {_Failed}    : hlColor := clFuchsia;
+    7 {_Break}     : hlColor := clBlack;
+    8 {_Error}     : hlColor := clRed;
+    else
+      hlColor := clPurple;
+  end;
+
+  with meErrorMessage do
+  begin
+    Clear;
+(*
+    SelAttributes.Size  := self.Font.Size;
+    SelAttributes.Style := [fsBold];
+    SelText := Item.SubItems[3] + Item.Caption + ': '; //ParentPath + Test name
+
+    SelAttributes.Color := hlColor;
+    SelAttributes.Style := [fsBold];
+    SelText := Item.SubItems[0];        // Exception type
+
+    Lines.Add('');
+    SelAttributes.Size  := 11;
+    SelAttributes.Color := clWindowText;
+    SelAttributes.Style := [];
+    SelText := 'at ' + Item.SubItems[2]; // Location info
+
+    if Item.SubItems[1] <> '' then
+    begin
+      SelAttributes.Color := clWindowText;
+      Lines.Add('');
+      SelAttributes.Style := [];
+      SelText := Item.SubItems[4]; // unfiltered error message
+      SelAttributes.Size  := self.Font.Size;
+    end;
+
+    Status := Test.Status;
+    if Status <> '' then
+    begin
+      Lines.Add('');
+      Lines.Add('');
+      SelAttributes.Style := [fsBold];
+      Lines.Add('Status Messages');
+      SelAttributes.Style := [];
+      Lines.Add(Status);
+    end;
+*)
+    { ParentPath + Test name + Exception name }
+    Lines.Add(obj.FullTestPath + obj.Caption + ': ' + obj.ThrownExceptionName);
+    { location }
+    Lines.Add('at ' + obj.LocationInfo);
+    { unfiltered error messag }
+    Text := Text + LineEnding + (obj.ErrorMessage);
+
+    lStatus := Test.Status;
+    if lStatus <> '' then
+    begin
+      Lines.Add('');
+      Lines.Add('');
+      Lines.Add('Status Messages:');
+      Lines.Add(lStatus);
+    end;
+(*
+{$IFDEF USE_JEDI_JCL}
+      if Item.SubItems[5] <> '' then
+      begin
+        Lines.Add('');
+        SelAttributes.Style := [fsBold];
+        Lines.Add('StackTrace');
+        SelAttributes.Style := [];
+        SelText := Item.SubItems[5];
+      end;
+{$ENDIF}
+*)
+  end;  { with ErrorMessageRTF... }
 end;
 
 procedure TGUITestRunner.ClearFailureMessage;
