@@ -34,8 +34,8 @@ type
     btnSelectNone: TfpgButton;
     Bevel1: TfpgBevel;
     Button3: TfpgButton;
-    Button5: TfpgButton;
     btnDeselectCurrent: TfpgButton;
+    btnSelectCurrent: TfpgButton;
     Bevel2: TfpgBevel;
     btnRunSelected: TfpgButton;
     btnRunCurrent: TfpgButton;
@@ -198,6 +198,11 @@ type
   end;
 
   TSelectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+  TSelectCurrentCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
@@ -609,6 +614,7 @@ begin
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
 
   btnDeselectCurrent.SetCommand(TDeselectCurrentCommand.Create(self));
+  btnSelectCurrent.SetCommand(TSelectCurrentCommand.Create(self));
   btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
   btnRunCurrent.SetCommand(TRunCurrentCommand.Create(self));
   btnStopTests.SetCommand(TStopTestsCommand.Create(self));
@@ -1314,17 +1320,17 @@ begin
     Focusable := False;
   end;
 
-  Button5 := TfpgButton.Create(Toolbar);
-  with Button5 do
+  btnSelectCurrent := TfpgButton.Create(Toolbar);
+  with btnSelectCurrent do
   begin
-    Name := 'Button5';
+    Name := 'btnSelectCurrent';
     SetPosition(112, 2, 24, 24);
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
-    Hint := '';
+    Hint := 'Select current test';
     ImageMargin := 0;
-    ImageName := '';
+    ImageName := 'usr.state1';
     TabOrder := 6;
     Focusable := False;
   end;
@@ -1832,6 +1838,18 @@ begin
   begin
     ApplyToTests(TestTree.Selection, @DisableTest);
     SetNodeState(TestTree.Selection, False);
+    UpdateStatus(True);
+  end;
+end;
+
+{ TSelectCurrentCommand }
+
+procedure TSelectCurrentCommand.Execute;
+begin
+  with FForm do
+  begin
+    ApplyToTests(TestTree.Selection, @EnableTest);
+    SetNodeState(TestTree.Selection, True);
     UpdateStatus(True);
   end;
 end;
