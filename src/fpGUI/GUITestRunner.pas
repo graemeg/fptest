@@ -339,8 +339,10 @@ var
   LOverridesGUI: Boolean;
   LHasRunTimePropsSet: Boolean;
 begin
-  SendDebug('success: ' + ATest.Name);
-  assert(assigned(ATest));
+//  SendDebug('success: ' + ATest.Name);
+  {$IFDEF DEBUG}
+  Assert(Assigned(ATest));
+  {$ENDIF}
   if not IsTestMethod(ATest) then
     SetTreeNodeImage(TestToNode(ATest), imgRUN)
   else
