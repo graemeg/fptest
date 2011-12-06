@@ -174,6 +174,7 @@ type
     procedure SetProgressBarColor(const AColor: TfpgColor);
     procedure AutoSaveActionExecute(Sender: TObject);
     procedure EnableWarningsActionExecute(Sender: TObject);
+    procedure FailureGridRowChanged(Sender: TObject; ARow: Integer);
   protected
     procedure InitTree; virtual;
   public
@@ -1891,6 +1892,7 @@ begin
     RowSelect := True;
     TabOrder := 6;
     Options := [go_SmoothScroll];
+    OnRowChange  := @FailureGridRowChanged;
   end;
 
   {@VFD_BODY_END: GUITestRunner}
@@ -1918,6 +1920,20 @@ begin
     Exit;
   with miEnableWarnings do
     Checked := not Checked;
+end;
+
+procedure TGUITestRunner.FailureGridRowChanged(Sender: TObject; ARow: Integer);
+begin
+  if ARow <> -1 then
+  begin
+    TestTree.Selection := TFailureDataObject(FailureGrid.Objects[0, ARow]).TreeNode;
+    TestTree.Invalidate;
+  end;
+
+  if ARow = -1 then
+    ClearFailureMessage
+  else
+    DisplayFailureMessage(ARow);
 end;
 
 { TBaseCommand }
