@@ -134,6 +134,7 @@ type
     procedure ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
     procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
     procedure DrawGridCell(Sender: TObject; const ARow, ACol: Integer; const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
+    procedure OnTimerFired(Sender: TObject);
     procedure SetSuite(const AValue: ITestProxy);
     function get_TestResult: ITestResult;
     procedure set_TestResult(const AValue: ITestResult);
