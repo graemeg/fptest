@@ -428,7 +428,7 @@ var
   newrow: integer;
 begin
   {$IFDEF DEBUG}
-  SendDebug('error: ' + Error.FailedTest.Name);
+  SendDebug('error: ' + AError.FailedTest.Name);
   {$ENDIF}
   FTestFailed := True;
 
@@ -445,7 +445,7 @@ var
   newrow: integer;
 begin
   {$IFDEF DEBUG}
-  SendDebug('failure: ' + Failure.FailedTest.Name);
+  SendDebug('failure: ' + AFailure.FailedTest.Name);
   {$ENDIF}
   FTestFailed := True;
 
@@ -498,16 +498,18 @@ begin
   assert(assigned(TestResult));
   assert(assigned(Test));
   {$ENDIF}
+
   Node := TestToNode(Test);
+
   {$IFDEF DEBUG}
   assert(assigned(Node));
   {$ENDIF}
+
   SetTreeNodeImage(Node, imgRUNNING);
-  // TODO: graeme
+
   if miShowTestedNode.Checked then
-  begin
     MakeNodeVisible(Node);
-  end;
+
   ClearFailureMessage;
   UpdateStatus(False);
 end;
@@ -519,7 +521,9 @@ end;
 
 procedure TGUITestRunner.TestingEnds(TestResult: ITestResult);
 begin
+  {$IFDEF DEBUG}
   SendSeparator;
+  {$ENDIF}
 end;
 
 function TGUITestRunner.ShouldRunTest(const ATest: ITestProxy): Boolean;
