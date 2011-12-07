@@ -105,6 +105,8 @@ type
     FStateImageList: TfpgImageList;
 
     SelectAllCommand: ICommand;
+    HideTestNodesCommand: ICommand;
+    ExpandAllNodesCommand: ICommand;
     miSelectAll: TfpgMenuItem;
 
     { implement the IStatusListeners interface }
@@ -160,6 +162,8 @@ type
     procedure AutoSaveConfiguration;
     procedure SaveConfiguration;
     procedure LoadConfiguration;
+    function  NodeIsGrandparent(ANode: TfpgTreeNode): boolean;
+    procedure CollapseNonGrandparentNodes(RootNode: TfpgTreeNode);
     function HasParent(ANode: TfpgTreeNode): Boolean;
     procedure SetupGUINodes;
     procedure MakeNodeVisible(Node: TfpgTreeNode);
@@ -251,6 +255,16 @@ type
   end;
 
   TStopTestsCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+  THideTestNodesOnOpenCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+  TExpandAllNodesCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
@@ -576,7 +590,6 @@ begin
   ResultsView.Cells[5, 0] := 'Test Time';
   ResultsView.Cells[6, 0] := 'Total Time';
 
-  TestTree.FullExpand;
   SetupGUINodes;
   TestTree.SetFocus;
 end;
@@ -667,6 +680,8 @@ begin
   mnuFile.MenuItemByName('Quit').SetCommand(TExitCommand.Create(self));
 
   SelectAllCommand := TExitCommand.Create(self);
+  HideTestNodesCommand := THideTestNodesOnOpenCommand.Create(self);
+  ExpandAllNodesCommand := TExpandAllNodesCommand.Create(self);
   miSelectAll.SetCommand(TSelectAllCommand.Create(self));
 
   btnSelectedFailed.SetCommand(TSelectFailedTestsCommand.Create(self));
@@ -1214,7 +1229,19 @@ begin
   end;
 end;
 
+procedure TGUITestRunner.CollapseNonGrandparentNodes(RootNode: TfpgTreeNode);
+var
+  AChildNode: TfpgTreeNode;
+begin
+  if not NodeIsGrandparent(RootNode) then
+    RootNode.Collapse;
 
+  AChildNode := RootNode.FirstSubNode;
+  while AChildNode <> nil do
+  begin
+    CollapseNonGrandparentNodes(AChildNode);
+    AChildNode := AChildNode.Next;
+  end;
 end;
 
 function TGUITestRunner.HasParent(ANode: TfpgTreeNode): Boolean;
@@ -1449,12 +1476,12 @@ begin
   FTests.Clear;
   FillTestTree(Suite);
   SetUp;
-{ TODO: graeme
-  if HideTestNodesOnOpenAction.Checked then
-    HideTestNodesAction.Execute
+
+  if miHideTestNodesOnOpen.Checked then
+    HideTestNodesCommand.Execute
   else
-    ExpandAllNodesAction.Execute;
-}
+    ExpandAllNodesCommand.Execute;
+
   TestTree.Selection := TestTree.RootNode.FirstSubNode;
 end;
 
@@ -2152,6 +2179,47 @@ begin
   with FForm do
   begin
     Suite.HaltTesting;
+  end;
+end;
+
+{ THideTestNodesOnOpenCommand }
+
+procedure THideTestNodesOnOpenCommand.Execute;
+var
+  ANode: TfpgTreeNode;
+begin
+  with FForm do
+  begin
+    if TestTree.RootNode.Count = 0 then
+      Exit;
+
+    TestTree.BeginUpdate;
+    try
+      TestTree.FullExpand; // initiall set everything to expanded
+      ANode := TestTree.RootNode.FirstSubNode;
+      if ANode <> nil then
+      begin
+        ANode.Expand;
+        CollapseNonGrandparentNodes(ANode);
+        MakeNodeVisible(ANode);
+      end;
+    finally
+      TestTree.EndUpdate;
+    end;
+  end;
+end;
+
+{ TExpandAllNodesCommand }
+
+procedure TExpandAllNodesCommand.Execute;
+begin
+  with FForm do
+  begin
+    TestTree.FullExpand;
+    if (TestTree.Selection <> nil) then
+      MakeNodeVisible(TestTree.Selection)
+    else if(TestTree.RootNode.Count > 0) then
+      TestTree.Selection := TestTree.RootNode.FirstSubNode;
   end;
 end;
 
