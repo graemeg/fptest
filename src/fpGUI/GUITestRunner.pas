@@ -264,7 +264,8 @@ uses
   dbugintf,
   TestFrameworkProxy,
   TimeManager,
-  formimages;
+  formimages,
+  IniFiles;
 
 const
   TEST_INI_FILE = 'fptest.ini';
@@ -1073,58 +1074,145 @@ begin
   if Suite <> nil then
     Suite.SaveConfiguration(IniFileName, False {UseRegistryAction.Checked}, True);
   // TODO: graeme
-(*
-  SaveFormPlacement;
-  SaveRegistryAction;
+//  SaveFormPlacement;
+//  SaveRegistryAction;
 
-  with GetIniFile(IniFileName) do
-  try
+
+  with TIniFile.Create(IniFileName) do
+    try
     { center splitter location }
-    WriteInteger(cnConfigIniSection, 'ResultsPanel.Height',
-      ResultsPanel.Height);
+//    WriteInteger(cnConfigIniSection, 'ResultsPanel.Height',
+//      ResultsPanel.Height);
 
     { error box }
-    WriteInteger(cnConfigIniSection, 'ErrorMessage.Height',
-      ErrorBoxPanel.Height);
-    WriteBool(cnConfigIniSection, 'ErrorMessage.Visible',
-      ErrorBoxVisibleAction.Checked);
+//    WriteInteger(cnConfigIniSection, 'ErrorMessage.Height',
+//      ErrorBoxPanel.Height);
+//    WriteBool(cnConfigIniSection, 'ErrorMessage.Visible',
+//      ErrorBoxVisibleAction.Checked);
 
     { failure list configuration }
-    with FailureListView do begin
-      for i := 0 to Columns.Count-1 do
-      begin
-       WriteInteger(cnConfigIniSection,
-                     Format('FailureList.ColumnWidth[%d]', [i]),
-                     Columns[i].Width);
-      end;
-    end;
+//    with FailureListView do begin
+//      for i := 0 to Columns.Count-1 do
+//      begin
+//       WriteInteger(cnConfigIniSection,
+//                     Format('FailureList.ColumnWidth[%d]', [i]),
+//                     Columns[i].Width);
+//      end;
+//    end;
 
-    { other options }
-    WriteBool(cnConfigIniSection, 'HideTestNodesOnOpen',      HideTestNodesOnOpenAction.Checked);
-    WriteBool(cnConfigIniSection, 'BreakOnFailures',          BreakOnFailuresAction.Checked);
-    WriteBool(cnConfigIniSection, 'ReportMemoryLeakTypes',    ReportMemoryLeakTypeOnShutdownAction.Checked);
-    WriteBool(cnConfigIniSection, 'SelectTestedNode',         ShowTestedNodeAction.Checked);
-    WriteBool(cnConfigIniSection, 'ShowRunTimeProperties',    ShowTestCasesWithRunTimePropertiesAction.Checked);
-    WriteBool(cnConfigIniSection, 'ShowOverriddenFailures',   ShowOverriddenFailuresAction.Checked);
-    WriteBool(cnConfigIniSection, 'ShowEarlyExitTests',       ShowEarlyExitedTestAction.Checked);
+      { other options }
+      WriteBool(cnConfigIniSection, 'AutoSave',      miAutoSaveConfiguration.Checked);
+      WriteBool(cnConfigIniSection, 'HideTestNodesOnOpen',      miHideTestNodesOnOpen.Checked);
+//    WriteBool(cnConfigIniSection, 'BreakOnFailures',          BreakOnFailuresAction.Checked);
+//    WriteBool(cnConfigIniSection, 'ReportMemoryLeakTypes',    ReportMemoryLeakTypeOnShutdownAction.Checked);
+      WriteBool(cnConfigIniSection, 'SelectTestedNode',         miShowTestedNode.Checked);
+//    WriteBool(cnConfigIniSection, 'ShowRunTimeProperties',    ShowTestCasesWithRunTimePropertiesAction.Checked);
+//    WriteBool(cnConfigIniSection, 'ShowOverriddenFailures',   ShowOverriddenFailuresAction.Checked);
+//    WriteBool(cnConfigIniSection, 'ShowEarlyExitTests',       ShowEarlyExitedTestAction.Checked);
 
-    WriteInteger(cnConfigIniSection, 'PopupX',                FPopupX);
-    WriteInteger(cnConfigIniSection, 'PopupY',                FPopupY);
+//    WriteInteger(cnConfigIniSection, 'PopupX',                FPopupX);
+//    WriteInteger(cnConfigIniSection, 'PopupY',                FPopupY);
 
     // Settings common to all test runners
-    WriteBool(cnRunners, 'FailOnNoChecksExecuted',    FailIfNoChecksExecutedAction.Checked);
-    WriteBool(cnRunners, 'FailOnMemoryLeaked',        FailTestCaseIfMemoryLeakedAction.Checked);
-    WriteBool(cnRunners, 'EnableWarnings',            EnableWarningsAction.Checked);
-    WriteBool(cnRunners, 'IgnoreSetUpTearDownLeaks',  IgnoreMemoryLeakInSetUpTearDownAction.Checked);
-    WriteBool(cnRunners, 'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
-  finally
-    Free;
-  end;
-*)
+//    WriteBool(cnRunners, 'FailOnNoChecksExecuted',    FailIfNoChecksExecutedAction.Checked);
+//    WriteBool(cnRunners, 'FailOnMemoryLeaked',        FailTestCaseIfMemoryLeakedAction.Checked);
+//    WriteBool(cnRunners, 'EnableWarnings',            EnableWarningsAction.Checked);
+//    WriteBool(cnRunners, 'IgnoreSetUpTearDownLeaks',  IgnoreMemoryLeakInSetUpTearDownAction.Checked);
+//    WriteBool(cnRunners, 'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
+    finally
+      Free;
+    end;
 end;
 
 procedure TGUITestRunner.LoadConfiguration;
+var
+  i: Integer;
 begin
+//  LoadRegistryAction;
+//  LoadFormPlacement;
+  LoadSuiteConfiguration;
+
+  with TINIFile.Create(IniFileName) do
+  try
+    { center splitter location }
+//    with ResultsPanel do
+//      Height := ReadInteger(cnConfigIniSection, 'ResultsPanel.Height', Height);
+
+    { error splitter location }
+//    with ErrorBoxPanel do
+//      Height := ReadInteger(cnConfigIniSection, 'ErrorMessage.Height', Height);
+//    with ErrorBoxVisibleAction do
+//      Checked := ReadBool(cnConfigIniSection, 'ErrorMessage.Visible', Checked);
+
+//    ErrorBoxSplitter.Visible := ErrorBoxVisibleAction.Checked;
+//    ErrorBoxPanel.Visible    := ErrorBoxVisibleAction.Checked;
+
+    { failure list configuration }
+//    with FailureListView do begin
+//      for i := 0 to Columns.Count-1 do
+//      begin
+//        Columns[i].Width := Max(4, ReadInteger(cnConfigIniSection,
+//                                   Format('FailureList.ColumnWidth[%d]', [i]),
+//                                   Columns[i].Width));
+//      end;
+//    end;
+
+    { other options }
+    with miAutoSaveConfiguration do
+      Checked := ReadBool(cnConfigIniSection, 'AutoSave', Checked);
+    with miHideTestNodesOnOpen do
+      Checked := ReadBool(cnConfigIniSection, 'HideTestNodesOnOpen', Checked);
+    with miShowTestedNode do
+      Checked := ReadBool(cnConfigIniSection, 'SelectTestedNode', Checked);
+//    BreakOnFailuresAction.Checked := ReadBool(cnConfigIniSection,
+//      'BreakOnFailures', BreakOnFailuresAction.Checked);
+//    ReportMemoryLeakTypeOnShutdownAction.Checked := ReadBool(cnConfigIniSection,
+//      'ReportMemoryLeakTypes', ReportMemoryLeakTypeOnShutdownAction.Checked);
+//    ShowTestCasesWithRunTimePropertiesAction.Checked := ReadBool(cnConfigIniSection,
+//      'ShowRunTimeProperties', ShowTestCasesWithRunTimePropertiesAction.Checked);
+//    ShowOverriddenFailuresAction.Checked := ReadBool(cnConfigIniSection,
+//      'ShowOverriddenFailures', ShowOverriddenFailuresAction.Checked);
+//    ShowEarlyExitedTestAction.Checked := ReadBool(cnConfigIniSection,
+//      'ShowEarlyExitTests', ShowEarlyExitedTestAction.Checked);
+
+//    FPopupX := ReadInteger(cnConfigIniSection,'PopupX', 350);
+//    FPopupY := ReadInteger(cnConfigIniSection,'PopupY', 30);
+
+    // Read settings common to all test runners
+//    FailIfNoChecksExecutedAction.Checked := ReadBool(cnRunners,
+//      'FailOnNoChecksExecuted', FailIfNoChecksExecutedAction.Checked);
+//    FailTestCaseIfMemoryLeakedAction.Checked := ReadBool(cnRunners,
+//      'FailOnMemoryLeaked', FailTestCaseIfMemoryLeakedAction.Checked);
+//    EnableWarningsAction.Checked := ReadBool(cnRunners,
+//      'EnableWarnings', EnableWarningsAction.Checked);
+//    InhibitSummaryLevelChecksAction.Checked := ReadBool(cnRunners,
+//      'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
+//    IgnoreMemoryLeakInSetUpTearDownAction.Checked := ReadBool(cnRunners,
+//      'IgnoreSetUpTearDownLeaks', IgnoreMemoryLeakInSetUpTearDownAction.Checked);
+  finally
+    Free;
+  end;
+
+  if Suite <> nil then
+    UpdateTestTreeState;
+end;
+
+function TGUITestRunner.NodeIsGrandparent(ANode: TfpgTreeNode): boolean;
+var
+  AChildNode: TfpgTreeNode;
+begin
+  Result := False;
+  if ANode.HasChildren then
+  begin
+    AChildNode := ANode.FirstSubNode;
+    while AChildNode <> nil do
+    begin
+      Result := AChildNode.HasChildren or Result;
+      AChildNode := AChildNode.Next;
+    end;
+  end;
+end;
+
 
 end;
 
