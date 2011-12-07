@@ -173,6 +173,7 @@ type
     procedure ResetProgress;
     procedure SetProgressBarColor(const AColor: TfpgColor);
     procedure AutoSaveActionExecute(Sender: TObject);
+    procedure HideTestNodesOnOpenClicked(Sender: TObject);
     procedure ShowTestedNodeClicked(Sender: TObject);
     procedure EnableWarningsActionExecute(Sender: TObject);
     procedure FailureGridRowChanged(Sender: TObject; ARow: Integer);
@@ -1838,7 +1839,7 @@ begin
     miAutoSaveConfiguration := AddMenuItem('Auto Save Configuration', '', @AutoSaveActionExecute);
     miErrorBoxVisible := AddMenuItem('Error Box Visible', '', nil);
     miAutoChangeFocus := AddMenuItem('Auto Change Focus', '', nil);
-    miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', nil);
+    miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', @HideTestNodesOnOpenClicked);
     miShowTestedNode := AddMenuItem('Show Tested Node', '', @ShowTestedNodeClicked);
     miBreakOnFailure := AddMenuItem('Break On Failures', '', nil);
     AddMenuItem('-', '', nil);
@@ -2019,6 +2020,13 @@ end;
 procedure TGUITestRunner.AutoSaveActionExecute(Sender: TObject);
 begin
   with miAutoSaveConfiguration do
+    Checked := not Checked;
+  AutoSaveConfiguration;
+end;
+
+procedure TGUITestRunner.HideTestNodesOnOpenClicked(Sender: TObject);
+begin
+  with miHideTestNodesOnOpen do
     Checked := not Checked;
   AutoSaveConfiguration;
 end;
