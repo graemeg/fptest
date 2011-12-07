@@ -561,6 +561,10 @@ begin
   LoadConfiguration;
   Setup;
   HoldOptions(False);
+
+  FUpdateTimer := TfpgTimer.Create(300);
+  FUpdateTimer.OnTimer := @OnTimerFired;
+  FUpdateTimer.Enabled := True;
 end;
 
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
@@ -623,6 +627,12 @@ begin
     ResultsView.Canvas.SetColor(clDarkGray);
     ResultsView.Canvas.FillRectangle(ARect);
   end;
+end;
+
+procedure TGUITestRunner.OnTimerFired(Sender: TObject);
+begin
+  FTimerExpired := True;
+  FUpdateTimer.Enabled := False;
 end;
 
 function TGUITestRunner.get_TestResult: ITestResult;
@@ -813,7 +823,7 @@ begin
       if (TestNumber < TotalTestsCount) then
       begin
         FTimerExpired := False;
-//        FUpdateTimer.Enabled := True;
+        FUpdateTimer.Enabled := True;
       end;
     end;
   end
