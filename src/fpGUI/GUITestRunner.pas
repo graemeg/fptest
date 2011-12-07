@@ -788,18 +788,20 @@ var
   i: Integer;
   TestNumber: Integer;
 begin
-  if fullUpdate then
+  if FullUpdate then
+  begin
     if Assigned(Suite) then
       ResultsView.Cells[0, 1] := IntToStr(TotalTestsCount)
     else
       ResultsView.Cells[0, 1] := '';
+  end;
 
   if TestResult <> nil then
   begin
     // Save the test number as we use it a lot
     TestNumber := TestResult.RunCount;
     FTotalTime := TestResult.TotalTime;
-    if fullUpdate or FTimerExpired or ((TestNumber and 15) = 0) or FTestFailed then
+    if FullUpdate or FTimerExpired or ((TestNumber and 15) = 0) or FTestFailed then
     begin
       with ResultsView do
       begin
