@@ -521,10 +521,20 @@ begin
 end;
 
 procedure TGUITestRunner.TestingEnds(TestResult: ITestResult);
+var
+  idx: Integer;
+  AProxy: ITestProxy;
 begin
   {$IFDEF DEBUG}
   SendSeparator;
   {$ENDIF}
+  for idx := 0 to FTests.Count-1 do
+  begin
+    AProxy := (FTests[idx] as ITestProxy);
+    AProxy.IsOverridden := False;
+  end;
+  FTotalTime := TestResult.TotalTime;
+  UpdateStatus(True);
 end;
 
 function TGUITestRunner.ShouldRunTest(const ATest: ITestProxy): Boolean;
