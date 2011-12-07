@@ -173,6 +173,7 @@ type
     procedure ResetProgress;
     procedure SetProgressBarColor(const AColor: TfpgColor);
     procedure AutoSaveActionExecute(Sender: TObject);
+    procedure ShowTestedNodeClicked(Sender: TObject);
     procedure EnableWarningsActionExecute(Sender: TObject);
     procedure FailureGridRowChanged(Sender: TObject; ARow: Integer);
     procedure ClearFailureGrid;
@@ -488,11 +489,10 @@ begin
   {$ENDIF}
   SetTreeNodeImage(Node, imgRUNNING);
   // TODO: graeme
-//  if ShowTestedNodeAction.Checked then
-//  begin
+  if miShowTestedNode.Checked then
+  begin
     MakeNodeVisible(Node);
-    TestTree.Invalidate;
-//  end;
+  end;
   ClearFailureMessage;
   UpdateStatus(False);
 end;
@@ -1248,6 +1248,7 @@ end;
 procedure TGUITestRunner.MakeNodeVisible(Node: TfpgTreeNode);
 begin
   TestTree.Selection := Node;
+  TestTree.Invalidate;
 end;
 
 procedure TGUITestRunner.SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
@@ -1838,7 +1839,7 @@ begin
     miErrorBoxVisible := AddMenuItem('Error Box Visible', '', nil);
     miAutoChangeFocus := AddMenuItem('Auto Change Focus', '', nil);
     miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', nil);
-    miShowTestedNode := AddMenuItem('Show Tested Node', '', nil);
+    miShowTestedNode := AddMenuItem('Show Tested Node', '', @ShowTestedNodeClicked);
     miBreakOnFailure := AddMenuItem('Break On Failures', '', nil);
     AddMenuItem('-', '', nil);
     miShowTestCasesWithRuntimeProperties := AddMenuItem('Show TestCases with RunTime Properties', '', nil);
@@ -2018,6 +2019,13 @@ end;
 procedure TGUITestRunner.AutoSaveActionExecute(Sender: TObject);
 begin
   with miAutoSaveConfiguration do
+    Checked := not Checked;
+  AutoSaveConfiguration;
+end;
+
+procedure TGUITestRunner.ShowTestedNodeClicked(Sender: TObject);
+begin
+  with miShowTestedNode do
     Checked := not Checked;
   AutoSaveConfiguration;
 end;
