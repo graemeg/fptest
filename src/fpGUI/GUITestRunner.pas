@@ -81,7 +81,7 @@ type
     miEnableWarnings: TfpgMenuItem;
     miInhibitSummaryLevelChecks: TfpgMenuItem;
     FSuite:         ITestProxy;
-    FTestResult:    TTestResult;
+    FTestResult:    ITestResult;
     FRunning:       Boolean;
     FTests:         TInterfaceList;
     FSelectedTests: TInterfaceList;
@@ -120,7 +120,7 @@ type
     procedure TestingStarts;
     procedure StartTest(Test: ITestProxy);
     procedure EndTest(Test: ITestProxy);
-    procedure TestingEnds(TestResult: TTestResult);
+    procedure TestingEnds(TestResult: ITestResult);
     function  ShouldRunTest(const ATest :ITestProxy):Boolean;
 
     { implement the ITestListenerX interface }
@@ -135,8 +135,8 @@ type
     procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
     procedure DrawGridCell(Sender: TObject; const ARow, ACol: Integer; const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
     procedure SetSuite(const AValue: ITestProxy);
-    function get_TestResult: TTestResult;
-    procedure set_TestResult(const AValue: TTestResult);
+    function get_TestResult: ITestResult;
+    procedure set_TestResult(const AValue: ITestResult);
     procedure LoadSuiteConfiguration;
     procedure EnableUI(AEnable: Boolean);
     function  IniFileName: TfpgString;
@@ -191,7 +191,7 @@ type
     { The Test Suite to be run in this runner }
     property Suite: ITestProxy read FSuite write SetSuite;
     { The result of the last Test run }
-    property TestResult : TTestResult read get_TestResult write set_TestResult;
+    property TestResult: ITestResult read get_TestResult write set_TestResult;
   end;
 
   TFailureDataObject = class(TObject)
@@ -517,7 +517,7 @@ begin
   UpdateStatus(False);
 end;
 
-procedure TGUITestRunner.TestingEnds(TestResult: TTestResult);
+procedure TGUITestRunner.TestingEnds(TestResult: ITestResult);
 begin
   SendSeparator;
 end;
@@ -621,7 +621,7 @@ begin
   end;
 end;
 
-function TGUITestRunner.get_TestResult: TTestResult;
+function TGUITestRunner.get_TestResult: ITestResult;
 begin
   Result := FTestResult;
 end;
@@ -642,7 +642,7 @@ begin
     EnableUI(False);
 end;
 
-procedure TGUITestRunner.set_TestResult(const AValue: TTestResult);
+procedure TGUITestRunner.set_TestResult(const AValue: ITestResult);
 begin
   FTestResult := AValue;
 end;
@@ -2195,7 +2195,7 @@ begin
 
     TestTree.BeginUpdate;
     try
-      TestTree.FullExpand; // initiall set everything to expanded
+      TestTree.FullExpand; // initially set everything to expanded
       ANode := TestTree.RootNode.FirstSubNode;
       if ANode <> nil then
       begin

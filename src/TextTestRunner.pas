@@ -78,7 +78,7 @@ type
     procedure TestingStarts; virtual;
     procedure StartTest(Test: ITestProxy); virtual;
     procedure EndTest(Test: ITestProxy); virtual;
-    procedure TestingEnds(ATestResult: TTestResult); virtual;
+    procedure TestingEnds(ATestResult: ITestResult); virtual;
     function  ShouldRunTest(const ATest :ITestProxy):boolean; virtual;
 
     // Implement the ITestListenerX interface
@@ -88,15 +88,15 @@ type
     property  Errors: IInterfaceList read FErrors;
     property  Failures: IInterfaceList read FFailures;
     property  Warnings: IInterfaceList read FWarnings;
-    function  Report(r: TTestResult): string;
-    function  PrintErrors(r: TTestResult): string; virtual;
-    function  PrintFailures(r: TTestResult): string; virtual;
-    function  PrintWarnings(r: TTestResult): string; virtual;
-    function  PrintHeader(r: TTestResult): string; virtual;
-    function  PrintSettings(r: TTestResult): string; virtual;
-    function  PrintWarningItems(r: TTestResult): string; virtual;
-    function  PrintFailureItems(r :TTestResult): string; virtual;
-    function  PrintErrorItems(r :TTestResult): string; virtual;
+    function  Report(r: ITestResult): string;
+    function  PrintErrors(r: ITestResult): string; virtual;
+    function  PrintFailures(r: ITestResult): string; virtual;
+    function  PrintWarnings(r: ITestResult): string; virtual;
+    function  PrintHeader(r: iTestResult): string; virtual;
+    function  PrintSettings(r: ITestResult): string; virtual;
+    function  PrintWarningItems(r: iTestResult): string; virtual;
+    function  PrintFailureItems(r: ITestResult): string; virtual;
+    function  PrintErrorItems(r: ITestResult): string; virtual;
     property  StartTime: TDateTime read FStartTime write FStartTime;
     property  EndTime: TDateTime read FEndTime write FEndTime;
     property  RunTime: TDateTime read FRunTime write FRunTime;
@@ -117,9 +117,9 @@ type
      }
 
 { Run the given Test Suite }
-function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult; overload;
-function RunRegisteredTests: TTestResult; overload;
-function RunRegisteredTests(const AExitBehavior: TRunnerExitBehavior): TTestResult; overload;
+function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): ITestResult; overload;
+function RunRegisteredTests: ITestResult; overload;
+function RunRegisteredTests(const AExitBehavior: TRunnerExitBehavior): ITestResult; overload;
 
 implementation
 uses
@@ -216,7 +216,7 @@ begin
 end;
 
 { Prints failures to the standard output }
-function TTextTestListener.Report(r: TTestResult): string;
+function TTextTestListener.Report(r: ITestResult): string;
 var
   LHeader: string;
   LErrors: string;
@@ -245,7 +245,7 @@ begin
                 ]) + CRLF + CRLF;
 end;
 
-function TTextTestListener.PrintWarningItems(r :TTestResult): string;
+function TTextTestListener.PrintWarningItems(r: ITestResult): string;
 var
   i: Integer;
   Failure: TTestFailure;
@@ -258,7 +258,7 @@ begin
   end;
 end;
 
-function TTextTestListener.PrintFailureItems(r :TTestResult): string;
+function TTextTestListener.PrintFailureItems(r: ITestResult): string;
 var
   i: Integer;
   Failure: TTestFailure;
@@ -271,7 +271,7 @@ begin
   end;
 end;
 
-function TTextTestListener.PrintErrorItems(r :TTestResult): string;
+function TTextTestListener.PrintErrorItems(r: ITestResult): string;
 var
   i: Integer;
   Failure: TTestFailure;
@@ -285,7 +285,7 @@ begin
 end;
 
 { Prints the errors to the standard output }
-function TTextTestListener.PrintErrors(r: TTestResult): string;
+function TTextTestListener.PrintErrors(r: ITestResult): string;
 begin
   Result := '';
   if (r.ErrorCount <> 0) then begin
@@ -300,7 +300,7 @@ begin
 end;
 
 { Prints failures to the standard output }
-function TTextTestListener.PrintFailures(r: TTestResult): string;
+function TTextTestListener.PrintFailures(r: ITestResult): string;
 begin
   Result := '';
   if (r.FailureCount <> 0) then
@@ -316,7 +316,7 @@ begin
 end;
 
 { Prints warnings to the standard output }
-function TTextTestListener.PrintWarnings(r: TTestResult): string;
+function TTextTestListener.PrintWarnings(r: ITestResult): string;
 begin
   Result := '';
   if (r.WarningCount <> 0) then begin
@@ -331,7 +331,7 @@ begin
 end;
 
 { Prints the setting used }
-function TTextTestListener.PrintSettings(r: TTestResult): string;
+function TTextTestListener.PrintSettings(r: ITestResult): string;
 begin
   Result := '';
   if RegisteredTests = nil then
@@ -352,7 +352,7 @@ begin
 end;
 
 { Prints the header of the Report }
-function TTextTestListener.PrintHeader(r: TTestResult): string;
+function TTextTestListener.PrintHeader(r: ITestResult): string;
 begin
   Result := '';
   if r.wasSuccessful then
@@ -390,7 +390,7 @@ begin
   FStartTime := now;
 end;
 
-procedure TTextTestListener.TestingEnds(ATestResult: TTestResult);
+procedure TTextTestListener.TestingEnds(ATestResult: ITestResult);
 begin
   FEndTime := now;
   FRunTime := FEndTime - FStartTime;
@@ -402,7 +402,7 @@ begin
   end;
 end;
 
-function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): TTestResult;
+function RunTest(Suite: ITestProxy; exitBehavior: TRunnerExitBehavior = rxbContinue): ITestResult;
 begin
   Result := nil;
   try
@@ -440,7 +440,7 @@ begin
   end;
 end;
 
-function RunRegisteredTests: TTestResult;
+function RunRegisteredTests: ITestResult;
 var
   LExitBehavior: TRunnerExitBehavior;
 begin
@@ -464,7 +464,7 @@ begin
   Result := RunTest(RegisteredTests, LExitBehavior);
 end;
 
-function RunRegisteredTests(const AExitBehavior: TRunnerExitBehavior): TTestResult;
+function RunRegisteredTests(const AExitBehavior: TRunnerExitBehavior): ITestResult;
 begin
   Result := RunTest(RegisteredTests, AExitBehavior);
 end;

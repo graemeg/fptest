@@ -53,7 +53,7 @@ uses
 
 type
   // forward declarations
-  TTestResult = interface;
+  ITestResult = interface;
   ITestListener = interface;
 
   ITestProxy = interface
@@ -107,9 +107,9 @@ type
     function  CountEnabledTestCases: integer;
     function  ElapsedTestTime: Extended;
     function  Tests: IInterfaceList;
-    procedure Run(const TestResult: TTestResult); overload;
-    function  Run(const Listeners: array of ITestListener): TTestResult; overload;
-    function  Run(const AListener: ITestListener): TTestResult; overload;
+    procedure Run(const TestResult: ITestResult); overload;
+    function  Run(const Listeners: array of ITestListener): ITestResult; overload;
+    function  Run(const AListener: ITestListener): ITestResult; overload;
     procedure HaltTesting;
     procedure ReleaseTests;
 
@@ -177,7 +177,7 @@ type
     procedure TestingStarts;
     procedure StartTest(Test: ITestProxy);
     procedure EndTest(Test: ITestProxy);
-    procedure TestingEnds(TestResult: TTestResult);
+    procedure TestingEnds(TestResult: ITestResult);
     function  ShouldRunTest(const ATest :ITestProxy):Boolean;
   end;
 
@@ -189,7 +189,7 @@ type
   end;
 
 
-  TTestResult = interface
+  ITestResult = interface
     procedure ReleaseListeners;
     function  GetFailure(idx :Integer) :TTestFailure;
     procedure SetFailure(idx: Integer; AFailure: TTestFailure);

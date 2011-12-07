@@ -79,7 +79,7 @@ type
     procedure StartTest(Test: ITestProxy); virtual;
     procedure EndTest(Test: ITestProxy); virtual;
     procedure EndSuite(Suite: ITestProxy); virtual;
-    procedure TestingEnds(TestResult: TTestResult); virtual;
+    procedure TestingEnds(TestResult: ITestResult); virtual;
     function  ShouldRunTest(const ATest :ITestProxy):Boolean; virtual;
     procedure Status(const ATest: ITestProxy; AMessage: string); virtual;
   public
@@ -419,7 +419,7 @@ begin
   end;
 end;
 
-procedure TXMLListener.TestingEnds(TestResult: TTestResult);
+procedure TXMLListener.TestingEnds(TestResult: ITestResult);
 begin
   if not Assigned(TestResult) or (CurrentElement = nil) then
     Exit;

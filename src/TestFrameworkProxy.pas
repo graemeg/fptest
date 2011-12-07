@@ -63,8 +63,8 @@ function  RegisteredTests(const TestsTitle: string): ITestSuiteProxy; overload;
 function  IsTestMethod(ATest: ITestProxy): Boolean;
 function  GetDUnitRegistryKey: string;
 procedure ClearRegistry;
-function  GetTestResult: TTestResult;
-function  RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): TTestResult; overload;
+function  GetTestResult: ITestResult;
+function  RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): ITestResult; overload;
 function  PointerToLocationInfo(Addrs: PtrType): string;
 
 
@@ -80,7 +80,7 @@ uses
 type
   TTestListenerProxy = class(TInterfacedObject, ITestListenerProxy)
   private
-    FTestResult: TTestResult;
+    FTestResult: ITestResult;
     FTestListeners: IInterfaceList;
     FRunningStartTime: Extended;
     FRunningStopTime: Extended;
@@ -98,7 +98,7 @@ type
     procedure ReleaseListeners;
     procedure Status(const ATest: ITest; const AMessage: string);
   public
-    constructor Create(const Value: TTestResult);
+    constructor Create(const Value: ITestResult);
     destructor Destroy; override;
   end;
 
@@ -165,9 +165,9 @@ type
     function  CountEnabledTestCases: Integer;
     function  ElapsedTestTime: Extended;
     function  Tests: IInterfaceList;
-    procedure Run(const TestResult: TTestResult); overload;
-    function  Run(const Listeners: array of ITestListener): TTestResult; overload;
-    function  Run(const AListener: ITestListener): TTestResult; overload;
+    procedure Run(const TestResult: ITestResult); overload;
+    function  Run(const Listeners: array of ITestListener): ITestResult; overload;
+    function  Run(const AListener: ITestListener): ITestResult; overload;
     procedure HaltTesting;
     procedure ReleaseTests; virtual;
   public
@@ -219,7 +219,7 @@ type
     TTestResult object but unwinds some of the deeper convoluted involvement in
     test execution. }
   {$M+}
-  TITestResult = class(TInterfacedObject, TTestResult)
+  TITestResult = class(TInterfacedObject, ITestResult)
   private
     FOverrides: Integer;
     FBreakOnFailures: boolean;
@@ -296,12 +296,12 @@ var
   DUnitRegistryKey: string = '';
 
 
-function GetTestResult: TTestResult;
+function GetTestResult: ITestResult;
 begin
   Result := TITestResult.Create;
 end;
 
-function RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): TTestResult; overload;
+function RunTest(Suite: ITestProxy; const Listeners: array of ITestListener): ITestResult; overload;
 var
   i: Integer;
 begin
@@ -859,7 +859,7 @@ begin
   FITest := nil;
 end;
 
-procedure TTestProxy.Run(const TestResult: TTestResult);
+procedure TTestProxy.Run(const TestResult: ITestResult);
 var
   LExecControl: ITestExecControl;
 begin
@@ -885,10 +885,10 @@ begin
     (Self.FITest.ExecStatus = _HaltTest);
 end;
 
-function TTestProxy.Run(const Listeners: array of ITestListener): TTestResult;
+function TTestProxy.Run(const Listeners: array of ITestListener): ITestResult;
 var
   idx: Integer;
-  LTestResult: TTestResult;
+  LTestResult: ITestResult;
 begin
   Result := nil;
   LTestResult := GetTestResult;
@@ -903,7 +903,7 @@ begin
   Result := LTestResult;
 end;
 
-function TTestProxy.Run(const AListener: ITestListener): TTestResult;
+function TTestProxy.Run(const AListener: ITestListener): ITestResult;
 begin
   Result := Run([AListener]);
 end;
@@ -1131,7 +1131,7 @@ end;
 
 { TTestListenerProxy }
 
-constructor TTestListenerProxy.Create(const Value: TTestResult);
+constructor TTestListenerProxy.Create(const Value: ITestResult);
 begin
   inherited Create;
   FTestResult := Value;
