@@ -1627,26 +1627,11 @@ begin
     Focusable := False;
   end;
 
-  btnDeselectCurrent := TfpgButton.Create(Toolbar);
-  with btnDeselectCurrent do
-  begin
-    Name := 'btnDeselectCurrent';
-    SetPosition(88, 2, 24, 24);
-    Text := '';
-    Flat := True;
-    FontDesc := '#Label1';
-    Hint := 'Deselect current test';
-    ImageMargin := 0;
-    ImageName := 'usr.state0';
-    TabOrder := 5;
-    Focusable := False;
-  end;
-
   btnSelectCurrent := TfpgButton.Create(Toolbar);
   with btnSelectCurrent do
   begin
     Name := 'btnSelectCurrent';
-    SetPosition(112, 2, 24, 24);
+    SetPosition(88, 2, 24, 24);
     Text := '';
     Flat := True;
     FontDesc := '#Label1';
@@ -1654,6 +1639,21 @@ begin
     ImageMargin := 0;
     ImageName := 'usr.state1';
     TabOrder := 6;
+    Focusable := False;
+  end;
+
+  btnDeselectCurrent := TfpgButton.Create(Toolbar);
+  with btnDeselectCurrent do
+  begin
+    Name := 'btnDeselectCurrent';
+    SetPosition(112, 2, 24, 24);
+    Text := '';
+    Flat := True;
+    FontDesc := '#Label1';
+    Hint := 'Deselect current test';
+    ImageMargin := 0;
+    ImageName := 'usr.state0';
+    TabOrder := 5;
     Focusable := False;
   end;
 
