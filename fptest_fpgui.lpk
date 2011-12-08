@@ -15,7 +15,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="2">
+    <Files Count="3">
       <Item1>
         <Filename Value="src/fpGUI/GUITestRunner.pas"/>
         <UnitName Value="GUITestRunner"/>
@@ -24,6 +24,10 @@
         <Filename Value="src/fpGUI/formimages.pas"/>
         <UnitName Value="formimages"/>
       </Item2>
+      <Item3>
+        <Filename Value="src/fpGUI/customgauge.pas"/>
+        <UnitName Value="customgauge"/>
+      </Item3>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
