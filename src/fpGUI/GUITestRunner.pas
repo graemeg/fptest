@@ -13,7 +13,7 @@ uses
   SysUtils, Classes, fpg_base, fpg_main, fpg_form, fpg_label, fpg_menu,
   fpg_progressbar, fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
   fpg_panel, fpg_button, fpg_splitter, fpg_gauge, fpg_memo, fpg_basegrid,
-  fpg_scrollbar,
+  fpg_scrollbar, CustomGauge,
   TestFrameworkProxyIfaces;
 
 type
@@ -60,7 +60,7 @@ type
     Bevel5: TfpgBevel;
     TestTree: TfpgTreeView;
     ProgressBar: TfpgGauge;
-    ScoreBar: TfpgGauge;
+    ScoreBar: TGUIRunnerGauge;
     Label2: TfpgLabel;
     Label3: TfpgLabel;
     ResultsView: TfpgStringGrid;
@@ -1960,7 +1960,7 @@ begin
     Progress := 90;
   end;
 
-  ScoreBar := TfpgGauge.Create(Bevel5);
+  ScoreBar := TGUIRunnerGauge.Create(Bevel5);
   with ScoreBar do
   begin
     Name := 'ScoreBar';
