@@ -427,7 +427,7 @@ type
     procedure AddSuite(const ATest: ITest); virtual;
     procedure AddTest(const ATest: ITest);
     constructor Create; overload; override;
-    constructor Create(const AProcName: string); overload; virtual;
+    constructor Create(const AProcName: string); override;
     destructor Destroy; override;
     class function Suite: ITestCase; virtual;
   published
@@ -2425,7 +2425,7 @@ end;
 
 constructor TTestCase.Create;
 begin
-  inherited;
+  inherited Create;
   FTestIterator := TTestIterator.Create;
   EnumerateMethods;
 end;
