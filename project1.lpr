@@ -6,8 +6,8 @@ program project1;
   {$APPTYPE CONSOLE}
 {$ENDIF}
 
-{.$Define TextRunner}
-{$Define GUIRunner}
+{$Define TextRunner}
+{.$Define GUIRunner}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
