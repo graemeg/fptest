@@ -45,8 +45,11 @@ uses
   ProjectsManagerIface,
   TestFrameworkIfaces,
   TestListenerIface,
-  IniFiles,
-  Registry;
+  IniFiles
+  {$IFNDEF UNIX}
+  ,Registry
+  {$ENDIF}
+  ;
 
 { TODO : Remove Registry support - we want clean INI support only }
 
@@ -90,9 +93,11 @@ uses
   SysUtils,
   TestFramework;
 
+{$IFNDEF UNIX}
 var
   // SubKey of HKEY_CURRENT_USER for storing configurations in the registry (end with \)
   DUnitRegistryKey: string = ''; // How about 'Software\DUnitTests\';
+{$ENDIF}
 
 type
   TMemIniFileTrimmed = class(TMemIniFile)
