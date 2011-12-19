@@ -1,7 +1,7 @@
 {
   This unit defines a custom Gauge descendant which improves the visibility
-  of the background. The background is what tells the end user the state
-  of the test run.
+  of the state of the test run. Instead of setting the background color, the
+  progress bar is painted in the test state color itself.
 
   Copyright (c) 2011 by Graeme Geldenhuys
     All rights reserved.
