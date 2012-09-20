@@ -1128,6 +1128,8 @@ begin
     Suite.SaveConfiguration(IniFileName, False {UseRegistryAction.Checked}, True);
   SaveFormPlacement;
 
+  { center splitter location information - yes, we don't same the splitter infor itself }
+  gINI.WriteInteger(cnConfigIniSection, 'bvlTreeAndProgress.Height', bvlTreeAndProgress.Height);
 
     { error box }
 //    WriteInteger(cnConfigIniSection, 'ErrorMessage.Height',
@@ -1174,6 +1176,9 @@ begin
   LoadFormPlacement;
   LoadSuiteConfiguration;
 
+  { center splitter location }
+  bvlTreeAndProgress.Height := gINI.ReadInteger(cnConfigIniSection, 'bvlTreeAndProgress.Height', bvlTreeAndProgress.Height);
+  ClientArea.Realign;
 
     { error splitter location }
 //    with ErrorBoxPanel do
