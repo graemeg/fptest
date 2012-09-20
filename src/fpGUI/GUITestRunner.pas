@@ -163,6 +163,8 @@ type
     procedure AutoSaveConfiguration;
     procedure SaveConfiguration;
     procedure LoadConfiguration;
+    procedure SaveFormPlacement;
+    procedure LoadFormPlacement;
     function  NodeIsGrandparent(ANode: TfpgTreeNode): boolean;
     procedure CollapseNonGrandparentNodes(RootNode: TfpgTreeNode);
     function HasParent(ANode: TfpgTreeNode): Boolean;
@@ -278,6 +280,7 @@ implementation
 
 uses
   fpg_utils,
+  fpg_iniutils,
   dbugintf,
   TestFrameworkProxy,
   TimeManager,
@@ -1238,6 +1241,23 @@ begin
 
   if Suite <> nil then
     UpdateTestTreeState;
+end;
+
+procedure TGUITestRunner.SaveFormPlacement;
+begin
+  gINI.WriteInteger(Name + 'State', 'Left', Left);
+  gINI.WriteInteger(Name + 'State', 'Top', Top);
+  gINI.WriteInteger(Name + 'State', 'Width', Width);
+  gINI.WriteInteger(Name + 'State', 'Height', Height);
+end;
+
+procedure TGUITestRunner.LoadFormPlacement;
+begin
+  Left := gINI.ReadInteger(Name + 'State', 'Left', Left);
+  Top := gINI.ReadInteger(Name + 'State', 'Top', Top);
+  Width := gINI.ReadInteger(Name + 'State', 'Width', Width);
+  Height := gINI.ReadInteger(Name + 'State', 'Height', Height);
+  UpdateWindowPosition;
 end;
 
 function TGUITestRunner.NodeIsGrandparent(ANode: TfpgTreeNode): boolean;
