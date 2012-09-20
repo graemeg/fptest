@@ -1126,9 +1126,7 @@ var
 begin
   if Suite <> nil then
     Suite.SaveConfiguration(IniFileName, False {UseRegistryAction.Checked}, True);
-  // TODO: graeme
-//  SaveFormPlacement;
-//  SaveRegistryAction;
+  SaveFormPlacement;
 
 
   with TIniFile.Create(IniFileName) do
@@ -1182,7 +1180,7 @@ var
   i: Integer;
 begin
 //  LoadRegistryAction;
-//  LoadFormPlacement;
+  LoadFormPlacement;
   LoadSuiteConfiguration;
 
   with TINIFile.Create(IniFileName) do
