@@ -1129,12 +1129,6 @@ begin
   SaveFormPlacement;
 
 
-  with TIniFile.Create(IniFileName) do
-    try
-    { center splitter location }
-//    WriteInteger(cnConfigIniSection, 'ResultsPanel.Height',
-//      ResultsPanel.Height);
-
     { error box }
 //    WriteInteger(cnConfigIniSection, 'ErrorMessage.Height',
 //      ErrorBoxPanel.Height);
@@ -1152,11 +1146,11 @@ begin
 //    end;
 
       { other options }
-      WriteBool(cnConfigIniSection, 'AutoSave',      miAutoSaveConfiguration.Checked);
-      WriteBool(cnConfigIniSection, 'HideTestNodesOnOpen',      miHideTestNodesOnOpen.Checked);
+  gINI.WriteBool(cnConfigIniSection, 'AutoSave',      miAutoSaveConfiguration.Checked);
+  gINI.WriteBool(cnConfigIniSection, 'HideTestNodesOnOpen',      miHideTestNodesOnOpen.Checked);
 //    WriteBool(cnConfigIniSection, 'BreakOnFailures',          BreakOnFailuresAction.Checked);
 //    WriteBool(cnConfigIniSection, 'ReportMemoryLeakTypes',    ReportMemoryLeakTypeOnShutdownAction.Checked);
-      WriteBool(cnConfigIniSection, 'SelectTestedNode',         miShowTestedNode.Checked);
+  gINI.WriteBool(cnConfigIniSection, 'SelectTestedNode',         miShowTestedNode.Checked);
 //    WriteBool(cnConfigIniSection, 'ShowRunTimeProperties',    ShowTestCasesWithRunTimePropertiesAction.Checked);
 //    WriteBool(cnConfigIniSection, 'ShowOverriddenFailures',   ShowOverriddenFailuresAction.Checked);
 //    WriteBool(cnConfigIniSection, 'ShowEarlyExitTests',       ShowEarlyExitedTestAction.Checked);
@@ -1170,9 +1164,6 @@ begin
 //    WriteBool(cnRunners, 'EnableWarnings',            EnableWarningsAction.Checked);
 //    WriteBool(cnRunners, 'IgnoreSetUpTearDownLeaks',  IgnoreMemoryLeakInSetUpTearDownAction.Checked);
 //    WriteBool(cnRunners, 'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
-    finally
-      Free;
-    end;
 end;
 
 procedure TGUITestRunner.LoadConfiguration;
@@ -1183,11 +1174,6 @@ begin
   LoadFormPlacement;
   LoadSuiteConfiguration;
 
-  with TINIFile.Create(IniFileName) do
-  try
-    { center splitter location }
-//    with ResultsPanel do
-//      Height := ReadInteger(cnConfigIniSection, 'ResultsPanel.Height', Height);
 
     { error splitter location }
 //    with ErrorBoxPanel do
@@ -1210,11 +1196,11 @@ begin
 
     { other options }
     with miAutoSaveConfiguration do
-      Checked := ReadBool(cnConfigIniSection, 'AutoSave', Checked);
+      Checked := gINI.ReadBool(cnConfigIniSection, 'AutoSave', Checked);
     with miHideTestNodesOnOpen do
-      Checked := ReadBool(cnConfigIniSection, 'HideTestNodesOnOpen', Checked);
+      Checked := gINI.ReadBool(cnConfigIniSection, 'HideTestNodesOnOpen', Checked);
     with miShowTestedNode do
-      Checked := ReadBool(cnConfigIniSection, 'SelectTestedNode', Checked);
+      Checked := gINI.ReadBool(cnConfigIniSection, 'SelectTestedNode', Checked);
 //    BreakOnFailuresAction.Checked := ReadBool(cnConfigIniSection,
 //      'BreakOnFailures', BreakOnFailuresAction.Checked);
 //    ReportMemoryLeakTypeOnShutdownAction.Checked := ReadBool(cnConfigIniSection,
@@ -1240,9 +1226,6 @@ begin
 //      'InhibitSummaryLevelChecks', InhibitSummaryLevelChecksAction.Checked);
 //    IgnoreMemoryLeakInSetUpTearDownAction.Checked := ReadBool(cnRunners,
 //      'IgnoreSetUpTearDownLeaks', IgnoreMemoryLeakInSetUpTearDownAction.Checked);
-  finally
-    Free;
-  end;
 
   if Suite <> nil then
     UpdateTestTreeState;
