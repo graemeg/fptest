@@ -1568,8 +1568,9 @@ begin
   {%region 'Auto-generated GUI code' -fold}
   {@VFD_BODY_BEGIN: GUITestRunner}
   Name := 'GUITestRunner';
-  SetPosition(507, 209, 548, 581);
+  SetPosition(100, 100, 548, 581);
   WindowTitle := 'GUI Test Runner';
+  WindowPosition := wpUser;
   Hint := '';
   ShowHint := True;
   MinWidth := 540;
