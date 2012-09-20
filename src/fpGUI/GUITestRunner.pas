@@ -576,10 +576,6 @@ begin
   LoadConfiguration;
   Setup;
   HoldOptions(False);
-
-  FUpdateTimer := TfpgTimer.Create(300);
-  FUpdateTimer.OnTimer := @OnTimerFired;
-  FUpdateTimer.Enabled := True;
 end;
 
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
@@ -605,6 +601,11 @@ end;
 
 procedure TGUITestRunner.FormShow(Sender: TObject);
 begin
+  FUpdateTimer := TfpgTimer.Create(300);
+  FUpdateTimer.OnTimer := @OnTimerFired;
+  FUpdateTimer.Enabled := True;
+
+
   ResultsView.Cells[0, 0] := 'Tests';
   ResultsView.Cells[1, 0] := 'Run';
   ResultsView.Cells[2, 0] := 'Failures';
