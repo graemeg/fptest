@@ -131,6 +131,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
     procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
     procedure DrawGridCell(Sender: TObject; const ARow, ACol: Integer; const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
@@ -585,6 +586,8 @@ procedure TGUITestRunner.FormDestroy(Sender: TObject);
 var
   i: integer;
 begin
+  ClearResult;
+
   TestTree.ImageList := nil;
   for i := FImageList.Count-1 downto 0 do
     FImageList[i].Image := nil; // clear the references
@@ -595,8 +598,6 @@ begin
     FStateImageList[i].Image := nil;  // clear the references
   FStateImageList.Free;
 
-  ClearResult;
-  AutoSaveConfiguration;
   FreeAndNil(FTests); // Note this is an object full of Interface refs
   Suite := nil;       // Take down the test proxys
 //  ClearRegistry;      // Take down the Registered tests
@@ -614,6 +615,11 @@ begin
 
   SetupGUINodes;
   TestTree.SetFocus;
+end;
+
+procedure TGUITestRunner.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  AutoSaveConfiguration;
 end;
 
 procedure TGUITestRunner.ProcessClickOnStateIcon(Sender: TObject; ANode: TfpgTreeNode);
@@ -1572,6 +1578,7 @@ begin
   OnCreate := @FormCreate;
   OnDestroy := @FormDestroy;
   OnShow := @FormShow;
+  OnClose := @FormClose;
 
   MainMenu := TfpgMenuBar.Create(self);
   with MainMenu do
