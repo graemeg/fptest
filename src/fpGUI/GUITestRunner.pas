@@ -2089,7 +2089,12 @@ end;
 procedure TGUITestRunner.AutoSaveActionExecute(Sender: TObject);
 begin
   with miAutoSaveConfiguration do
+  begin
     Checked := not Checked;
+    if not Checked then
+      { only save the checked state }
+      gINI.WriteBool(cnConfigIniSection, 'AutoSave', miAutoSaveConfiguration.Checked);
+  end;
   AutoSaveConfiguration;
 end;
 
