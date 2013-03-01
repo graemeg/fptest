@@ -22,8 +22,10 @@ program sample_fptest_project;
 {$Define GUIRunner}
 
 
-{$ifdef GuiRunner}
-  {$apptype gui}
+{$ifdef GUIRunner}
+  {$IFDEF WINDOWS}
+    {$apptype gui}
+  {$ENDIF}
 {$endif}
 
 
