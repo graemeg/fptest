@@ -11,7 +11,7 @@ interface
 
 uses
   SysUtils, Classes, fpg_base, fpg_main, fpg_form, fpg_label, fpg_menu,
-  fpg_progressbar, fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
+  fpg_grid, fpg_tree, fpg_imagelist, fpg_command_intf,
   fpg_panel, fpg_button, fpg_splitter, fpg_gauge, fpg_memo, fpg_basegrid,
   fpg_scrollbar, CustomGauge,
   TestFrameworkProxyIfaces;
@@ -285,8 +285,7 @@ uses
   dbugintf,
   TestFrameworkProxy,
   TimeManager,
-  formimages,
-  IniFiles;
+  formimages;
 
 const
   TEST_INI_FILE = 'fptest.ini';
