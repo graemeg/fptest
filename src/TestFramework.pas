@@ -110,7 +110,7 @@ type
     FExcluded: boolean;
     FTestSetUpData: ITestSetUpData;
     FMethodName: string;
-    FParent: ITestCase;
+    FParent: Pointer; // Weak reference to ITestCase;
     FIsTestMethod: boolean;
     FSupportedIface: TSupportedIface;
     FMethod: TTestMethod;
@@ -126,7 +126,7 @@ type
     FErrorMessage: string;
     FFailsOnNoChecksExecuted: boolean;
     FStatusMsgs: TStrings;
-    FProxy: IInterface;
+    FProxy: Pointer; // Weak reference to IInterface;
     FParentPath: string;
     FInhibitSummaryLevelChecks: Boolean;
     FEarlyExit: Boolean;
@@ -1916,12 +1916,12 @@ end;
 
 function TTestProc.get_ParentTestCase: ITestCase;
 begin
-  Result := FParent;
+  Result := ITestCase(FParent);
 end;
 
 procedure TTestProc.set_ParentTestCase(const TestCase: ITestCase);
 begin
-  FParent := TestCase;
+  FParent := Pointer(TestCase);
 end;
 
 procedure TTestProc.set_ParentPath(const AName: string);
@@ -1941,12 +1941,12 @@ end;
 
 function TTestProc.get_Proxy: IInterface;
 begin
-  Result := FProxy;
+  Result := IInterface(FProxy);
 end;
 
 procedure TTestProc.set_Proxy(const AProxy: IInterface);
 begin
-  FProxy := AProxy;
+  FProxy := Pointer(AProxy);
 end;
 
 function TTestProc.GetName: string;
@@ -2248,7 +2248,7 @@ begin
       CurrentTestCase.CheckCalled := FCheckCalled;
     FailsOnNoChecksExecuted := CurrentTestCase.FailsOnNoChecksExecuted;
     // Pass back the state after the method executed
-    Result := CheckMethodCalledCheck(FParent);
+    Result := CheckMethodCalledCheck(ITestCase(FParent));
     if (Result = _Warning) then
       ExecControl.WarningCount := ExecControl.WarningCount + 1
     else
