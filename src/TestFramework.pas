@@ -229,7 +229,7 @@ type
                        const ErrorAddress: Pointer = nil); overload;
     function  PtrToStr(const P: Pointer): string;
     procedure Invoke(AMethod: TExceptTestMethod);
-    // related to Check(Not)EqualsMem, pointer based, unsuitable for .NET
+    // related to Check(Not)EqualsMem, pointer based
     function  GetMemDiffStr(const expected, actual: pointer;
                             const size: longword; const ErrorMsg: string): string;
 
@@ -795,8 +795,9 @@ type
     FTestProcMemDiff : Integer;
     FSetUpMemDiff    : Integer;
     FTearDownMemDiff : Integer;
-
+  {$IFDEF FASTMM}
     function BumpWarningCount(const ALeakSize: Integer): TExecutionStatus;
+  {$ENDIF}
   protected
     procedure BeginTestMethod;
     procedure RunSetup(const UsersSetUp: TThreadMethod); override;
@@ -1035,6 +1036,7 @@ begin
   FTestCaseMemLeakMonitor := TDUnitMemLeakMonitor.Create;
 end;
 
+{$IFDEF FASTMM}
 function TMemUseComparator.BumpWarningCount(const ALeakSize: Integer): TExecutionStatus;
 begin
   Result := _Warning;
@@ -1061,6 +1063,7 @@ begin
     end;  {case}
   end;
 end;
+{$ENDIF}
 
 procedure TMemUseComparator.BeginTestMethod;
 begin
@@ -1101,12 +1104,14 @@ begin
 end;
 
 function TMemUseComparator.AlertOnMemoryLoss(const CurrentStatus: TExecutionStatus): TExecutionStatus;
+{$IFDEF FASTMM}
 var
   LMemoryLeakIgnoredInSetupOrTearDown: Boolean;
   LMemoryImbalance : boolean;
   LLeakIndex       : Integer;
   LMemErrorMessage : string;
   LExcept: Exception;
+{$ENDIF}
 begin
   Result := CurrentStatus;
   {$IFDEF FASTMM}
