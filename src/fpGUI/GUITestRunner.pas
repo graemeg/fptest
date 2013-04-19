@@ -171,7 +171,7 @@ type
     procedure LoadFormPlacement;
     function  NodeIsGrandparent(ANode: TfpgTreeNode): boolean;
     procedure CollapseNonGrandparentNodes(RootNode: TfpgTreeNode);
-    function HasParent(ANode: TfpgTreeNode): Boolean;
+    function HasParentNode(ANode: TfpgTreeNode): Boolean;
     procedure SetupGUINodes;
     procedure MakeNodeVisible(Node: TfpgTreeNode);
     procedure SetTreeNodeImage(Node: TfpgTreeNode; imgIndex: Integer);
@@ -1042,7 +1042,7 @@ begin
   if AEnabled then
   begin
     n := ANode;
-    while HasParent(n) do
+    while HasParentNode(n) do
     begin
       n := n.Parent;
       if not NodeToTest(n).Enabled then
@@ -1068,7 +1068,7 @@ begin
   begin
     ANode.StateImageIndex := imgDISABLED;
   end
-  else if HasParent(ANode) and (ANode.Parent.StateImageIndex <= imgPARENT_DISABLED) then
+  else if HasParentNode(ANode) and (ANode.Parent.StateImageIndex <= imgPARENT_DISABLED) then
   begin
     ANode.StateImageIndex := imgPARENT_DISABLED;
   end
@@ -1077,7 +1077,7 @@ begin
     ANode.StateImageIndex := imgENABLED;
   end;
 
-  if HasParent(ANode) and (ANode.Parent.StateImageIndex >= imgEXCLUDED) then
+  if HasParentNode(ANode) and (ANode.Parent.StateImageIndex >= imgEXCLUDED) then
       ANode.StateImageIndex := imgPARENT_EXCLUDED
   else if Test.Excluded then
     ANode.StateImageIndex := imgEXCLUDED;
@@ -1289,7 +1289,7 @@ begin
   end;
 end;
 
-function TGUITestRunner.HasParent(ANode: TfpgTreeNode): Boolean;
+function TGUITestRunner.HasParentNode(ANode: TfpgTreeNode): Boolean;
 begin
   Result := (ANode.Parent <> nil) and (ANode.Parent <> TestTree.RootNode);
 end;
