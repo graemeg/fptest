@@ -856,6 +856,11 @@ begin
   begin
     (FITestList.Items[i] as ITestProxy).ReleaseTests;
   end;
+  if Assigned(FITest) then
+  begin
+    FITest.Proxy := nil;
+    FITest.ParentTestCase := nil;
+  end;
   FITest := nil;
 end;
 
