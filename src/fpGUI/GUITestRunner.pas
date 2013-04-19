@@ -7,6 +7,9 @@ unit GUITestRunner;
   {$ASSERTIONS ON}
 {$ENDIF}
 
+{ if enabled, test results will be written to a XML file }
+{.$DEFINE XMLLISTENER}
+
 interface
 
 uses
@@ -284,6 +287,9 @@ uses
   fpg_iniutils,
   dbugintf,
   TestFrameworkProxy,
+  {$IFDEF XMLLISTENER}
+  XMLListener,
+  {$ENDIF}
   TimeManager,
   formimages;
 
@@ -1365,7 +1371,7 @@ begin
     try
       {$IFDEF XMLLISTENER}
       TestResult.AddListener(
-        TXMLListener.Create(LocalAppDataPath + Suite.Name
+        TXMLListener.Create(fpgGetAppConfigDir(False) + Suite.Name
           {, 'type="text/xsl" href="fpcunit2.xsl"'}));
       {$ENDIF}
       TestResult.AddListener(self);
