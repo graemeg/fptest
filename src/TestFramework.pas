@@ -3024,14 +3024,14 @@ procedure TTestProc.CheckTrue(const condition: boolean; const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (not condition) then
-      FailNotEquals(BoolToStr(true), BoolToStr(false), ErrorMsg, CallerAddr);
+      FailNotEquals(BoolToStr(true, true), BoolToStr(false, true), ErrorMsg, CallerAddr);
 end;
 
 procedure TTestProc.CheckFalse(const condition: boolean; const ErrorMsg: string);
 begin
   OnCheckCalled;
   if (condition) then
-      FailNotEquals(BoolToStr(false), BoolToStr(true), ErrorMsg, CallerAddr);
+      FailNotEquals(BoolToStr(false, true), BoolToStr(true, true), ErrorMsg, CallerAddr);
 end;
 
 procedure TTestProc.CheckEquals(const expected, actual: int64;
@@ -3140,7 +3140,7 @@ procedure TTestProc.CheckEquals(const expected, actual: boolean;
 begin
   OnCheckCalled;
   if (expected <> actual) then
-    FailNotEquals(BoolToStr(expected), BoolToStr(actual), ErrorMsg, CallerAddr);
+    FailNotEquals(BoolToStr(expected, true), BoolToStr(actual, true), ErrorMsg, CallerAddr);
 end;
 
 procedure TTestProc.CheckEqualsBin(const expected, actual: longword;
@@ -3193,7 +3193,7 @@ procedure TTestProc.CheckNotEquals(const expected, actual: boolean;
 begin
   OnCheckCalled;
   if (expected = actual) then
-    FailEquals(BoolToStr(expected), BoolToStr(actual), ErrorMsg, CallerAddr);
+    FailEquals(BoolToStr(expected, true), BoolToStr(actual, true), ErrorMsg, CallerAddr);
 end;
 
 procedure TTestProc.CheckEquals(const expected, actual: integer;
