@@ -2347,14 +2347,10 @@ end;
 
 procedure TTestProc.Warn(const ErrorMsg: string; const ErrorAddress: Pointer);
 begin
-{$IFDEF CLR}
-  raise EPostTestFailure.Create(ErrorMsg);
-{$ELSE}
   if ErrorAddress = nil then
     raise EPostTestFailure.Create(ErrorMsg) at CallerAddr
   else
     raise EPostTestFailure.Create(ErrorMsg) at ErrorAddress;
-{$ENDIF}
 end;
 
 procedure TTestproc.CheckMethodIsNotEmpty(const AMethod: TTestMethod);
