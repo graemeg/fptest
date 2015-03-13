@@ -2068,27 +2068,29 @@ begin
   end
 end;
 
-function CallerAddr: Pointer; assembler;
-const
-  CallerIP = $4;
-asm
-   mov   eax, ebp
-   call  IsBadPointer
-   test  eax,eax
-   jne   @@Error
+{$WARN SYMBOL_PLATFORM OFF}
+function RtlCaptureStackBackTrace(FramesToSkip: ULONG; FramesToCapture: ULONG;
+  out BackTrace: Pointer; BackTraceHash: PULONG): USHORT; stdcall;
+  external 'kernel32.dll' name 'RtlCaptureStackBackTrace' delayed;
+{$WARN SYMBOL_PLATFORM ON}
 
-   mov   eax, [ebp].CallerIP
-   sub   eax, 5   // 5 bytes for call
-
-   push  eax
-   call  IsBadPointer
-   test  eax,eax
-   pop   eax
-   je    @@Finish
-
-@@Error:
-   xor eax, eax
-@@Finish:
+// 32-bit and 64-bit compatible
+// Source: http://stackoverflow.com/questions/12022862/what-does-dunit2s-calleraddr-function-do-and-how-do-i-convert-it-to-64-bits
+function CallerAddr: Pointer;
+begin
+  // Skip 2 Frames, one for the return of CallerAddr and one for the
+  // return of RtlCaptureStackBackTrace
+  if RtlCaptureStackBackTrace(2, 1, Result, nil) > 0 then
+  begin
+    if not IsBadPointer(Result) then
+      Result := Pointer(NativeInt(Result) - 5)
+    else
+      Result := nil;
+  end
+  else
+  begin
+    Result := nil;
+  end;
 end;
 {$ELSE}
 // FPC has a cross-platform implementation for this.
