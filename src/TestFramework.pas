@@ -2095,8 +2095,14 @@ end;
 {$ELSE}
 // FPC has a cross-platform implementation for this.
 function CallerAddr: Pointer;
+var
+  bp: Pointer;
 begin
-  Result := get_caller_addr(get_frame);
+  bp := get_caller_frame(get_frame);
+  if bp <> nil then
+    Result := get_caller_addr(bp)
+  else
+    Result := nil;
 end;
 
 {$ENDIF}
