@@ -624,8 +624,18 @@ begin
 end;
 
 function PointerToLocationInfo(Addrs: PtrType): string;
+var
+  _line: Integer;
+  _file: string;
 begin
-  Result := AddrsToStr(Addrs);
+  // TODO: Extract file and line info from backtrace
+//  if _file <> '' then
+//    Result := Format('%s:%d', [_file, _line]);
+  Result := BackTraceStrFunc(Pointer(Addrs));
+//  else
+//    Result := string(_module);
+  if Trim(Result) = '' then
+    Result := AddrsToStr(Addrs) + '  <no map file>';
 end;
 
 function PointerToAddressInfo(Addrs: PtrType): string;
@@ -646,7 +656,7 @@ var
 begin
   LTrace := TStringList.Create;
   try
-    { TODO -cStackTrace : Could we use FPC heaptrc unit here? }
+    { TODO -cStackTrace : See DumpStack for details }
     {$IFDEF USE_JEDI_JCL}
       JclDebug.JclLastExceptStackListToStrings(LTrace, true);
     {$ENDIF}
