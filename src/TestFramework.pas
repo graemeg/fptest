@@ -1300,7 +1300,7 @@ begin
   if idx < Count  then
   begin
     Result := (FIList.Items[idx] as ITest);
-    inc(idx); // idx will eventuually = count
+    inc(idx); // idx will eventually = count
   end;
   FCurrentTest := Result;
 end;
