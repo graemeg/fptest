@@ -3575,7 +3575,7 @@ begin
         FReportErrorOnce := True;
         ExecStatus := UpdateOnError(Self,
                                     _Error,
-                                    'TearDown  + LWhichOne + failed: ' + E.Message,
+                                    'TearDown ' + LWhichOne + ' failed: ' + E.Message,
                                     E,
                                     PtrType(ExceptAddr));
       end;
@@ -3586,7 +3586,7 @@ begin
       FReportErrorOnce := True;
       ExecStatus := UpdateOnError(Self,
                                   _Error,
-                                  'SetUp' + LWhichOne + ' failed: ' + E.Message,
+                                  'SetUp ' + LWhichOne + ' failed: ' + E.Message,
                                   E,
                                   PtrType(ExceptAddr));
     end;
