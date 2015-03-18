@@ -727,8 +727,8 @@ end;
 const
   sExpectedButWasFmt = 'Expected:'+LineEnding+'  "%s"'+LineEnding+'But was:'+LineEnding+'  "%s"';
   sExpectedButWasAndMessageFmt = '      "%s"'+LineEnding + sExpectedButWasFmt;
-  sMsgActualEqualsExpFmt = '%s'+LineEnding+'Expected '+LineEnding+'< %s > '+LineEnding+'equals actual '+LineEnding+'< %s >';
   sActualEqualsExpFmt = 'Expected '+LineEnding+'< %s > '+LineEnding+'equals actual '+LineEnding+'< %s >';
+  sMsgActualEqualsExpFmt = '%s'+LineEnding+sActualEqualsExpFmt;
 
 type
   EStopTestsFailure = class(ETestFailure);
@@ -3365,6 +3365,7 @@ end;
 procedure TTestProc.CheckNotEquals(const expected, actual: extended;
                                    const ErrorMsg: string);
 begin
+  // TODO: This is not going to report correct calling error address
   CheckNotEquals(expected, actual, 0, ErrorMsg);
 end;
 
@@ -3726,7 +3727,7 @@ begin
         if not ATest.IsTestMethod then
         begin
           if (ATest.Depth = 0) and (ATest.ProjectID = 0) then
-          (FListener as ITestListenerProxy).TestingStarts;
+            (FListener as ITestListenerProxy).TestingStarts;
           (FListener as ITestListenerProxy).StartSuite(ATest);
         end;
         (FListener as ITestListenerProxy).StartTest(ATest);
