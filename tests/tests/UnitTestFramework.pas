@@ -37,37 +37,29 @@
   '!!!Alert SELFTEST must be defined in project options conditionals'
 {$ENDIF}
 
-{$IFDEF CLR}
-  {$UNSAFECODE ON}
-  {$UNDEF FASTMM}
-{$ENDIF}
-{$IFNDEF VER130}
-  {$IFNDEF VER140}
-    {$WARN UNSAFE_CAST OFF}
-    {$WARN UNSAFE_CODE OFF}
+unit UnitTestFramework;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
   {$ENDIF}
 {$ENDIF}
 
-unit UnitTestFramework;
 interface
+
 uses
-  {$IFDEF CLR}
-    System.Reflection,
-  {$ENDIF}
   ProjectsManagerIface,
   TestFrameworkIfaces,
   {$IFDEF SELFTEST}
     RefTestFramework,
   {$ELSE}
     TestFramework,
-  {$ENDIF}
-  {$IFDEF FASTMM}
-    {$IFDEF COVERAGE}
-    CheckOverrides,
-    {$ENDIF}
-  {$ENDIF}
-  {$IFDEF USE_JEDI_JCL}
-    JclDebug,
   {$ENDIF}
   SysUtils,
   Classes;
@@ -2364,19 +2356,13 @@ type
  {==============================================================================}
 implementation
 uses
-  {$IFDEF VER130}
-    D5Support,
-  {$ENDIF}
-  Windows,
-  Forms,
   TypInfo,
   {$IFDEF SELFTEST}
   TestFramework,
   {$ENDIF}
   ProjectsManager,
   SharedTestClasses,
-  XPVistaSupport,
-  MMSystem;
+  TimeManager;
 
 type
   EUnitTestsUnknownExcept = class(TestFramework.EDUnitException);
@@ -8448,20 +8434,20 @@ end;
 procedure TElapsedTimesTests.Quick;
 begin
   Check(Self.ElapsedTime = 0,
-    'Time should be zero but was ' + IntToStr(Self.ElapsedTime));
+    'Time should be zero but was ' + ElapsedDHMS(Self.ElapsedTime));
 end;
 
 procedure TElapsedTimesTests.Sleep20;
 begin
   Check(Self.ElapsedTime = 0,
-    'Time should be zero but was ' + IntToStr(Self.ElapsedTime));
+    'Time should be zero but was ' + ElapsedDHMS(Self.ElapsedTime));
   Sleep(20);
 end;
 
 procedure TElapsedTimesTests.Sleep40;
 begin
   Check(Self.ElapsedTime = 0,
-    'Time should be zero but was ' + IntToStr(Self.ElapsedTime));
+    'Time should be zero but was ' + ElapsedDHMS(Self.ElapsedTime));
   Sleep(40);
 end;
 
@@ -8470,13 +8456,14 @@ end;
 procedure TTestsElapsedTimes.SetUp;
 begin
   FAnExecControl := TestFramework.TestExecControl;
-  TimeBeginPeriod(1);
+  gTimer.Clear;
+  gTimer.Start;
   Sleep(1); // Attempt to sync up to thread slice
 end;
 
 procedure TTestsElapsedTimes.TearDown;
 begin
-  TimeEndPeriod(1);
+  gTimer.Stop;
   FAnExecControl := nil;
   FTestProject := nil;
   RemoveProjectManager;
@@ -8486,7 +8473,7 @@ procedure TTestsElapsedTimes.TestElapsedTestCase;
 var
   LReturnStatus: TExecutionStatus;
   LTest: ITest;
-  LHold: Int64;
+  LHold: Extended;
   LExecControl: ITestExecControl;
 begin
 // A +- 3 ms tolerance has been built in to cater for rounding errors
@@ -8512,35 +8499,35 @@ begin
   Check(Assigned(LTest), 'Quick = nil');
   Check(LTest.ElapsedTime <= 3,
     'Elapsed time for Quick execution too slow, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   LTest := FTestProject.FindNextTest;
   Check(Assigned(LTest), 'Sleep20 = nil');
   Check(LTest.ElapsedTime >= 17,
     'Elapsed time for Sleep(20) execution too fast, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   Check(LTest.ElapsedTime <= 23,
     'Elapsed time for Sleep(20) execution too slow, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   LTest := FTestProject.FindNextTest;
   Check(Assigned(LTest), 'Sleep40 = nil');
   Check(LTest.ElapsedTime >= 37,
     'Elapsed time for Sleep(40) execution too fast, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   Check(LTest.ElapsedTime <= 43,
     'Elapsed time for Sleep(40) execution too slow, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   Check(LHold >= 55, // Held over so individual times get tested first.
     'Elapsed time for TElapsedTimesTests execution too fast, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 
   Check(LHold <= 65, // Held over so individual times get tested first.
     'Elapsed time for TElapsedTimesTests execution too slow, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 end;
 
 procedure TTestsElapsedTimes.TestElapsedSuite;
@@ -8567,7 +8554,7 @@ begin
       LTest.DisplayedName);
   Check(LTest.ElapsedTime >= 27,
     'Elapsed time for TElapsedTimesTests execution too fast, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 end;
 
 procedure TTestsElapsedTimes.TestElapsedSuites;
@@ -8595,7 +8582,7 @@ begin
       LTest.DisplayedName);
   Check(LTest.ElapsedTime >= 57,
     'Elapsed time for TElapsedTimesTests execution too fast, was ' +
-      IntToStr(LTest.ElapsedTime));
+      ElapsedDHMS(LTest.ElapsedTime));
 end;
 
 procedure TTestsElapsedTimes.TestElapsedProject;
@@ -8620,7 +8607,7 @@ begin
 
   Check(FTestProject.ElapsedTime >= 117,
     'Elapsed time for TElapsedTimesTests execution too fast, was ' +
-      IntToStr(FTestProject.ElapsedTime));
+      ElapsedDHMS(FTestProject.ElapsedTime));
 end;
 
 
@@ -9915,8 +9902,8 @@ begin
 
   FProjectsManager := nil;
   RemoveProjectManager;
-  FPath := LocalAppDataPath;
-  FPathName := FPath + 'DUnit2.ini';
+  FPath := ''; // TODO: LocalAppDataPath;
+  FPathName := FPath + 'fptest.ini';
   SysUtils.DeleteFile(FPathName);
 end;
 
@@ -10045,7 +10032,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest(TTestCase3.Suite); // Two procedures
@@ -10087,7 +10074,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest(TTestCase3.Suite); // Two procedures
@@ -10151,7 +10138,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest('ATestSuite', TTestCase2.Suite);
@@ -10185,7 +10172,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest('TestSuite1', TTestCase2.Suite);
@@ -10223,7 +10210,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest('TestSuite1', TTestCase2.Suite);
@@ -10262,7 +10249,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest('TestSuite1', TTestCase2.Suite);
@@ -10339,7 +10326,7 @@ procedure TestSaveProjectEnableState.CallSaveConfigurationWith2ndRegisteredProje
 var
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest(TTestCase2.Suite);
@@ -10377,7 +10364,7 @@ var
   LTest: ITest;
   LExeName: string;
 begin
-  LExeName := ExtractFileName(Application.ExeName);
+  LExeName := ExtractFileName(ParamStr(0));
   FTestProject := TestFramework.TestProject;
   Check(FTestProject = nil, 'Must be nil at start of test');
   TestFramework.RegisterTest(TTestCase2.Suite);

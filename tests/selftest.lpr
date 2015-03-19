@@ -17,35 +17,31 @@ uses
   cthreads,
   {$ENDIF}
   Classes,
-TestFrameworkIfaces,
-TestFramework,
-TestFrameworkProxyIfaces,
-TestListenerIface,
-ProjectsManagerIface,
-ProjectsManager,
-TestFrameworkProxy,
-RefTestFrameworkProxy,
-RefTestFramework,
-RefProjectsManager,
-SharedTestClasses,
-  UnitTestFramework,
-//  UnitTestModules
-  UnitTestFrameworkProxy,
+  TestFrameworkIfaces,
+  TestFramework,
+  TestFrameworkProxyIfaces,
+  TestListenerIface,
+  ProjectsManagerIface,
+  ProjectsManager,
+  TestFrameworkProxy,
+  RefTestFrameworkProxy,
+  RefTestFramework,
+  RefProjectsManager,
+  SharedTestClasses,
   MiniTestSuite,
   MiniTestSuite2,
   UnitSingleTest,
   {$IFDEF TextRunner}
-  TextTestRunner;
+  TextTestRunner,
   {$ENDIF}
   {$IFDEF GUIRunner}
-  RefGUITestRunner;
+  RefGUITestRunner,
   {$ENDIF}
+  UnitTestFramework,
+  UnitTestFrameworkProxy;
 
 
 begin
-  // Register all tests
-//  sample_tests.RegisterTests;
-
   RunRegisteredTests;
 end.
 

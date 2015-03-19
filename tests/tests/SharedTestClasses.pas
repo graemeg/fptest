@@ -33,17 +33,23 @@
    Graeme Geldenhuys <graemeg@gmail.com>
 }
 
-{$IFDEF CLR}
-  {$UNSAFECODE ON}
-  {$UNDEF FASTMM}
+unit SharedTestClasses;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
+  {$ENDIF}
 {$ENDIF}
 
-unit SharedTestClasses;
 interface
+
 uses
-  {$IFDEF CLR}
-    System.Reflection,
-  {$ENDIF}
   {$IFDEF SELFTEST}
     RefTestFramework,
   {$ELSE}

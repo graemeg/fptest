@@ -41,21 +41,41 @@
         <PackageName Value="fptest"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="3">
+    <Units Count="7">
       <Unit0>
         <Filename Value="selftest.lpr"/>
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="UnitTestFramework.pas"/>
+        <Filename Value="tests/SharedTestClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="UnitTestFramework"/>
+        <UnitName Value="SharedTestClasses"/>
       </Unit1>
       <Unit2>
-        <Filename Value="UnitTestFrameworkProxy.pas"/>
+        <Filename Value="tests/MiniTestSuite.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MiniTestSuite"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="tests/MiniTestSuite2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MiniTestSuite2"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="tests/UnitSingleTest.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitSingleTest"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="tests/UnitTestFramework.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="UnitTestFramework"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="tests/UnitTestFrameworkProxy.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="UnitTestFrameworkProxy"/>
-      </Unit2>
+      </Unit6>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

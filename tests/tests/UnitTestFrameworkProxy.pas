@@ -39,7 +39,21 @@
 {$ENDIF}
 
 unit UnitTestFrameworkProxy;
+
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 interface
+
 uses
   TestFrameworkIfaces,
   TestFrameworkProxyIfaces,
@@ -48,15 +62,12 @@ uses
 type
   TSimpleTestCase1 = class(TTestCase)
   published
-    {$ifdef clr} [TEST] {$endif}
     procedure TestPasses;
   end;
 
   TSimpleTestCase2 = class(TTestCase)
   published
-    {$ifdef clr} [TEST] {$endif}
     procedure FirstTestPasses;
-    {$ifdef clr} [TEST] {$endif}
     procedure SecondTestPasses;
   end;
 
@@ -76,15 +87,11 @@ type
     procedure TearDown; override;
     procedure TearDownOnce; override;
   published
-    {$ifdef clr} [Test] {$endif}
     procedure VerifyRegisteredProxyReturnsSameSingleAutoRegisteredEmptyProjectst;
-    {$ifdef clr} [Test] {$endif}
     procedure VerifyRegisteredProxyReturnsSameSingleAutoRegisteredEmptyProject;
-    {$ifdef clr} [Test] {$endif}
     procedure VerifyRegisteredProxyReturnsSameSingleAutoRegisteredSimpleProject;
-    {$ifdef clr} [Test] {$endif}
     procedure VerifyRegisteredProxyReturnsTwoRegisteredSimpleProjects;
-    {$ifndef clr}
+    {$ifndef FPC}
     procedure VerifyRegisteredProxyReturnsSameSingleCodeRegisteredDLL;
     procedure VerifyRegisteredProxyReturnsSameSingleAutoRegisteredDLL;
     procedure VerifyRegisteredProxyReturnsOneRegisteredProjectAndOneRegisteredDLL;
@@ -165,7 +172,7 @@ uses
   ProjectsManagerIface,
   TestFrameworkProxy,
   TestFramework,
-  {$ifndef clr}
+  {$ifndef FPC}
   TestModules,
    {$IFNDEF VER130}
      {$IFNDEF VER140}
@@ -174,7 +181,6 @@ uses
      Windows,
    {$ENDIF}
   {$ENDIF}
-  XPVistaSupport,
   SharedTestClasses,
   SysUtils;
 
@@ -230,7 +236,7 @@ begin
     FTestFrameworkProxy.ReleaseTests;
   FTestFrameworkProxy := nil;
   TestFramework.UnRegisterProjectManager;
-  {$ifndef clr}
+  {$ifndef FPC}
   TestModules.UnloadTestModules;
   {$endif}
 end;
@@ -355,7 +361,7 @@ begin
 }
 end;
 
-{$ifndef clr}
+{$ifndef FPC}
 procedure TTestProxyFrameworkRegistersProjects.VerifyRegisteredProxyReturnsSameSingleCodeRegisteredDLL;
 var
   LDLLFileName: string;
@@ -852,7 +858,7 @@ end;
 
 procedure TTestBreakOnFailure.VerifyTestsBreakOnFailure;
 var
-  LTestResult: TTestResult;
+  LTestResult: ITestResult;
 begin
   FTestFrameworkProxy := TestFrameworkProxy.RegisteredTests;
   Check(FTestFrameworkProxy = nil, 'Should be nil until project registered.');
@@ -878,7 +884,7 @@ end;
 
 procedure TTestBreakOnFailure.VerifyTestsBreakOnException;
 var
-  LTestResult: TTestResult;
+  LTestResult: ITestResult;
 begin
   FTestFrameworkProxy := TestFrameworkProxy.RegisteredTests;
   Check(FTestFrameworkProxy = nil, 'Should be nil until project registered.');

@@ -35,7 +35,20 @@
 
 unit MiniTestSuite2;
 
+{$IFDEF FPC}
+  {$mode delphi}{$H+}
+{$ELSE}
+  // If Delphi 7, turn off UNSAFE_* Warnings
+  {$IFNDEF VER130}
+    {$IFNDEF VER140}
+      {$WARN UNSAFE_CODE OFF}
+      {$WARN UNSAFE_CAST OFF}
+    {$ENDIF}
+  {$ENDIF}
+{$ENDIF}
+
 interface
+
 uses
   TestFramework
   ;
