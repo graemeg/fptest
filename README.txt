@@ -15,14 +15,14 @@ Support
 -------
 Support can be found in the form of a newsgroup (NNTP Server) at:
 
-  news://opensoft.homeip.net
-  Port: 119
+  Server:  geldenhuys.co.uk
+  Port:    119
 
 For those that can't use NNTP news client software for some reason, can
 also access the support newsgroup via a web browser using the following
 URL:
 
-  http://opensoft.homeip.net:8080/webnews/
+  http://geldenhuys.co.uk/webnews/
 
 
 Summary
