@@ -2,8 +2,8 @@ unit RefGUITestRunner;
 
 {$mode objfpc}{$H+}
 
-{.$define DEBUG}
-{$IFDEF DEBUG}
+{.$define gDEBUG}
+{$IFDEF gDEBUG}
   {$ASSERTIONS ON}
 {$ENDIF}
 
@@ -139,6 +139,7 @@ type
     procedure ProcessKeyPressOnTreeview(Sender: TObject; var KeyCode: word; var ShiftState: TShiftState; var Consumed: boolean);
     procedure DrawGridCell(Sender: TObject; const ARow, ACol: Integer; const ARect: TfpgRect; const AFlags: TfpgGridDrawState; var ADefaultDrawing: boolean);
     procedure OnTimerFired(Sender: TObject);
+    procedure TestNodeSelected(Sender: TObject);
     procedure SetSuite(const AValue: ITestProxy);
     function get_TestResult: ITestResult;
     procedure set_TestResult(const AValue: ITestResult);
@@ -362,6 +363,22 @@ begin
   end;
 end;
 
+procedure TGUITestRunner.TestNodeSelected(Sender: TObject);
+var
+  i: integer;
+  obj: TFailureDataObject;
+begin
+  for i := 0 to FailureGrid.RowCount-1 do
+  begin
+    obj := FailureGrid.Objects[0, i] as TFailureDataObject;
+    if obj.TreeNode = TestTree.Selection then
+    begin
+      FailureGrid.FocusRow := i;
+      break;
+    end;
+  end;
+end;
+
 procedure TGUITestRunner.Status(const ATest: ITestProxy; AMessage: string);
 begin
   if meErrorMessage.Lines.Count = 0 then
@@ -375,7 +392,7 @@ var
   LOverridesGUI: Boolean;
   LHasRunTimePropsSet: Boolean;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('success: ' + ATest.Name);
   Assert(Assigned(ATest));
   {$ENDIF}
@@ -437,7 +454,7 @@ procedure TGUITestRunner.AddError(AError: TTestFailure);
 var
   newrow: integer;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('error: ' + AError.FailedTest.Name);
   {$ENDIF}
   FTestFailed := True;
@@ -454,7 +471,7 @@ procedure TGUITestRunner.AddFailure(AFailure: TTestFailure);
 var
   newrow: integer;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('failure: ' + AFailure.FailedTest.Name);
   {$ENDIF}
   FTestFailed := True;
@@ -474,7 +491,7 @@ procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
 var
   newrow: integer;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('warning: ' + AWarning.FailedTest.Name);
   {$ENDIF}
   if miEnableWarnings.Checked then
@@ -491,7 +508,7 @@ end;
 
 procedure TGUITestRunner.TestingStarts;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('*** Testing Starts ****');
   {$ENDIF}
   FTotalTime := 0;
@@ -504,14 +521,14 @@ procedure TGUITestRunner.StartTest(Test: ITestProxy);
 var
   Node: TfpgTreeNode;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   assert(assigned(TestResult));
   assert(assigned(Test));
   {$ENDIF}
 
   Node := TestToNode(Test);
 
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   assert(assigned(Node));
   {$ENDIF}
 
@@ -534,7 +551,7 @@ var
   idx: Integer;
   AProxy: ITestProxy;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendSeparator;
   {$ENDIF}
   for idx := 0 to FTests.Count-1 do
@@ -709,7 +726,7 @@ end;
 function TGUITestRunner.IniFileName: TfpgString;
 begin
   result := fpgGetAppConfigDir(False) + TEST_INI_FILE;
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   SendDebug('IniFileName = ' + Result);
   {$ENDIF}
 end;
@@ -781,7 +798,7 @@ function TGUITestRunner.AddFailureItem(Failure: TTestFailure): integer;
 var
   obj: TFailureDataObject;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   Assert(Assigned(Failure));
   {$ENDIF}
   Result := FailureGrid.RowCount;
@@ -994,7 +1011,7 @@ end;
 
 procedure TGUITestRunner.SwitchNodeState(ANode: TfpgTreeNode);
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   Assert(ANode <> nil);
   {$ENDIF}
   TestTree.BeginUpdate;
@@ -1031,7 +1048,7 @@ var
   MostSeniorChanged: TfpgTreeNode;
   n: TfpgTreeNode;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   Assert(ANode <> nil);
   {$ENDIF}
 
@@ -1090,7 +1107,7 @@ var
   Test: ITestProxy;
   n: TfpgTreeNode;
 begin
-  {$IFDEF DEBUG}
+  {$IFDEF gDEBUG}
   Assert(Assigned(ANode));
   Test := NodeToTest(ANode);
   Assert(Assigned(Test));
@@ -1968,6 +1985,7 @@ begin
     StateImageList := FStateImageList;
     OnStateImageClicked  := @ProcessClickOnStateIcon;
     OnKeyPress  := @ProcessKeyPressOnTreeview;
+    OnChange := @TestNodeSelected;
   end;
 
   ProgressBar := TfpgGauge.Create(Bevel5);
