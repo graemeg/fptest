@@ -54,7 +54,6 @@ uses
   Classes,
   SysUtils,
   IniFiles;
-//  Registry;
 
 { TODO -cregistry : Remove Registry support - we want clean INI support only }
 
