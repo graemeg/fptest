@@ -58,6 +58,8 @@ type
 
   TTestFunc = function (item :ITestProxy):Boolean of object;
 
+  { TGUITestRunner }
+
   TGUITestRunner = class(TForm, ITestListener, ITestListenerX)
     StateImages: TImageList;
     RunImages: TImageList;
@@ -342,6 +344,7 @@ type
     FMemBytesStr:   string;
     FBytes:         string;
     FIgnoreLeakStr: string;
+    FAppDataPath:   string;
     FMemLeakDetectedPtyOverridden: Boolean;
     FIgnoreSetUpTearDownLeakPtyOverridden: Boolean;
     FNoCheckExecutedPtyOverridden: Boolean;
@@ -402,6 +405,7 @@ type
     procedure InitTree; virtual;
 
     function  IniFileName :string;
+    procedure InitializeAppDataPath;
     function  GetIniFile(const FileName : string) : tCustomIniFile;
 
     procedure LoadRegistryAction;
@@ -768,7 +772,13 @@ function TGUITestRunner.IniFileName: string;
 const
   TEST_INI_FILE = 'fptest.ini';
 begin
-  result := ExtractFilePath(ParamStr(0))  + TEST_INI_FILE;
+  Result := FAppDataPath + TEST_INI_FILE;
+end;
+
+procedure TGUITestRunner.InitializeAppDataPath;
+begin
+  FAppDataPath := GetAppConfigDir(False);
+  ForceDirectories(FAppDataPath);
 end;
 
 procedure TGUITestRunner.LoadFormPlacement;
@@ -812,6 +822,7 @@ procedure TGUITestRunner.LoadConfiguration;
 var
   i: Integer;
 begin
+  InitializeAppDataPath;
   LoadRegistryAction;
   LoadFormPlacement;
   LoadSuiteConfiguration;
@@ -1796,7 +1807,7 @@ begin
     try
       {$IFDEF XMLLISTENER}
       TestResult.AddListener(
-        TXMLListener.Create(ExtractFilePath(ParamStr(0)) + Suite.Name
+        TXMLListener.Create(FAppDataPath + Suite.Name
           {, 'type="text/xsl" href="fpcunit2.xsl"'}));
       {$ENDIF}
       TestResult.addListener(self);
