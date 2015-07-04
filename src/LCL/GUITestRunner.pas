@@ -512,8 +512,11 @@ const
   imgPARENT_EXCLUDED = 5;
 
 procedure RunTest(Test: ITestProxy);
+var
+  GUI: TGUITestRunner;
 begin
-  with TGUITestRunner.Create(nil) do
+  Application.CreateForm(TGUITestRunner, GUI);
+  with GUI do
   begin
     try
       Suite := Test;
