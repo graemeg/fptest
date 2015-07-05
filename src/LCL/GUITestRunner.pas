@@ -486,7 +486,7 @@ uses
   TimeManager;
 
 {$BOOLEVAL OFF}  // Required or you'll get an AV
-{$R *.LFM}
+{$R *.lfm}
 
 const
   {: Section of the dunit.ini file where GUI information will be stored }
