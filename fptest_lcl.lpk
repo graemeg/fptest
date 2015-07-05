@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\lcl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="6">
       <Item1>
         <Filename Value="src\LCL\GUITestRunner.pas"/>
         <UnitName Value="GUITestRunner"/>
@@ -27,6 +27,18 @@
         <HasRegisterProc Value="True"/>
         <UnitName Value="FPTestLazIDEIntf"/>
       </Item3>
+      <Item4>
+        <Filename Value="src\LCL\strtestcaseopts.pas"/>
+        <UnitName Value="strtestcaseopts"/>
+      </Item4>
+      <Item5>
+        <Filename Value="src\LCL\testcaseopts.lfm"/>
+        <Type Value="LFM"/>
+      </Item5>
+      <Item6>
+        <Filename Value="src\LCL\testcaseopts.pas"/>
+        <UnitName Value="testcaseopts"/>
+      </Item6>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

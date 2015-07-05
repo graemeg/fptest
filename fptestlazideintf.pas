@@ -28,12 +28,11 @@
 unit FPTestLazIDEIntf;
 
 {$mode objfpc}{$H+}
-{.$define TESTCASE_OPTIONS_FORM_IMPLEMENTED}
 
 interface
 
 uses
-  Classes, SysUtils, LazIDEIntf, ProjectIntf, Controls, Forms{, testcaseopts};
+  Classes, SysUtils, LazIDEIntf, ProjectIntf, Controls, Forms, testcaseopts;
 
 type
   { TFPTestApplicationDescriptor }
@@ -205,7 +204,6 @@ begin
   CreateSetup := false;
   CreateTeardown := false;
   LE:=LineEnding;
-  {$ifdef TESTCASE_OPTIONS_FORM_IMPLEMENTED}
   with TTestCaseOptionsForm.Create(nil) do
   try
     edDefaultName.Text := 'T' + SourceName;
@@ -225,9 +223,6 @@ begin
   finally
     Free;
   end;
-  {$else}
-  TestCaseName:= 'T' + SourceName;
-  {$endif}
 
   Result:=
      'unit '+SourceName+';'+LE
