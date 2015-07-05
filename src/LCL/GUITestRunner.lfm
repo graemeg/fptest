@@ -495,15 +495,12 @@ object GUITestRunner: TGUITestRunner
       ClientWidth = 571
       TabOrder = 1
       OnResize = ErrorBoxPanelResize
-      object ErrorMessageRTF: TMemo
+      object ErrorMessages: TMemo
         Left = 2
         Height = 76
         Top = 2
         Width = 567
         Align = alClient
-        Lines.Strings = (
-          'ErrorMessageRTF'
-        )
         PopupMenu = ErrorMessagePopup
         ReadOnly = True
         ScrollBars = ssAutoBoth

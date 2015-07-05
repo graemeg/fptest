@@ -129,7 +129,7 @@ type
     LbProgress: TLabel;
     UseRegistryAction: TAction;
     UseRegistryItem: TMenuItem;
-    ErrorMessageRTF: TMemo;
+    ErrorMessages: TMemo;
     SelectCurrentAction: TAction;
     DeselectCurrentAction: TAction;
     SelectCurrent1: TMenuItem;
@@ -583,6 +583,28 @@ begin
   GUI.Free;
 end;
 
+type
+
+  { TMemoLogHelper }
+
+  TMemoLogHelper = class helper for TMemo
+    procedure AddLine(const S: String; Size: Integer; Color: TColor; Styles: TFontStyles);
+    procedure AddEmptyLine;
+  end;
+
+{ TMemoLogHelper }
+
+procedure TMemoLogHelper.AddLine(const S: String; Size: Integer; Color: TColor;
+  Styles: TFontStyles);
+begin
+  Lines.Add(S);
+end;
+
+procedure TMemoLogHelper.AddEmptyLine;
+begin
+  Lines.Add('');
+end;
+
 { TGUITestRunner }
 
 procedure TGUITestRunner.InitTree;
@@ -647,7 +669,7 @@ begin
     MakeNodeVisible(Node);
     TestTree.Update;
   end;
-  ErrorMessageRTF.Lines.Clear;
+  ErrorMessages.Lines.Clear;
   UpdateStatus(False);
 end;
 
@@ -772,7 +794,7 @@ function TGUITestRunner.IniFileName: string;
 const
   TEST_INI_FILE = 'fptest.ini';
 begin
-  Result := FAppDataPath + TEST_INI_FILE;
+  Result := {FAppDataPath +} TEST_INI_FILE;
 end;
 
 procedure TGUITestRunner.InitializeAppDataPath;
@@ -1265,6 +1287,7 @@ var
   hlColor :TColor;
   Test    :ITestProxy;
   Status  :string;
+  Line    :string;
 begin
   TestTree.Selected := TTreeNode(Item.data);
   Test := NodeToTest(TestTree.Selected);
@@ -1281,63 +1304,53 @@ begin
     else
       hlColor := clPurple;
   end;
-  //todo: error report
-  {
-  with ErrorMessageRTF do
+
+  with ErrorMessages do
+  begin
+    Clear;
+    Line := Item.SubItems[3] + Item.Caption + ': '; //ParentPath + Test name
+    AddLine(Line, Self.Font.Size, hlColor, [fsBold]);
+
+    Line := Item.SubItems[0];        // Exception type
+    AddLine(Line, Self.Font.Size, hlColor, [fsBold]);
+
+    AddEmptyLine;
+
+    Line := 'at ' + Item.SubItems[2]; // Location info
+    AddLine(Line, 11, clWindowText, []);
+
+    if Item.SubItems[1] <> '' then
     begin
-      Clear;
-      SelAttributes.Size  := self.Font.Size;
-      SelAttributes.Style := [fsBold];
-      SelText := Item.SubItems[3] + Item.Caption + ': '; //ParentPath + Test name
-
-      SelAttributes.Color := hlColor;
-      SelAttributes.Style := [fsBold];
-      SelText := Item.SubItems[0];        // Exception type
-
-      Lines.Add('');
-      SelAttributes.Size  := 11;
-      SelAttributes.Color := clWindowText;
-      SelAttributes.Style := [];
-      SelText := 'at ' + Item.SubItems[2]; // Location info
-
-      if Item.SubItems[1] <> '' then
-      begin
-        SelAttributes.Color := clWindowText;
-        Lines.Add('');
-        SelAttributes.Style := [];
-        SelText := Item.SubItems[4]; // unfiltered error message
-        SelAttributes.Size  := self.Font.Size;
-      end;
-
-      Status := Test.Status;
-      if Status <> '' then
-      begin
-        Lines.Add('');
-        Lines.Add('');
-        SelAttributes.Style := [fsBold];
-        Lines.Add('Status Messages');
-        SelAttributes.Style := [];
-        Lines.Add(Status);
-      end;
-    }
-{$IFDEF USE_JEDI_JCL}
-      if Item.SubItems[5] <> '' then
-      begin
-        Lines.Add('');
-        SelAttributes.Style := [fsBold];
-        Lines.Add('StackTrace');
-        SelAttributes.Style := [];
-        SelText := Item.SubItems[5];
-      end;
-{$ENDIF}
-{
+      AddEmptyLine;
+      Line := Item.SubItems[4]; // unfiltered error message
+      AddLine(Line, Self.Font.Size, clWindowText, []);
     end;
-  }
+
+    Status := Test.Status;
+    if Status <> '' then
+    begin
+      AddEmptyLine;
+      AddEmptyLine;
+      AddLine('Status Messages', Self.Font.Size, clWindowText, [fsBold]);
+      AddLine(Status, Self.Font.Size, clWindowText, []);
+    end;
+
+    {$IFDEF USE_JEDI_JCL}
+    if Item.SubItems[5] <> '' then
+    begin
+      Lines.Add('');
+      SelAttributes.Style := [fsBold];
+      Lines.Add('StackTrace');
+      SelAttributes.Style := [];
+      SelText := Item.SubItems[5];
+    end;
+    {$ENDIF}
+  end;
 end;
 
 procedure TGUITestRunner.ClearFailureMessage;
 begin
-  ErrorMessageRTF.Clear;
+  ErrorMessages.Clear;
 end;
 
 procedure TGUITestRunner.ClearResult;
@@ -1495,14 +1508,14 @@ begin
       begin
         if Pointer(TTreeNode(FailureListView.Items[idy].Data)) = Pointer(LNode) then
         begin
-          ErrorMessageRTF.Lines.Add(FailureListView.Items[idy].SubItems[3] +
+          ErrorMessages.Lines.Add(FailureListView.Items[idy].SubItems[3] +
             FailureListView.Items[idy].Caption);  // ParentPath + Test Name
-          ErrorMessageRTF.Lines.Add(FailureListView.Items[idy].SubItems[0]); //Exception
-          ErrorMessageRTF.Lines.Add(FailureListView.Items[idy].SubItems[4]); //unfiltered error message
-          ErrorMessageRTF.Lines.Add('at ' + FailureListView.Items[idy].SubItems[2]);
+          ErrorMessages.Lines.Add(FailureListView.Items[idy].SubItems[0]); //Exception
+          ErrorMessages.Lines.Add(FailureListView.Items[idy].SubItems[4]); //unfiltered error message
+          ErrorMessages.Lines.Add('at ' + FailureListView.Items[idy].SubItems[2]);
           {$IFDEF USE_JEDI_JCL}
-            ErrorMessageRTF.Lines.Add(FailureListView.Items[idy].SubItems[5]);
-            ErrorMessageRTF.Lines.Add('');
+            ErrorMessages.Lines.Add(FailureListView.Items[idy].SubItems[5]);
+            ErrorMessages.Lines.Add('');
           {$ENDIF}
         end;
       end;
@@ -1521,17 +1534,17 @@ begin
       if FHoldOptions then
         Exit;
 
-      with ErrorMessageRTF do
+      with ErrorMessages do
       begin
         Clear;
         Font.Size  := 10;
         Font.Style := [];
       end;
       try
-        ErrorMessageRTF.Hide;
+        ErrorMessages.Hide;
         ShowNodeChildrenFailures(Node)
       finally
-        ErrorMessageRTF.Show;
+        ErrorMessages.Show;
       end;
     end
     else
@@ -2015,8 +2028,8 @@ end;
 
 procedure TGUITestRunner.CopyMessageToClipboardActionExecute(Sender: TObject);
 begin
-  ErrorMessageRTF.SelectAll;
-  ErrorMessageRTF.CopyToClipboard;
+  ErrorMessages.SelectAll;
+  ErrorMessages.CopyToClipboard;
 end;
 
 procedure TGUITestRunner.UseRegistryActionExecute(Sender: TObject);
@@ -2114,27 +2127,27 @@ end;
 
 procedure TGUITestRunner.Status(const ATest: ITestProxy; AMessage: string);
 begin
-  if ErrorMessageRTF.Lines.Count = 0 then
-    ErrorMessageRTF.Lines.Add(ATest.Name + ':');
+  if ErrorMessages.Lines.Count = 0 then
+    ErrorMessages.Lines.Add(ATest.Name + ':');
 
-  ErrorMessageRTF.Lines.Add(AMessage);
+  ErrorMessages.Lines.Add(AMessage);
 
-  ErrorMessageRTF.Update;
+  ErrorMessages.Update;
 end;
 
 procedure TGUITestRunner.Warning(const ATest: ITestProxy; const AMessage: string);
 begin
-  if ErrorMessageRTF.Lines.Count = 0 then
-    ErrorMessageRTF.Lines.Add(ATest.ParentPath + '.' +  ATest.Name + ':');
+  if ErrorMessages.Lines.Count = 0 then
+    ErrorMessages.Lines.Add(ATest.ParentPath + '.' +  ATest.Name + ':');
 
-  ErrorMessageRTF.Lines.Add(AMessage);
+  ErrorMessages.Lines.Add(AMessage);
 
-  ErrorMessageRTF.Update;
+  ErrorMessages.Update;
 end;
 
 procedure TGUITestRunner.ClearStatusMessage;
 begin
-  ErrorMessageRTF.Lines.Clear;
+  ErrorMessages.Lines.Clear;
 end;
 
 procedure TGUITestRunner.CopyProcnameToClipboardActionExecute(
@@ -2168,7 +2181,7 @@ begin
   LText:= '';
   LSL:= TStringList.Create;
   try
-    LSL.Text:= ErrorMessageRTF.SelText;
+    LSL.Text:= ErrorMessages.SelText;
     for i := 0 to LSL.Count - 1 do
     begin
       if i > 0 then
@@ -2185,19 +2198,19 @@ end;
 procedure TGUITestRunner.CopyQuotedSelectedMessageToClipboardActionUpdate(
   Sender: TObject);
 begin
-  CopyQuotedSelectedMessageToClipboardAction.Enabled := ErrorMessageRTF.SelText <> '';
+  CopyQuotedSelectedMessageToClipboardAction.Enabled := ErrorMessages.SelText <> '';
 end;
 
 procedure TGUITestRunner.CopySelectedMessageToClipboardActionExecute(
   Sender: TObject);
 begin
-  ErrorMessageRTF.CopyToClipboard;
+  ErrorMessages.CopyToClipboard;
 end;
 
 procedure TGUITestRunner.CopySelectedMessageToClipboardActionUpdate(
   Sender: TObject);
 begin
-  CopySelectedMessageToClipboardAction.Enabled := ErrorMessageRTF.SelText <> '';
+  CopySelectedMessageToClipboardAction.Enabled := ErrorMessages.SelText <> '';
 end;
 
 function TGUITestRunner.SelectedTest: ITestProxy;
