@@ -682,7 +682,7 @@ procedure TGUITestRunner.TestingStarts;
 begin
   FTotalTime := 0;
   UpdateStatus(True);
-  //todo: ProgressBar color seems to have no effect
+  //todo: ProgressBar color seems to have no effect in windows and QT
   ScoreBar.Color := clOK;
   ClearStatusMessage;
 end;

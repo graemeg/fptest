@@ -1,9 +1,9 @@
 object GUITestRunner: TGUITestRunner
-  Left = 475
+  Left = 471
   Height = 593
-  Top = 70
+  Top = 0
   Width = 575
-  Caption = 'DUnit2: An Xtreme testing framework'
+  Caption = 'FPTest/DUnit2: An Xtreme testing framework'
   ClientHeight = 570
   ClientWidth = 575
   Color = clBtnFace
@@ -368,7 +368,7 @@ object GUITestRunner: TGUITestRunner
         end
         object ResultsView: TListView
           Left = 2
-          Height = 49
+          Height = 48
           Hint = 'Shows statistics about the current/last run'
           Top = 48
           Width = 567
@@ -417,15 +417,15 @@ object GUITestRunner: TGUITestRunner
               AutoSize = True
               Caption = 'Test Time'
               MaxWidth = 200
-              MinWidth = 80
-              Width = 80
+              MinWidth = 82
+              Width = 82
             end          
             item
               Alignment = taRightJustify
               Caption = 'Total Time'
               MaxWidth = 120
-              MinWidth = 80
-              Width = 80
+              MinWidth = 82
+              Width = 82
             end          
             item
               Width = 97
@@ -436,15 +436,15 @@ object GUITestRunner: TGUITestRunner
             050000004974656D35050000004974656D36050000004974656D37FFFFFFFFFF
             FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           }
-          ScrollBars = ssAutoBoth
+          ScrollBars = ssNone
           TabOrder = 1
           ViewStyle = vsReport
         end
         object FailureListView: TListView
           Left = 2
-          Height = 109
+          Height = 110
           Hint = 'Shows the list of failed tests'
-          Top = 97
+          Top = 96
           Width = 567
           Align = alClient
           Columns = <          
