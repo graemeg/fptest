@@ -8,15 +8,20 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
+        <IncludeFiles Value="src\LCL"/>
         <OtherUnitFiles Value="src\LCL"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\lcl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="1">
+    <Files Count="2">
       <Item1>
         <Filename Value="src\LCL\GUITestRunner.pas"/>
         <UnitName Value="GUITestRunner"/>
       </Item1>
+      <Item2>
+        <Filename Value="src\LCL\GUITestRunner.lfm"/>
+        <Type Value="LFM"/>
+      </Item2>
     </Files>
     <RequiredPkgs Count="2">
       <Item1>
