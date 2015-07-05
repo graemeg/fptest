@@ -1308,6 +1308,7 @@ begin
 
   with ErrorMessages do
   begin
+    Lines.BeginUpdate;
     Clear;
     Line := Item.SubItems[3] + Item.Caption + ': '; //ParentPath + Test name
     AddLine(Line, Self.Font.Size, hlColor, [fsBold]);
@@ -1346,7 +1347,7 @@ begin
       SelText := Item.SubItems[5];
     end;
     {$ENDIF}
-    VertScrollBar.Position := 0;
+    Lines.EndUpdate;
   end;
 end;
 
