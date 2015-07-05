@@ -18,7 +18,7 @@
 
   Adapted from FPCUnit package
 }
-unit FPtestStrTestCaseOpts;
+unit FPTestStrTestCaseOpts;
 
 {$mode objfpc}{$H+}
 

@@ -32,7 +32,7 @@ unit FPTestLazIDEIntf;
 interface
 
 uses
-  Classes, SysUtils, LazIDEIntf, ProjectIntf, Controls, Forms, testcaseopts;
+  Classes, SysUtils, LazIDEIntf, ProjectIntf, Controls, Forms, FPTestTestCaseOpts;
 
 type
   { TFPTestApplicationDescriptor }
@@ -204,7 +204,7 @@ begin
   CreateSetup := false;
   CreateTeardown := false;
   LE:=LineEnding;
-  with TTestCaseOptionsForm.Create(nil) do
+  with TFPTestTestCaseOptionsForm.Create(nil) do
   try
     edDefaultName.Text := 'T' + SourceName;
     ShowModal;

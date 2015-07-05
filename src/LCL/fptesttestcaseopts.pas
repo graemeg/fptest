@@ -8,13 +8,13 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, Buttons, strtestcaseopts;
+  ExtCtrls, Buttons, FPTestStrTestCaseOpts;
 
 type
 
-  { TTestCaseOptionsForm }
+  { TFPTestTestCaseOptionsForm }
 
-  TTestCaseOptionsForm = class(TForm)
+  TFPTestTestCaseOptionsForm = class(TForm)
     btnAccept: TButton;
     cbSetup: TCheckBox;
     cbTeardown: TCheckBox;
@@ -35,14 +35,14 @@ implementation
 
 {$R *.lfm}
 
-{ TTestCaseOptionsForm }
+{ TFPTestTestCaseOptionsForm }
 
-procedure TTestCaseOptionsForm.btnAcceptClick(Sender: TObject);
+procedure TFPTestTestCaseOptionsForm.btnAcceptClick(Sender: TObject);
 begin
   Close;
 end;
 
-procedure TTestCaseOptionsForm.FormCreate(Sender: TObject);
+procedure TFPTestTestCaseOptionsForm.FormCreate(Sender: TObject);
 begin
   Caption := sfrmTest;
   gbNames.Caption:= sgrpNames;
