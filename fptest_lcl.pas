@@ -7,12 +7,13 @@ unit fptest_lcl;
 interface
 
 uses
-  GUITestRunner, LazarusPackageIntf;
+  GUITestRunner, FPTestLazIDEIntf, LazarusPackageIntf;
 
 implementation
 
 procedure Register;
 begin
+  RegisterUnit('FPTestLazIDEIntf', @FPTestLazIDEIntf.Register);
 end;
 
 initialization

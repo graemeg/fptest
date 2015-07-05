@@ -13,7 +13,7 @@
         <UnitOutputDirectory Value="lib\lcl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
-    <Files Count="2">
+    <Files Count="3">
       <Item1>
         <Filename Value="src\LCL\GUITestRunner.pas"/>
         <UnitName Value="GUITestRunner"/>
@@ -22,14 +22,22 @@
         <Filename Value="src\LCL\GUITestRunner.lfm"/>
         <Type Value="LFM"/>
       </Item2>
+      <Item3>
+        <Filename Value="fptestlazideintf.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="FPTestLazIDEIntf"/>
+      </Item3>
     </Files>
-    <RequiredPkgs Count="2">
+    <RequiredPkgs Count="3">
       <Item1>
-        <PackageName Value="fptest"/>
+        <PackageName Value="IDEIntf"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCL"/>
+        <PackageName Value="fptest"/>
       </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
     </RequiredPkgs>
     <UsageOptions>
       <UnitPath Value="$(PkgOutDir)"/>
