@@ -1,13 +1,6 @@
 program project1;
 
-{$IFDEF FPC}
-  {$mode objfpc}{$H+}
-{$ELSE}
-  {$APPTYPE CONSOLE}
-{$ENDIF}
-
-{$Define TextRunner}
-{$Define GUIRunner}
+{$mode objfpc}{$H+}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -15,7 +8,6 @@ uses
   {$ENDIF}{$ENDIF}
   Classes,
   Forms, Interfaces, sample_tests, GUITestRunner;
-
 
 {$R *.res}
 
