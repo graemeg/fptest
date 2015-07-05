@@ -1,11 +1,11 @@
 object GUITestRunner: TGUITestRunner
-  Left = 380
-  Height = 552
-  Top = 82
-  Width = 558
+  Left = 475
+  Height = 593
+  Top = 70
+  Width = 575
   Caption = 'DUnit2: An Xtreme testing framework'
-  ClientHeight = 532
-  ClientWidth = 558
+  ClientHeight = 570
+  ClientWidth = 575
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -20,21 +20,21 @@ object GUITestRunner: TGUITestRunner
   LCLVersion = '1.5'
   object BodyPanel: TPanel
     Left = 0
-    Height = 532
+    Height = 570
     Top = 0
-    Width = 558
+    Width = 575
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
-    ClientHeight = 532
-    ClientWidth = 558
+    ClientHeight = 570
+    ClientWidth = 575
     TabOrder = 0
     object ErrorBoxSplitter: TSplitter
       Cursor = crVSplit
       Left = 2
       Height = 6
-      Top = 449
-      Width = 554
+      Top = 482
+      Width = 571
       Align = alBottom
       Color = clBtnFace
       Constraints.MaxHeight = 6
@@ -45,20 +45,20 @@ object GUITestRunner: TGUITestRunner
     end
     object TopPanel: TPanel
       Left = 2
-      Height = 447
+      Height = 480
       Top = 2
-      Width = 554
+      Width = 571
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 447
-      ClientWidth = 554
+      ClientHeight = 480
+      ClientWidth = 571
       TabOrder = 0
       object ResultsSplitter: TSplitter
         Cursor = crVSplit
         Left = 0
         Height = 5
-        Top = 268
-        Width = 554
+        Top = 267
+        Width = 571
         Align = alBottom
         Color = clBtnFace
         ParentColor = False
@@ -66,21 +66,21 @@ object GUITestRunner: TGUITestRunner
       end
       object TreePanel: TPanel
         Left = 0
-        Height = 268
+        Height = 267
         Top = 0
-        Width = 554
+        Width = 571
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 2
-        ClientHeight = 268
-        ClientWidth = 554
+        ClientHeight = 267
+        ClientWidth = 571
         Constraints.MinHeight = 100
         TabOrder = 0
         object lblTestTree: TLabel
           Left = 2
           Height = 19
           Top = 31
-          Width = 550
+          Width = 567
           Align = alTop
           AutoSize = False
           Caption = 'Test Hi&erarchy:'
@@ -90,10 +90,10 @@ object GUITestRunner: TGUITestRunner
         end
         object TestTree: TTreeView
           Left = 2
-          Height = 216
+          Height = 215
           Hint = 'Hierarchy of test cases. Checked test cases will be run.'
           Top = 50
-          Width = 550
+          Width = 567
           Align = alClient
           DefaultItemHeight = 16
           HideSelection = False
@@ -102,6 +102,7 @@ object GUITestRunner: TGUITestRunner
           PopupMenu = pmTestTree
           ReadOnly = True
           RowSelect = True
+          ScrollBars = ssAutoBoth
           StateImages = StateImages
           TabOrder = 0
           OnChange = TestTreeChange
@@ -114,7 +115,7 @@ object GUITestRunner: TGUITestRunner
           Left = 2
           Height = 29
           Top = 2
-          Width = 550
+          Width = 567
           ButtonWidth = 26
           Caption = 'ToolBar'
           EdgeBorders = [ebTop, ebBottom]
@@ -266,43 +267,43 @@ object GUITestRunner: TGUITestRunner
       end
       object ResultsPanel: TPanel
         Left = 0
-        Height = 174
-        Top = 273
-        Width = 554
+        Height = 208
+        Top = 272
+        Width = 571
         Align = alBottom
         BevelOuter = bvNone
         BorderWidth = 2
-        ClientHeight = 174
-        ClientWidth = 554
+        ClientHeight = 208
+        ClientWidth = 571
         TabOrder = 1
         object ProgressPanel: TPanel
           Left = 2
           Height = 46
           Top = 2
-          Width = 550
+          Width = 567
           Align = alTop
           BevelOuter = bvLowered
           BorderWidth = 4
           ClientHeight = 46
-          ClientWidth = 550
+          ClientWidth = 567
           TabOrder = 0
           object TopProgressPanel: TPanel
             Left = 5
             Height = 18
             Top = 5
-            Width = 540
+            Width = 557
             Align = alTop
             BevelOuter = bvNone
             BorderWidth = 2
             ClientHeight = 18
-            ClientWidth = 540
+            ClientWidth = 557
             TabOrder = 0
             object ProgressBar: TProgressBar
               Left = 62
               Height = 14
               Hint = 'Shows the proportion of tests run'
               Top = 2
-              Width = 476
+              Width = 493
               Align = alClient
               Step = 1
               TabOrder = 1
@@ -323,15 +324,15 @@ object GUITestRunner: TGUITestRunner
             Left = 5
             Height = 18
             Top = 23
-            Width = 540
+            Width = 557
             Align = alClient
             BevelOuter = bvNone
             BorderWidth = 2
             ClientHeight = 18
-            ClientWidth = 540
+            ClientWidth = 557
             TabOrder = 1
             object LbProgress: TLabel
-              Left = 482
+              Left = 499
               Height = 14
               Top = 2
               Width = 56
@@ -346,7 +347,7 @@ object GUITestRunner: TGUITestRunner
               Height = 14
               Hint = 'Shows the proportion of successful tests'
               Top = 2
-              Width = 420
+              Width = 437
               Align = alClient
               BorderWidth = 2
               Step = 1
@@ -367,10 +368,10 @@ object GUITestRunner: TGUITestRunner
         end
         object ResultsView: TListView
           Left = 2
-          Height = 63
+          Height = 49
           Hint = 'Shows statistics about the current/last run'
           Top = 48
-          Width = 550
+          Width = 567
           Align = alTop
           Columns = <          
             item
@@ -416,34 +417,35 @@ object GUITestRunner: TGUITestRunner
               AutoSize = True
               Caption = 'Test Time'
               MaxWidth = 200
-              MinWidth = 70
-              Width = 59
+              MinWidth = 80
+              Width = 80
             end          
             item
               Alignment = taRightJustify
               Caption = 'Total Time'
               MaxWidth = 120
-              MinWidth = 70
-              Width = 70
+              MinWidth = 80
+              Width = 80
             end          
             item
-              Width = 0
+              Width = 97
             end>
           Items.LazData = {
-            7C00000001000000FFFFFFFFFFFFFFFFFFFFFFFF07000000050000004974656D
-            30050000004974656D31050000004974656D32050000004974656D3305000000
-            4974656D34050000004974656D35050000004974656D36050000004974656D37
-            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
+            7700000001000000FFFFFFFFFFFFFFFFFFFFFFFF070000000000000005000000
+            4974656D31050000004974656D32050000004974656D33050000004974656D34
+            050000004974656D35050000004974656D36050000004974656D37FFFFFFFFFF
+            FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
           }
+          ScrollBars = ssAutoBoth
           TabOrder = 1
           ViewStyle = vsReport
         end
         object FailureListView: TListView
           Left = 2
-          Height = 61
+          Height = 109
           Hint = 'Shows the list of failed tests'
-          Top = 111
-          Width = 550
+          Top = 97
+          Width = 567
           Align = alClient
           Columns = <          
             item
@@ -465,12 +467,13 @@ object GUITestRunner: TGUITestRunner
               AutoSize = True
               Caption = 'Location'
               MinWidth = 50
-              Width = 53
+              Width = 145
             end>
           Constraints.MinHeight = 50
           HideSelection = False
           ReadOnly = True
           RowSelect = True
+          ScrollBars = ssAutoBoth
           SmallImages = RunImages
           TabOrder = 2
           ViewStyle = vsReport
@@ -481,29 +484,29 @@ object GUITestRunner: TGUITestRunner
     end
     object ErrorBoxPanel: TPanel
       Left = 2
-      Height = 75
-      Top = 455
-      Width = 554
+      Height = 80
+      Top = 488
+      Width = 571
       Align = alBottom
       BevelOuter = bvNone
       BorderWidth = 2
       Caption = ' '
-      ClientHeight = 75
-      ClientWidth = 554
+      ClientHeight = 80
+      ClientWidth = 571
       TabOrder = 1
       OnResize = ErrorBoxPanelResize
       object ErrorMessageRTF: TMemo
         Left = 2
-        Height = 71
+        Height = 76
         Top = 2
-        Width = 550
+        Width = 567
         Align = alClient
         Lines.Strings = (
           'ErrorMessageRTF'
         )
         PopupMenu = ErrorMessagePopup
         ReadOnly = True
-        ScrollBars = ssVertical
+        ScrollBars = ssAutoBoth
         TabOrder = 0
       end
     end
@@ -710,7 +713,7 @@ object GUITestRunner: TGUITestRunner
   object RunImages: TImageList
     AllocBy = 7
     BkColor = clWhite
-    left = 280
+    left = 298
     top = 60
     Bitmap = {
       4C69090000001000000010000000FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFF
@@ -1006,8 +1009,8 @@ object GUITestRunner: TGUITestRunner
   end
   object DialogActions: TActionList
     Images = ActionsImages
-    left = 328
-    top = 64
+    left = 224
+    top = 208
     object RunAction: TAction
       Category = 'Commands'
       Caption = '&Run'
@@ -1277,8 +1280,8 @@ object GUITestRunner: TGUITestRunner
   end
   object MainMenu: TMainMenu
     Images = ActionsImages
-    left = 368
-    top = 64
+    left = 87
+    top = 136
     object FileMenu: TMenuItem
       Caption = '&File'
       object SaveConfigurationItem: TMenuItem
@@ -1785,8 +1788,8 @@ object GUITestRunner: TGUITestRunner
   end
   object pmTestTree: TPopupMenu
     OnPopup = pmTestTreePopup
-    left = 176
-    top = 96
+    left = 152
+    top = 136
     object TestCasePopup: TMenuItem
       Action = TestCasePropertiesAction
       ShortCut = 24660
@@ -1858,8 +1861,8 @@ object GUITestRunner: TGUITestRunner
     end
   end
   object ErrorMessagePopup: TPopupMenu
-    left = 229
-    top = 96
+    left = 245
+    top = 136
     object CopyFailureMessage: TMenuItem
       Action = CopyMessageToClipboardAction
     end
@@ -1874,8 +1877,8 @@ object GUITestRunner: TGUITestRunner
     end
   end
   object ActionsImages: TImageList
-    left = 176
-    top = 61
+    left = 152
+    top = 60
     Bitmap = {
       4C69160000001000000010000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2585,8 +2588,8 @@ object GUITestRunner: TGUITestRunner
     }
   end
   object TestCaseProperty: TPopupMenu
-    left = 282
-    top = 98
+    left = 353
+    top = 136
     object TestCaseProperties: TMenuItem
       Caption = 'TestCase Run-Time Applied Properties '
     end
