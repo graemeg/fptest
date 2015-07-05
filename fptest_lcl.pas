@@ -7,7 +7,7 @@ unit fptest_lcl;
 interface
 
 uses
-  GUITestRunner, FPTestLazIDEIntf, strtestcaseopts, testcaseopts, 
+  GUITestRunner, FPTestLazIDEIntf, fpteststrtestcaseopts, fptesttestcaseopts, 
   LazarusPackageIntf;
 
 implementation

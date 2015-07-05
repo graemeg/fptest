@@ -1,4 +1,6 @@
-unit testcaseopts;
+unit FPTestTestCaseOpts;
+
+//Adapted from FPCUnit package
 
 {$mode objfpc}{$H+}
 

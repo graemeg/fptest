@@ -15,8 +15,10 @@
   Você deve ter recebido uma cópia da licença GNU Library General Public
   License juntamente com esta biblioteca; senão, escreva a Free Software
   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+
+  Adapted from FPCUnit package
 }
-unit strtestcaseopts;
+unit FPtestStrTestCaseOpts;
 
 {$mode objfpc}{$H+}
 
