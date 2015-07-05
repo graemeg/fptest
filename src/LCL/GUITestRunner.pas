@@ -1316,14 +1316,11 @@ begin
     Line := Item.SubItems[0];        // Exception type
     AddLine(Line, Self.Font.Size, hlColor, [fsBold]);
 
-    AddEmptyLine;
-
     Line := 'at ' + Item.SubItems[2]; // Location info
     AddLine(Line, 11, clWindowText, []);
 
     if Item.SubItems[1] <> '' then
     begin
-      AddEmptyLine;
       Line := Item.SubItems[4]; // unfiltered error message
       AddLine(Line, Self.Font.Size, clWindowText, []);
     end;
@@ -1331,7 +1328,6 @@ begin
     Status := Test.Status;
     if Status <> '' then
     begin
-      AddEmptyLine;
       AddEmptyLine;
       AddLine('Status Messages', Self.Font.Size, clWindowText, [fsBold]);
       AddLine(Status, Self.Font.Size, clWindowText, []);
