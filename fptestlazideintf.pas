@@ -176,6 +176,7 @@ begin
   
   // compiler options
   AProject.LazCompilerOptions.UseLineInfoUnit:=true;
+  AProject.LazCompilerOptions.Win32GraphicApp:=true;
   Result:=mrOK;
 end;
 
