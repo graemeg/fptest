@@ -11,7 +11,7 @@
       <SearchPaths>
         <IncludeFiles Value="src\LCL"/>
         <OtherUnitFiles Value="src\LCL"/>
-        <UnitOutputDirectory Value="lib\lcl\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\lcl"/>
       </SearchPaths>
     </CompilerOptions>
     <Description Value="FPTest LCL GUITextRunner package"/>
@@ -32,7 +32,7 @@
       </Item3>
       <Item4>
         <Filename Value="src\LCL\fpteststrtestcaseopts.pas"/>
-        <UnitName Value="strtestcaseopts"/>
+        <UnitName Value="fpteststrtestcaseopts"/>
       </Item4>
       <Item5>
         <Filename Value="src\LCL\fptesttestcaseopts.lfm"/>
@@ -40,7 +40,7 @@
       </Item5>
       <Item6>
         <Filename Value="src\LCL\fptesttestcaseopts.pas"/>
-        <UnitName Value="testcaseopts"/>
+        <UnitName Value="fptesttestcaseopts"/>
       </Item6>
     </Files>
     <RequiredPkgs Count="3">
