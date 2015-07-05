@@ -1423,6 +1423,9 @@ end;
 procedure TGUITestRunner.FormCreate(Sender: TObject);
 begin
   inherited;
+  {$ifdef LCLWin32}
+  ResultsView.ScrollBars := ssAutoHorizontal;
+  {$endif}
   FTests := TInterfaceList.Create;
   LoadConfiguration;
 
