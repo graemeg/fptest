@@ -1345,6 +1345,7 @@ begin
       SelText := Item.SubItems[5];
     end;
     {$ENDIF}
+    VertScrollBar.Position := 0;
   end;
 end;
 
