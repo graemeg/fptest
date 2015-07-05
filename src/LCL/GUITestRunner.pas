@@ -31,6 +31,7 @@
    The DUnit group at SourceForge <http://dunit.sourceforge.net>
    Peter McNab <mcnabp@gmail.com>
    Graeme Geldenhuys <graemeg@gmail.com>
+   Luiz Américo Pereira Câmara (LCL port)
 }
 {$UNDEF XMLLISTENER}
 {$IFNDEF VER130}

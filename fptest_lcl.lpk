@@ -4,6 +4,7 @@
     <PathDelim Value="\"/>
     <Name Value="fptest_lcl"/>
     <Type Value="RunAndDesignTime"/>
+    <Author Value="DUnit developers / Luiz Américo Pereira Câmara"/>
     <CompilerOptions>
       <Version Value="11"/>
       <PathDelim Value="\"/>
@@ -13,6 +14,8 @@
         <UnitOutputDirectory Value="lib\lcl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
+    <Description Value="FPTest LCL GUITextRunner package"/>
+    <Version Major="1"/>
     <Files Count="6">
       <Item1>
         <Filename Value="src\LCL\GUITestRunner.pas"/>
