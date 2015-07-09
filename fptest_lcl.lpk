@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="fptest_lcl"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="DUnit developers / Luiz Américo Pereira Câmara"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="src\LCL"/>
+        <OtherUnitFiles Value="src\LCL"/>
+        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)\lcl"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="FPTest LCL GUITextRunner package"/>
+    <Version Major="1"/>
+    <Files Count="6">
+      <Item1>
+        <Filename Value="src\LCL\GUITestRunner.pas"/>
+        <UnitName Value="GUITestRunner"/>
+      </Item1>
+      <Item2>
+        <Filename Value="src\LCL\GUITestRunner.lfm"/>
+        <Type Value="LFM"/>
+      </Item2>
+      <Item3>
+        <Filename Value="fptestlazideintf.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="FPTestLazIDEIntf"/>
+      </Item3>
+      <Item4>
+        <Filename Value="src\LCL\fpteststrtestcaseopts.pas"/>
+        <UnitName Value="fpteststrtestcaseopts"/>
+      </Item4>
+      <Item5>
+        <Filename Value="src\LCL\fptesttestcaseopts.lfm"/>
+        <Type Value="LFM"/>
+      </Item5>
+      <Item6>
+        <Filename Value="src\LCL\fptesttestcaseopts.pas"/>
+        <UnitName Value="fptesttestcaseopts"/>
+      </Item6>
+    </Files>
+    <RequiredPkgs Count="3">
+      <Item1>
+        <PackageName Value="IDEIntf"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="fptest"/>
+      </Item2>
+      <Item3>
+        <PackageName Value="LCL"/>
+      </Item3>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
