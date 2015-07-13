@@ -4,7 +4,7 @@ object GUITestRunner: TGUITestRunner
   Top = 0
   Width = 575
   Caption = 'FPTest/DUnit2: An Xtreme testing framework'
-  ClientHeight = 570
+  ClientHeight = 568
   ClientWidth = 575
   Color = clBtnFace
   Font.Color = clWindowText
@@ -20,20 +20,20 @@ object GUITestRunner: TGUITestRunner
   LCLVersion = '1.5'
   object BodyPanel: TPanel
     Left = 0
-    Height = 570
+    Height = 568
     Top = 0
     Width = 575
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
-    ClientHeight = 570
+    ClientHeight = 568
     ClientWidth = 575
     TabOrder = 0
     object ErrorBoxSplitter: TSplitter
       Cursor = crVSplit
       Left = 2
       Height = 6
-      Top = 482
+      Top = 480
       Width = 571
       Align = alBottom
       Color = clBtnFace
@@ -45,19 +45,19 @@ object GUITestRunner: TGUITestRunner
     end
     object TopPanel: TPanel
       Left = 2
-      Height = 480
+      Height = 478
       Top = 2
       Width = 571
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 480
+      ClientHeight = 478
       ClientWidth = 571
       TabOrder = 0
       object ResultsSplitter: TSplitter
         Cursor = crVSplit
         Left = 0
         Height = 5
-        Top = 267
+        Top = 265
         Width = 571
         Align = alBottom
         Color = clBtnFace
@@ -66,13 +66,13 @@ object GUITestRunner: TGUITestRunner
       end
       object TreePanel: TPanel
         Left = 0
-        Height = 267
+        Height = 265
         Top = 0
         Width = 571
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 2
-        ClientHeight = 267
+        ClientHeight = 265
         ClientWidth = 571
         Constraints.MinHeight = 100
         TabOrder = 0
@@ -90,7 +90,7 @@ object GUITestRunner: TGUITestRunner
         end
         object TestTree: TTreeView
           Left = 2
-          Height = 215
+          Height = 213
           Hint = 'Hierarchy of test cases. Checked test cases will be run.'
           Top = 50
           Width = 567
@@ -268,7 +268,7 @@ object GUITestRunner: TGUITestRunner
       object ResultsPanel: TPanel
         Left = 0
         Height = 208
-        Top = 272
+        Top = 270
         Width = 571
         Align = alBottom
         BevelOuter = bvNone
@@ -305,6 +305,7 @@ object GUITestRunner: TGUITestRunner
               Top = 2
               Width = 493
               Align = alClient
+              Smooth = True
               Step = 1
               TabOrder = 1
             end
@@ -350,6 +351,7 @@ object GUITestRunner: TGUITestRunner
               Width = 437
               Align = alClient
               BorderWidth = 2
+              Smooth = True
               Step = 1
               TabOrder = 1
             end
@@ -467,7 +469,7 @@ object GUITestRunner: TGUITestRunner
               AutoSize = True
               Caption = 'Location'
               MinWidth = 50
-              Width = 145
+              Width = 143
             end>
           Constraints.MinHeight = 50
           HideSelection = False
@@ -485,7 +487,7 @@ object GUITestRunner: TGUITestRunner
     object ErrorBoxPanel: TPanel
       Left = 2
       Height = 80
-      Top = 488
+      Top = 486
       Width = 571
       Align = alBottom
       BevelOuter = bvNone
