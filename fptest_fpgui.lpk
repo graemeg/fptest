@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <Package Version="4">
     <Name Value="fptest_fpgui"/>
@@ -8,16 +8,10 @@
         <OtherUnitFiles Value="src/fpGUI"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
-      <Other>
-        <CompilerMessages>
-          <UseMsgFile Value="True"/>
-        </CompilerMessages>
-        <CompilerPath Value="$(CompPath)"/>
-      </Other>
     </CompilerOptions>
     <Files Count="3">
       <Item1>
-        <Filename Value="src/fpGUI/GUITestRunner.pas"/>
+        <Filename Value="src/fpGUI/guitestrunner.pas"/>
         <UnitName Value="GUITestRunner"/>
       </Item1>
       <Item2>

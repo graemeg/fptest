@@ -47,7 +47,6 @@
       <Unit1>
         <Filename Value="sample_tests.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="sample_tests"/>
       </Unit1>
       <Unit2>
         <Filename Value="src/fpGUI/formimages.pas"/>

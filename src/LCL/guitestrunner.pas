@@ -41,7 +41,7 @@
 {$ENDIF}
 {$MODE DELPHI}
 
-unit GUITestRunner;
+unit GuiTestRunner;
 interface
 
 uses

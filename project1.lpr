@@ -19,7 +19,7 @@ uses
   ,TextTestRunner
   {$ENDIF}
   {$IFDEF GUIRunner}
-  ,GUITestRunner
+  ,GuiTestRunner
   {$ENDIF}
   ,formimages;
 

@@ -16,32 +16,28 @@
     </CompilerOptions>
     <Description Value="FPTest LCL GUITextRunner package"/>
     <Version Major="1"/>
-    <Files Count="6">
+    <Files Count="5">
       <Item1>
-        <Filename Value="src\LCL\GUITestRunner.pas"/>
+        <Filename Value="src\LCL\guitestrunner.pas"/>
         <UnitName Value="GUITestRunner"/>
       </Item1>
       <Item2>
-        <Filename Value="src\LCL\GUITestRunner.lfm"/>
-        <Type Value="LFM"/>
-      </Item2>
-      <Item3>
         <Filename Value="fptestlazideintf.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="FPTestLazIDEIntf"/>
-      </Item3>
-      <Item4>
+      </Item2>
+      <Item3>
         <Filename Value="src\LCL\fpteststrtestcaseopts.pas"/>
         <UnitName Value="fpteststrtestcaseopts"/>
-      </Item4>
-      <Item5>
+      </Item3>
+      <Item4>
         <Filename Value="src\LCL\fptesttestcaseopts.lfm"/>
         <Type Value="LFM"/>
-      </Item5>
-      <Item6>
+      </Item4>
+      <Item5>
         <Filename Value="src\LCL\fptesttestcaseopts.pas"/>
         <UnitName Value="fptesttestcaseopts"/>
-      </Item6>
+      </Item5>
     </Files>
     <RequiredPkgs Count="3">
       <Item1>

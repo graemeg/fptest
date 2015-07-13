@@ -7,7 +7,7 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Classes,
-  Forms, Interfaces, sample_tests, GUITestRunner;
+  Forms, Interfaces, sample_tests, GuiTestRunner;
 
 {$R *.res}
 

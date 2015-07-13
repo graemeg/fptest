@@ -1,4 +1,4 @@
-unit GUITestRunner;
+unit GuiTestRunner;
 
 {$mode objfpc}{$H+}
 
