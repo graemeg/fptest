@@ -47,6 +47,9 @@ unit TestFramework;
   {$ENDIF}
 {$ENDIF}
 
+// Comment out this define to remove FPCUnit test interface support
+{$define fpcunit}
+
 interface
 
 uses
@@ -54,6 +57,11 @@ uses
   Classes,
   SysUtils,
   IniFiles;
+
+{ This lets us use a single include file for both the Interface and
+  Implementation sections. }
+{$define read_interface}
+{$undef read_implementation}
 
 { TODO -cregistry : Remove Registry support - we want clean INI support only }
 
@@ -338,6 +346,9 @@ type
     procedure CheckEquals(const expected, actual: extended;
                           const delta: extended;
                           const ErrorMsg: string= ''); overload;
+    {$IFDEF fpcunit}
+      {$I FPCUnitCompatibleInterface.inc}
+    {$ENDIF}
   public
     constructor Create; overload; virtual;
     constructor Create(const AName: string); overload; virtual;
@@ -581,6 +592,12 @@ uses
   TimeManager;
 
 {$STACKFRAMES ON} // Required to retrieve caller's address
+
+{ This lets us use a single include file for both the Interface and
+  Implementation sections. }
+{$undef read_interface}
+{$define read_implementation}
+
 
 const
   csExcluded = 'Excluded_';
@@ -1703,6 +1720,11 @@ begin
   inherited;
 end;
 
+{ DUnit compatibility interface }
+{$IFDEF fpcunit}
+  {$I FPCUnitCompatibleInterface.inc}
+{$ENDIF}
+
 function TTestProc.get_Depth: Integer;
 begin
   Result := FDepth;
@@ -1802,12 +1824,12 @@ begin
   FCheckCalled := Value;
 end;
 
-function TTestProc.get_InhibitSummaryLevelChecks: Boolean;
+function TTestProc.get_InhibitSummaryLevelChecks: boolean;
 begin
   Result := FInhibitSummaryLevelChecks;
 end;
 
-procedure TTestProc.set_InhibitSummaryLevelChecks(const Value: Boolean);
+procedure TTestProc.set_InhibitSummaryLevelChecks(const Value: boolean);
 begin
   FInhibitSummaryLevelChecks := Value;
 end;
@@ -2360,7 +2382,7 @@ begin
     raise EPostTestFailure.Create(ErrorMsg) at ErrorAddress;
 end;
 
-procedure TTestproc.CheckMethodIsNotEmpty(const AMethod: TTestMethod);
+procedure TTestProc.CheckMethodIsNotEmpty(const AMethod: TTestMethod);
 const
   AssemblerRet = $C3;
 begin

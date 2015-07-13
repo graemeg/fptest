@@ -1,12 +1,12 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="3">
+  <Package Version="4">
     <Name Value="fptest"/>
-    <AddToProjectUsesSection Value="False"/>
     <Author Value="Graeme Geldenhuys"/>
     <CompilerOptions>
-      <Version Value="9"/>
+      <Version Value="11"/>
       <SearchPaths>
+        <IncludeFiles Value="src"/>
         <OtherUnitFiles Value="src;3rdparty/epiktimer"/>
         <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
@@ -15,14 +15,11 @@
           <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
-      <Other>
-        <CompilerPath Value="$(CompPath)"/>
-      </Other>
     </CompilerOptions>
     <Description Value="Free Pascal Testing Framework."/>
     <License Value="Mozilla Public License"/>
     <Version Major="2" Minor="1"/>
-    <Files Count="13">
+    <Files Count="14">
       <Item1>
         <Filename Value="src/TestFrameworkIfaces.pas"/>
         <UnitName Value="TestFrameworkIfaces"/>
@@ -75,6 +72,10 @@
         <Filename Value="src/TestExtensions.pas"/>
         <UnitName Value="TestExtensions"/>
       </Item13>
+      <Item14>
+        <Filename Value="src/FPCUnitCompatibleInterface.inc"/>
+        <Type Value="Include"/>
+      </Item14>
     </Files>
     <RequiredPkgs Count="1">
       <Item1>
