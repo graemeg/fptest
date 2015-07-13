@@ -111,6 +111,7 @@ type
     HideTestNodesCommand: ICommand;
     ExpandAllNodesCommand: ICommand;
     miSelectAll: TfpgMenuItem;
+    miRunSelected: TfpgMenuItem;
 
     { implement the IStatusListeners interface }
     procedure Status(const ATest: ITestProxy; AMessage: string);
@@ -749,6 +750,8 @@ begin
   btnStopTests.SetCommand(TStopTestsCommand.Create(self));
   btnSelectAll.SetCommand(TSelectAllCommand.Create(self));
   btnSelectNone.SetCommand(TDeselectAllCommand.Create(self));
+
+  miRunSelected.SetCommand(TRunSelectedCommand.Create(self));
 end;
 
 function TGUITestRunner.EnableTest(Test: ITestProxy): boolean;
@@ -1949,6 +1952,7 @@ begin
   begin
     Name := 'mnuActions';
     SetPosition(400, 156, 120, 20);
+    miRunSelected := AddMenuItem('Run', 'F9', nil);
     AddMenuItem('[todo]', '', nil);
   end;
 
