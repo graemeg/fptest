@@ -37,8 +37,8 @@ type
     btnSelectNone: TfpgButton;
     Bevel1: TfpgBevel;
     btnSelectedFailed: TfpgButton;
-    btnDeselectCurrent: TfpgButton;
     btnSelectCurrent: TfpgButton;
+    btnDeselectCurrent: TfpgButton;
     Bevel2: TfpgBevel;
     btnRunSelected: TfpgButton;
     btnRunCurrent: TfpgButton;
@@ -1582,11 +1582,12 @@ begin
   {%region 'Auto-generated GUI code' -fold}
   {@VFD_BODY_BEGIN: GUITestRunner}
   Name := 'GUITestRunner';
-  SetPosition(100, 100, 548, 581);
+  SetPosition(467, 182, 548, 581);
   WindowTitle := 'GUI Test Runner';
-  WindowPosition := wpUser;
   Hint := '';
+  IconName := '';
   ShowHint := True;
+  WindowPosition := wpUser;
   MinWidth := 540;
   MinHeight := 450;
   OnCreate := @FormCreate;
