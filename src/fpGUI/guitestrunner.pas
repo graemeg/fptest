@@ -1414,12 +1414,13 @@ end;
 
 procedure TGUITestRunner.ClearResult;
 begin
-  if FTestResult <> nil then
-  begin
+  // TODO: Double check why FTestResult is always nil just after a test run. Thus causing a memory leak because ClearGridFailures is never called when application terminates.
+//  if FTestResult <> nil then
+//  begin
     FTestResult := nil;
     ClearFailureMessage;
     ClearFailureGrid;
-  end;
+//  end;
 end;
 
 procedure TGUITestRunner.DisplayFailureMessage(ARow: integer);
