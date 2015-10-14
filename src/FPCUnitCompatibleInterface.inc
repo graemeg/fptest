@@ -26,7 +26,7 @@
   //procedure AssertEquals(Expected, Actual: char); overload;
   procedure AssertEquals(const AMessage: string; Expected, Actual: TClass); overload;
   procedure AssertEquals(Expected, Actual: TClass); overload;
-  //procedure AssertSame(const AMessage: string; Expected, Actual: TObject); overload;
+  procedure AssertSame(const AMessage: string; Expected, Actual: TObject); overload;
   //procedure AssertSame(Expected, Actual: TObject); overload;
   //procedure AssertSame(const AMessage: string; Expected, Actual: Pointer); overload;
   //procedure AssertSame(Expected, Actual: Pointer); overload;
@@ -34,13 +34,13 @@
   //procedure AssertNotSame(Expected, Actual: TObject); overload;
   //procedure AssertNotSame(const AMessage: string; Expected, Actual: Pointer); overload;
   //procedure AssertNotSame(Expected, Actual: Pointer); overload;
-  //procedure AssertNotNull(const AMessage: string; AObject: TObject); overload;
-  //procedure AssertNotNull(AObject: TObject); overload;
+  procedure AssertNotNull(const AMessage: string; AObject: TObject); overload;
+  procedure AssertNotNull(AObject: TObject); overload;
   //procedure AssertNotNullIntf(const AMessage: string; AInterface: IInterface); overload;
   //procedure AssertNotNullIntf(AInterface: IInterface); overload;
   //procedure AssertNotNull(const AMessage: string; APointer: Pointer); overload;
   //procedure AssertNotNull(APointer: Pointer); overload;
-  //procedure AssertNull(const AMessage: string; AObject: TObject); overload;
+  procedure AssertNull(const AMessage: string; AObject: TObject); overload;
   //procedure AssertNull(AObject: TObject); overload;
   //procedure AssertNullIntf(const AMessage: string; AInterface: IInterface); overload;
   //procedure AssertNullIntf(AInterface: IInterface); overload;
@@ -48,7 +48,7 @@
   //procedure AssertNull(APointer: Pointer); overload;
   //procedure AssertNotNull(const AMessage, AString: string); overload;
   //procedure AssertNotNull(const AString: string); overload;
-  //procedure AssertException(const AMessage: string; AExceptionClass: ExceptClass; AMethod: TRunMethod;AExceptionMessage : String = ''; AExceptionContext : Integer = 0; AErrorAddr : Pointer = Nil); overload;
+  procedure AssertException(const AMessage: string; AExceptionClass: ExceptClass; AMethod: TExceptTestMethod; AExceptionMessage : String = ''; AExceptionContext : Integer = 0; AErrorAddr : Pointer = Nil); overload;
   //procedure AssertException(AExceptionClass: ExceptClass; AMethod: TRunMethod;AExceptionMessage : String = ''; AExceptionContext : Integer = 0); overload;
 
 {$ENDIF read_interface}
@@ -144,6 +144,32 @@ end;
 procedure TTestProc.AssertEquals(Expected, Actual: TClass);
 begin
   CheckEquals(Expected, Actual);
+end;
+
+procedure TTestProc.AssertSame(const AMessage: string; Expected, Actual: TObject);
+begin
+  CheckSame(Expected, Actual, AMessage);
+end;
+
+procedure TTestProc.AssertNotNull(const AMessage: string; AObject: TObject);
+begin
+  CheckNotNull(AObject, AMessage);
+end;
+
+procedure TTestProc.AssertNotNull(AObject: TObject);
+begin
+  CheckNotNull(AObject);
+end;
+
+procedure TTestProc.AssertNull(const AMessage: string; AObject: TObject);
+begin
+  CheckNull(AObject, AMessage);
+end;
+
+procedure TTestProc.AssertException(const AMessage: string; AExceptionClass: ExceptClass; AMethod: TExceptTestMethod;
+  AExceptionMessage: String; AExceptionContext: Integer; AErrorAddr: Pointer);
+begin
+  CheckException(AMethod, AExceptionClass, AExceptionMessage);
 end;
 
 
