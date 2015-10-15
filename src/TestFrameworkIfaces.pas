@@ -47,7 +47,7 @@ uses
   SysUtils;
 
 type
-  PtrType = Cardinal; // Watch this when Delphi gets 64bit support
+  PtrType = PtrUInt;
   TExceptTestMethod = procedure of object;
 
   TTestMethod = procedure of object;

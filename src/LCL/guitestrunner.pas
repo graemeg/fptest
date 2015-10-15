@@ -622,13 +622,13 @@ end;
 
 function TGUITestRunner.NodeToTest(Node: TTreeNode): ITestProxy;
 var
-  idx: Integer;
+  idx: PtrUInt;
 begin
   Result := nil;
   if not assigned(Node) then
     Exit;
 
-  idx  := Integer(Node.data);
+  idx  := PtrUInt(Node.data);
   if (idx >= 0) and (idx < FTests.Count) then
     result := FTests[idx] as ITestProxy;
 end;

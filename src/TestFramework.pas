@@ -216,7 +216,7 @@ type
     function  get_ErrorMessage: string;
     procedure set_ErrorMessage(const Value: string);
     function  get_ErrorAddress: PtrType;
-    procedure set_ErrorAddress(const Value: Cardinal);
+    procedure set_ErrorAddress(const Value: PtrType);
     procedure Warn(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil); overload;
     function  UpdateOnFail(const ATest: ITest;
@@ -375,7 +375,7 @@ type
     property  ExceptionClass: ExceptClass read get_ExceptionClass
                                           write set_ExceptionClass;
     property  ErrorMessage: string read get_ErrorMessage write set_ErrorMessage;
-    property  ErrorAddress: Cardinal read get_ErrorAddress write set_ErrorAddress;
+    property  ErrorAddress: PtrType read get_ErrorAddress write set_ErrorAddress;
     property  ExpectedException :ExceptClass read  get_ExpectedException
                                              write StartExpectingException;
     property  InhibitSummaryLevelChecks: boolean read get_InhibitSummaryLevelChecks
@@ -1779,7 +1779,7 @@ begin
   FExcluded := Value;
 end;
 
-function TTestProc.get_ErrorAddress: Cardinal;
+function TTestProc.get_ErrorAddress: PtrType;
 begin
   Result := FErrorAddress;
 end;
