@@ -27,6 +27,8 @@ begin
 end;
 
 // Code copied form objpas.inc:  class function TObject.MethodAddress()
+{$PUSH}
+{$RANGECHECKS OFF}
 procedure GetMethodList(AClass: TClass; AList: TStrings);
 type
   TMethodNameRec = packed record
@@ -42,16 +44,16 @@ type
   PMethodNameTable =  ^TMethodNameTable;
 
 var
-  methodTable: PMethodNameTable;
+  MethodTable: PMethodNameTable;
   i: dword;
-  vmt: TClass;
+  ovmt: PVmt;
   idx: integer;
 begin
   AList.Clear;
-  vmt := aClass;
-  while Assigned(vmt) do
+  ovmt := PVmt(aClass);
+  while Assigned(ovmt) do
   begin
-    methodTable := pMethodNameTable((Pointer(vmt) + vmtMethodTable)^);
+    MethodTable := PMethodNameTable(ovmt^.vMethodTable);
     if Assigned(MethodTable) then
     begin
       for i := 0 to MethodTable^.count - 1 do
@@ -63,10 +65,10 @@ begin
         AList.AddObject(MethodTable^.entries[i].name^, TObject(MethodTable^.entries[i].addr));
       end;
     end;
-    vmt := pClass(pointer(vmt) + vmtParent)^;
+    ovmt := ovmt^.vParent;
   end;
 end;
-
+{$POP}
 
 end.
 
