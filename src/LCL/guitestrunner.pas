@@ -62,6 +62,7 @@ type
   { TGUITestRunner }
 
   TGUITestRunner = class(TForm, ITestListener, ITestListenerX)
+    ScoreLabel: TLabel;
     StateImages: TImageList;
     RunImages: TImageList;
     DialogActions: TActionList;
@@ -96,11 +97,8 @@ type
     ResultsSplitter: TSplitter;
     AutoChangeFocusItem: TMenuItem;
     TopProgressPanel: TPanel;
-    ProgressBar: TProgressBar;
     pnlProgresslabel: TPanel;
     ScorePanel: TPanel;
-    ScoreLabel: TPanel;
-    ScoreBar: TProgressBar;
     pmTestTree: TPopupMenu;
     pmiSelectAll: TMenuItem;
     pmiDeselectAll: TMenuItem;
@@ -127,7 +125,7 @@ type
     CopyMessageToClipboardAction: TAction;
     ActionsMenu: TMenuItem;
     CopyMessagetoCllipboardItem: TMenuItem;
-    LbProgress: TLabel;
+    lblScore: TLabel;
     UseRegistryAction: TAction;
     UseRegistryItem: TMenuItem;
     ErrorMessages: TMemo;
@@ -234,6 +232,7 @@ type
     InhibitSummaryLevelChecksMenuItem: TMenuItem;
     PropertyOverrideMenuItem: TMenuItem;
     ShowWarnedTestToolButton: TToolButton;
+    PaintBox1: TPaintBox;
     procedure FormCreate(Sender: TObject);
     procedure TestTreeClick(Sender: TObject);
     procedure FailureListViewSelectItem(Sender: TObject; Item: TListItem;
@@ -329,6 +328,7 @@ type
     procedure ShowOverriddenFailuresActionExecute(Sender: TObject);
     procedure ShowEarlyExitedTestActionUpdate(Sender: TObject);
     procedure EnableWarningsActionExecute(Sender: TObject);
+    procedure PaintBox1Paint(Sender: TObject);
 
   private
     FSuite:         ITestProxy;
@@ -341,6 +341,8 @@ type
     FUpdateTimer:   TTimer;
     FTimerExpired:  Boolean;
     TotalTestsCount: Integer;
+    FTestsToRunCount: Integer;
+    FPassedTestsCount: Integer;
     FMemLeakStr:    string;
     FMemBytesStr:   string;
     FBytes:         string;
@@ -683,8 +685,6 @@ procedure TGUITestRunner.TestingStarts;
 begin
   FTotalTime := 0;
   UpdateStatus(True);
-  //todo: ProgressBar color seems to have no effect in windows and QT
-  ScoreBar.Color := clOK;
   ClearStatusMessage;
 end;
 
@@ -747,6 +747,7 @@ begin
     else
       SetTreeNodeImage(TestToNode(ATest), imgRUN);
   end;
+  PaintBox1.Invalidate;
 end;
 
 procedure TGUITestRunner.AddWarning(AWarning: TTestFailure);
@@ -762,6 +763,7 @@ begin
   end
   else
     AddSuccess(AWarning.FailedTest);
+  PaintBox1.Invalidate;
 end;
 
 procedure TGUITestRunner.AddError(Failure: TTestFailure);
@@ -771,9 +773,9 @@ begin
   FTestFailed := True;
   ListItem := AddFailureItem(Failure);
   ListItem.ImageIndex := imgERROR;
-  ScoreBar.Color := clERROR;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgERROR);
   UpdateStatus(True);
+  PaintBox1.Invalidate;
 end;
 
 procedure TGUITestRunner.AddFailure(Failure: TTestFailure);
@@ -783,12 +785,9 @@ begin
   FTestFailed := True;
   ListItem := AddFailureItem(Failure);
   ListItem.ImageIndex := imgFAILED;
-  if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
-  begin
-    ScoreBar.Color := clFAILURE;
-  end;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
   UpdateStatus(True);
+  PaintBox1.Invalidate;
 end;
 
 function TGUITestRunner.IniFileName: string;
@@ -1092,6 +1091,7 @@ procedure TGUITestRunner.UpdateStatus(const fullUpdate:Boolean);
 var
   i: Integer;
   TestNumber: Integer;
+  CompletedPercentage: Integer;
 
    function FormatElapsedTime(milli: Int64):string;
    var
@@ -1134,14 +1134,14 @@ begin
       end;
       with TestResult do
       begin
-        ScoreBar.Position  := TestNumber - (FailureCount + ErrorCount);
-        ProgressBar.Position := TestNumber;
+        FPassedTestsCount := TestNumber - (FailureCount + ErrorCount);
 
         // There is a possibility for zero tests
         if (TestNumber = 0) and (TotalTestsCount = 0) then
-          LbProgress.Caption := '100%'
+          CompletedPercentage := 100
         else
-          LbProgress.Caption := IntToStr((100 * ScoreBar.Position) div ScoreBar.Max) + '%';
+          CompletedPercentage := (100 * FPassedTestsCount) div FTestsToRunCount;
+        lblScore.Caption := IntToStr(CompletedPercentage) + '%';
       end;
       if (TestNumber < TotalTestsCount) then
       begin
@@ -1178,10 +1178,8 @@ end;
 
 procedure TGUITestRunner.ResetProgress;
 begin
-  ScoreBar.Color := ScoreBar.Parent.Color;
-  ScoreBar.Position := 0;
-  ProgressBar.Position := 0;
-  LbProgress.Caption := '';
+  FPassedTestsCount := 0;
+  lblScore.Caption := '';
 end;
 
 function DeControl(const AString: string): string;
@@ -1389,13 +1387,9 @@ begin
   if Suite <> nil then
   begin
     TotalTestsCount := Suite.countEnabledTestCases;
+    FTestsToRunCount := TotalTestsCount;
     Item.SubItems[0] := IntToStr(TotalTestsCount);
-    ProgressBar.Max := TotalTestsCount;
-  end
-  else
-    ProgressBar.Max:= 10000;
-
-  ScoreBar.Max := ProgressBar.Max;
+  end;
 
   for i := 0 to TestTree.Items.Count - 1 do
   begin
@@ -1473,10 +1467,10 @@ begin
   { Set up the GUI nodes in the test nodes. We do it here because the form,
     the tree and all its tree nodes get recreated in TCustomForm.ShowModal
     in D8+ so we cannot do it sooner. }
-
-
   SetupGUINodes;
   ResultsView.Columns[8].Width := ResultsView.Columns[8].Width;
+  // initialize the look of our custom progress bar
+  PaintBox1.Invalidate;
 end;
 
 procedure TGUITestRunner.TestTreeClick(Sender: TObject);
@@ -2246,8 +2240,7 @@ procedure TGUITestRunner.RunSelectedTestActionExecute(Sender: TObject);
 begin
   SetUp;
   ListSelectedTests;
-  ProgressBar.Max := 1;
-  ScoreBar.Max    := 1;
+  FTestsToRunCount := 1;
   HoldOptions(True);
   try
     RunTheTest(Suite);
@@ -2812,6 +2805,38 @@ begin
 
   with EnableWarningsAction do
     Checked := not Checked;
+end;
+
+{ We use a PaintBox to simulate a progress bar. We do this because the LCL
+  TProgressBar looks crap on some systems or themes. }
+procedure TGUITestRunner.PaintBox1Paint(Sender: TObject);
+var
+  lTestNumber: integer;
+  lTestCount: integer;
+  lFailures: integer;
+  lErrors: integer;
+begin
+  lTestNumber := StrToIntDef(ResultsView.Items[0].SubItems[1], 0);
+  lTestCount := StrToIntDef(ResultsView.Items[0].SubItems[0], 0);
+  lFailures := StrToIntDef(ResultsView.Items[0].SubItems[2], 0);
+  lErrors := StrToIntDef(ResultsView.Items[0].SubItems[3], 0);
+  with PaintBox1 do
+  begin
+    // point background
+    Canvas.Brush.Color := clSilver;
+    Canvas.Rectangle(0, 0, Width, Height);
+    Canvas.Font.Color := clWhite;
+    if lTestCount = 0 then
+      Exit;
+    // paint progress
+    if lErrors > 0 then
+      Canvas.Brush.Color := clRed
+    else if (lErrors = 0) and (lFailures > 0) then
+      Canvas.Brush.Color := clFuchsia
+    else
+      Canvas.Brush.Color := clGreen;
+    Canvas.Rectangle(0, 0, round(lTestNumber / (lTestCount) * PaintBox1.Width), PaintBox1.Height);
+  end;
 end;
 
 end.
