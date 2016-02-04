@@ -330,24 +330,16 @@ object GUITestRunner: TGUITestRunner
             ClientHeight = 18
             ClientWidth = 81
             TabOrder = 1
-            object LbProgress: TLabel
-              Left = 36
+            object lblScore: TLabel
+              Left = 40
               Height = 18
               Top = 1
               Width = 40
               Alignment = taCenter
               AutoSize = False
-              Caption = 'Progress'
-              Color = clDefault
-              Font.Color = clWhite
-              Font.Height = -11
-              Font.Name = 'MS Sans Serif'
-              Font.Pitch = fpVariable
-              Font.Style = [fsBold]
+              Caption = '0%'
               Layout = tlCenter
               ParentColor = False
-              ParentFont = False
-              Transparent = False
             end
             object ScoreLabel: TLabel
               Left = 2

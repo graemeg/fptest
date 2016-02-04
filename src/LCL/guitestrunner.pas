@@ -125,7 +125,7 @@ type
     CopyMessageToClipboardAction: TAction;
     ActionsMenu: TMenuItem;
     CopyMessagetoCllipboardItem: TMenuItem;
-    LbProgress: TLabel;
+    lblScore: TLabel;
     UseRegistryAction: TAction;
     UseRegistryItem: TMenuItem;
     ErrorMessages: TMemo;
@@ -685,7 +685,6 @@ procedure TGUITestRunner.TestingStarts;
 begin
   FTotalTime := 0;
   UpdateStatus(True);
-  LbProgress.Color := clDefault;
   ClearStatusMessage;
 end;
 
@@ -774,7 +773,6 @@ begin
   FTestFailed := True;
   ListItem := AddFailureItem(Failure);
   ListItem.ImageIndex := imgERROR;
-  LbProgress.Color := clERROR;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgERROR);
   UpdateStatus(True);
   PaintBox1.Invalidate;
@@ -787,10 +785,6 @@ begin
   FTestFailed := True;
   ListItem := AddFailureItem(Failure);
   ListItem.ImageIndex := imgFAILED;
-  if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
-  begin
-    LbProgress.Color := clFAILURE;
-  end;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
   UpdateStatus(True);
   PaintBox1.Invalidate;
@@ -1147,11 +1141,7 @@ begin
           CompletedPercentage := 100
         else
           CompletedPercentage := (100 * FPassedTestsCount) div FTestsToRunCount;
-        LbProgress.Caption := IntToStr(CompletedPercentage) + '%';
-        if CompletedPercentage >= 100 then
-          LbProgress.Color := clGreen
-        else
-          LbProgress.Color := clRed;
+        lblScore.Caption := IntToStr(CompletedPercentage) + '%';
       end;
       if (TestNumber < TotalTestsCount) then
       begin
@@ -1189,8 +1179,7 @@ end;
 procedure TGUITestRunner.ResetProgress;
 begin
   FPassedTestsCount := 0;
-  LbProgress.Color := clDefault;
-  LbProgress.Caption := '';
+  lblScore.Caption := '';
 end;
 
 function DeControl(const AString: string): string;
