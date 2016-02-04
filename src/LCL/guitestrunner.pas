@@ -62,6 +62,7 @@ type
   { TGUITestRunner }
 
   TGUITestRunner = class(TForm, ITestListener, ITestListenerX)
+    ScoreLabel: TLabel;
     StateImages: TImageList;
     RunImages: TImageList;
     DialogActions: TActionList;
@@ -99,8 +100,6 @@ type
     ProgressBar: TProgressBar;
     pnlProgresslabel: TPanel;
     ScorePanel: TPanel;
-    ScoreLabel: TPanel;
-    ScoreBar: TProgressBar;
     pmTestTree: TPopupMenu;
     pmiSelectAll: TMenuItem;
     pmiDeselectAll: TMenuItem;
@@ -341,6 +340,8 @@ type
     FUpdateTimer:   TTimer;
     FTimerExpired:  Boolean;
     TotalTestsCount: Integer;
+    FTestsToRunCount: Integer;
+    FPassedTestsCount: Integer;
     FMemLeakStr:    string;
     FMemBytesStr:   string;
     FBytes:         string;
@@ -683,8 +684,7 @@ procedure TGUITestRunner.TestingStarts;
 begin
   FTotalTime := 0;
   UpdateStatus(True);
-  //todo: ProgressBar color seems to have no effect in windows and QT
-  ScoreBar.Color := clOK;
+  LbProgress.Color := clDefault;
   ClearStatusMessage;
 end;
 
@@ -771,7 +771,7 @@ begin
   FTestFailed := True;
   ListItem := AddFailureItem(Failure);
   ListItem.ImageIndex := imgERROR;
-  ScoreBar.Color := clERROR;
+  LbProgress.Color := clERROR;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgERROR);
   UpdateStatus(True);
 end;
@@ -785,7 +785,7 @@ begin
   ListItem.ImageIndex := imgFAILED;
   if TestResult.ErrorCount = 0 then //Dont override higher priority error colour
   begin
-    ScoreBar.Color := clFAILURE;
+    LbProgress.Color := clFAILURE;
   end;
   SetTreeNodeImage(TestToNode(Failure.failedTest), imgFAILED);
   UpdateStatus(True);
@@ -1092,6 +1092,7 @@ procedure TGUITestRunner.UpdateStatus(const fullUpdate:Boolean);
 var
   i: Integer;
   TestNumber: Integer;
+  CompletedPercentage: Integer;
 
    function FormatElapsedTime(milli: Int64):string;
    var
@@ -1134,14 +1135,19 @@ begin
       end;
       with TestResult do
       begin
-        ScoreBar.Position  := TestNumber - (FailureCount + ErrorCount);
+        FPassedTestsCount := TestNumber - (FailureCount + ErrorCount);
         ProgressBar.Position := TestNumber;
 
         // There is a possibility for zero tests
         if (TestNumber = 0) and (TotalTestsCount = 0) then
-          LbProgress.Caption := '100%'
+          CompletedPercentage := 100
         else
-          LbProgress.Caption := IntToStr((100 * ScoreBar.Position) div ScoreBar.Max) + '%';
+          CompletedPercentage := (100 * FPassedTestsCount) div FTestsToRunCount;
+        LbProgress.Caption := IntToStr(CompletedPercentage) + '%';
+        if CompletedPercentage >= 100 then
+          LbProgress.Color := clGreen
+        else
+          LbProgress.Color := clRed;
       end;
       if (TestNumber < TotalTestsCount) then
       begin
@@ -1178,8 +1184,8 @@ end;
 
 procedure TGUITestRunner.ResetProgress;
 begin
-  ScoreBar.Color := ScoreBar.Parent.Color;
-  ScoreBar.Position := 0;
+  FPassedTestsCount := 0;
+  LbProgress.Color := clDefault;
   ProgressBar.Position := 0;
   LbProgress.Caption := '';
 end;
@@ -1389,13 +1395,12 @@ begin
   if Suite <> nil then
   begin
     TotalTestsCount := Suite.countEnabledTestCases;
+    FTestsToRunCount := TotalTestsCount;
     Item.SubItems[0] := IntToStr(TotalTestsCount);
     ProgressBar.Max := TotalTestsCount;
   end
   else
     ProgressBar.Max:= 10000;
-
-  ScoreBar.Max := ProgressBar.Max;
 
   for i := 0 to TestTree.Items.Count - 1 do
   begin
@@ -2247,7 +2252,7 @@ begin
   SetUp;
   ListSelectedTests;
   ProgressBar.Max := 1;
-  ScoreBar.Max    := 1;
+  FTestsToRunCount := 1;
   HoldOptions(True);
   try
     RunTheTest(Suite);
