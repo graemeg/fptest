@@ -21,30 +21,16 @@ uses
   {$IFDEF GUIRunner}
   ,GuiTestRunner
   {$ENDIF}
-  ,formimages;
+  {$ifndef LCL}
+  ,formimages
+  {$endif}
+  ;
 
 
-{.$Define RunManually}
-
-{$IFDEF RunManually}
-var
-  t: TTestCaseFirst;
-begin
-  t := TTestCaseFirst.Create;
-  try
-    t.TestWarning;
-    t.TestOne;
-    t.TestTwo;
-    t.TestThree;
-  finally
-    t.free;
-  end;
-{$ELSE}
 begin
   // Register all tests
   sample_tests.RegisterTests;
 
   RunRegisteredTests;
-{$ENDIF}
 end.
 
