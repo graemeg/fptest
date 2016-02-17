@@ -28,6 +28,7 @@ type
      return: true if processing should continue, false otherwise }
   TTestFunc = function (item: ITestProxy): Boolean of object;
 
+
   TGUITestRunner = class(TfpgForm, ITestListener, ITestListenerX)
   private
     {@VFD_HEAD_BEGIN: GUITestRunner}
@@ -36,12 +37,12 @@ type
     btnSelectAll: TfpgButton;
     btnSelectNone: TfpgButton;
     Bevel1: TfpgBevel;
-    btnSelectedFailed: TfpgButton;
+    btnSelectFailed: TfpgButton;
     btnSelectCurrent: TfpgButton;
     btnDeselectCurrent: TfpgButton;
     Bevel2: TfpgBevel;
-    btnRunSelected: TfpgButton;
-    btnRunCurrent: TfpgButton;
+    btnRunAllSelected: TfpgButton;
+    btnRunCurrentSelection: TfpgButton;
     btnStopTests: TfpgButton;
     Bevel3: TfpgBevel;
     Button9: TfpgButton;
@@ -110,8 +111,11 @@ type
     SelectAllCommand: ICommand;
     HideTestNodesCommand: ICommand;
     ExpandAllNodesCommand: ICommand;
-    miSelectAll: TfpgMenuItem;
-    miRunSelected: TfpgMenuItem;
+    miTreeSelectAll: TfpgMenuItem;
+    miTreeDeselectAll: TfpgMenuItem;
+    miTreeSelectFailed: TfpgMenuItem;
+    miRunAllSelected: TfpgMenuItem;
+    miRunCurrentSelection: TfpgMenuItem;
 
     { implement the IStatusListeners interface }
     procedure Status(const ATest: ITestProxy; AMessage: string);
@@ -205,6 +209,7 @@ type
     property TestResult: ITestResult read get_TestResult write set_TestResult;
   end;
 
+
   TFailureDataObject = class(TObject)
   public
     TreeNode: TfpgTreeNode;
@@ -238,10 +243,6 @@ type
     procedure Execute; override;
   end;
 
-  TSelectFailedTestsCommand = class(TBaseCommand)
-  public
-    procedure Execute; override;
-  end;
 
   TSelectCurrentCommand = class(TBaseCommand)
   public
@@ -255,19 +256,25 @@ type
   end;
 
 
-  TRunSelectedCommand = class(TBaseCommand)
+  TRunAllSelectedCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
 
-  TRunCurrentCommand = class(TBaseCommand)
+  TRunCurrentSelectionCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
 
   TDeselectAllCommand = class(TBaseCommand)
+  public
+    procedure Execute; override;
+  end;
+
+
+  TSelectFailedCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
@@ -753,18 +760,21 @@ begin
   SelectAllCommand := TExitCommand.Create(self);
   HideTestNodesCommand := THideTestNodesOnOpenCommand.Create(self);
   ExpandAllNodesCommand := TExpandAllNodesCommand.Create(self);
-  miSelectAll.SetCommand(TSelectAllCommand.Create(self));
+  miTreeSelectAll.SetCommand(TSelectAllCommand.Create(self));
+  miTreeDeselectAll.SetCommand(TDeselectAllCommand.Create(self));
+  miTreeSelectFailed.SetCommand(TSelectFailedCommand.Create(self));
 
-  btnSelectedFailed.SetCommand(TSelectFailedTestsCommand.Create(self));
+  btnSelectFailed.SetCommand(TSelectFailedCommand.Create(self));
   btnDeselectCurrent.SetCommand(TDeselectCurrentCommand.Create(self));
   btnSelectCurrent.SetCommand(TSelectCurrentCommand.Create(self));
-  btnRunSelected.SetCommand(TRunSelectedCommand.Create(self));
-  btnRunCurrent.SetCommand(TRunCurrentCommand.Create(self));
+  btnRunAllSelected.SetCommand(TRunAllSelectedCommand.Create(self));
+  btnRunCurrentSelection.SetCommand(TRunCurrentSelectionCommand.Create(self));
   btnStopTests.SetCommand(TStopTestsCommand.Create(self));
   btnSelectAll.SetCommand(TSelectAllCommand.Create(self));
   btnSelectNone.SetCommand(TDeselectAllCommand.Create(self));
 
-  miRunSelected.SetCommand(TRunSelectedCommand.Create(self));
+  miRunAllSelected.SetCommand(TRunAllSelectedCommand.Create(self));
+  miRunCurrentSelection.SetCommand(TRunCurrentSelectionCommand.Create(self));
 end;
 
 function TGUITestRunner.EnableTest(Test: ITestProxy): boolean;
@@ -1665,10 +1675,10 @@ begin
     Style := bsLowered;
   end;
 
-  btnSelectedFailed := TfpgButton.Create(Toolbar);
-  with btnSelectedFailed do
+  btnSelectFailed := TfpgButton.Create(Toolbar);
+  with btnSelectFailed do
   begin
-    Name := 'btnSelectedFailed';
+    Name := 'btnSelectFailed';
     SetPosition(64, 2, 24, 24);
     Text := '';
     FontDesc := '#Label1';
@@ -1717,24 +1727,24 @@ begin
     Style := bsLowered;
   end;
 
-  btnRunSelected := TfpgButton.Create(Toolbar);
-  with btnRunSelected do
+  btnRunAllSelected := TfpgButton.Create(Toolbar);
+  with btnRunAllSelected do
   begin
-    Name := 'btnRunSelected';
+    Name := 'btnRunAllSelected';
     SetPosition(148, 2, 24, 24);
     Text := '';
     FontDesc := '#Label1';
-    Hint := 'Run selected tests';
+    Hint := 'Run all selected tests';
     ImageMargin := 0;
     ImageName := 'usr.starttest';
     TabOrder := 8;
     Focusable := False;
   end;
 
-  btnRunCurrent := TfpgButton.Create(Toolbar);
-  with btnRunCurrent do
+  btnRunCurrentSelection := TfpgButton.Create(Toolbar);
+  with btnRunCurrentSelection do
   begin
-    Name := 'btnRunCurrent';
+    Name := 'btnRunCurrentSelection';
     SetPosition(172, 2, 24, 24);
     Text := '';
     FontDesc := '#Label1';
@@ -1922,7 +1932,9 @@ begin
   begin
     Name := 'mnuTestTree';
     SetPosition(400, 108, 120, 20);
-    miSelectAll := AddMenuItem('Select All', 'Ctrl+Alt+A', nil);
+    miTreeSelectAll := AddMenuItem('Select All', 'Ctrl+A', nil);
+    miTreeDeselectAll := AddMenuItem('Deselect All', 'Ctrl+D', nil);
+    miTreeSelectFailed := AddMenuItem('Select Failed', 'Ctrl+F', nil);
   end;
 
   mnuOptions := TfpgPopupMenu.Create(self);
@@ -1951,7 +1963,8 @@ begin
   begin
     Name := 'mnuActions';
     SetPosition(400, 156, 120, 20);
-    miRunSelected := AddMenuItem('Run', 'F9', nil);
+    miRunAllSelected := AddMenuItem('Run', 'F9', nil);
+    miRunCurrentSelection := AddMenuItem('Run focused test', 'F8', nil);
     AddMenuItem('[todo]', '', nil);
   end;
 
@@ -2206,9 +2219,9 @@ begin
   end;
 end;
 
-{ TRunSelectedCommand }
+{ TRunAllSelectedCommand }
 
-procedure TRunSelectedCommand.Execute;
+procedure TRunAllSelectedCommand.Execute;
 begin
   with FForm do
   begin
@@ -2225,9 +2238,9 @@ begin
   end;
 end;
 
-{ TRunCurrentCommand }
+{ TRunCurrentSelectionCommand }
 
-procedure TRunCurrentCommand.Execute;
+procedure TRunCurrentSelectionCommand.Execute;
 begin
   with FForm do
   begin
@@ -2255,6 +2268,28 @@ begin
     UpdateStatus(True);
   end;
 end;
+
+{ TSelectFailedCommand }
+
+procedure TSelectFailedCommand.Execute;
+var
+  i: Integer;
+  ANode: TfpgTreeNode;
+begin
+  with FForm do
+  begin
+    { deselect all }
+    ApplyToTests(TestTree.RootNode.FirstSubNode, @DisableTest);
+    { select failed }
+    for i := 0 to FailureGrid.RowCount-1 do
+    begin
+      ANode := TFailureDataObject(FailureGrid.Objects[0, i]).TreeNode;
+      SetNodeState(ANode, true);
+    end;
+    UpdateStatus(True);
+  end;
+end;
+
 
 { TStopTestsCommand }
 
@@ -2307,30 +2342,6 @@ begin
   end;
 end;
 
-{ TSelectFailedTestsCommand }
-
-procedure TSelectFailedTestsCommand.Execute;
-var
-  i: Integer;
-  ANode: TfpgTreeNode;
-begin
-  with FForm do
-  begin
-    { deselect all }
-    ApplyToTests(TestTree.RootNode.FirstSubNode, @DisableTest);
-
-    { select failed }
-(*
-    for i := 0 to FailureListView.Items.Count - 1 do
-    begin
-      ANode := TTreeNode(FailureListView.Items[i].Data);
-      SetNodeState(ANode, true);
-    end;
-    UpdateStatus(True);
-*)
-  end;
-end;
-
 { TDeselectCurrentCommand }
 
 procedure TDeselectCurrentCommand.Execute;
@@ -2354,8 +2365,6 @@ begin
     UpdateStatus(True);
   end;
 end;
-
-
 
 
 end.
