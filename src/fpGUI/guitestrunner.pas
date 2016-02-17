@@ -191,6 +191,8 @@ type
     procedure EnableWarningsActionExecute(Sender: TObject);
     procedure FailureGridRowChanged(Sender: TObject; ARow: Integer);
     procedure ClearFailureGrid;
+    procedure miHelpAboutFPGui(Sender: TObject);
+    procedure miHelpAboutFPTest(Sender: TObject);
   protected
     procedure InitTree; virtual;
   public
@@ -287,6 +289,7 @@ implementation
 uses
   fpg_utils,
   fpg_iniutils,
+  fpg_dialogs,
   dbugintf,
   TestFrameworkProxy,
   {$IFDEF XMLLISTENER}
@@ -1962,8 +1965,8 @@ begin
   begin
     Name := 'mnuHelp';
     SetPosition(400, 180, 120, 20);
-    AddMenuItem('About fpGUI Toolkit', '', nil);
-    AddMenuItem('About FPTest...', '', nil);
+    AddMenuItem('About fpGUI Toolkit', '', @miHelpAboutFPGui);
+    AddMenuItem('About FPTest...', '', @miHelpAboutFPTest);
   end;
 
   Bevel5 := TfpgBevel.Create(bvlTreeAndProgress);
@@ -2170,6 +2173,16 @@ begin
   for i := 0 to FailureGrid.RowCount-1 do
     TFailureDataObject(FailureGrid.Objects[0,i]).Free;
   FailureGrid.RowCount := 0;
+end;
+
+procedure TGUITestRunner.miHelpAboutFPGui(Sender: TObject);
+begin
+  TfpgMessageDialog.AboutFPGui();
+end;
+
+procedure TGUITestRunner.miHelpAboutFPTest(Sender: TObject);
+begin
+  TfpgMessageDialog.Information('About FPTest', 'Created by Graeme Geldenhuys - 2016');
 end;
 
 { TBaseCommand }
