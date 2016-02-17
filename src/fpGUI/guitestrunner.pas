@@ -1623,7 +1623,6 @@ begin
     Name := 'btnSelectAll';
     SetPosition(4, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1638,7 +1637,6 @@ begin
     Name := 'btnSelectNone';
     SetPosition(28, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1663,7 +1661,6 @@ begin
     Name := 'btnSelectedFailed';
     SetPosition(64, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Select all failed tests';
     ImageMargin := 0;
@@ -1678,7 +1675,6 @@ begin
     Name := 'btnSelectCurrent';
     SetPosition(88, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Select current test';
     ImageMargin := 0;
@@ -1693,7 +1689,6 @@ begin
     Name := 'btnDeselectCurrent';
     SetPosition(112, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Deselect current test';
     ImageMargin := 0;
@@ -1718,7 +1713,6 @@ begin
     Name := 'btnRunSelected';
     SetPosition(148, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Run selected tests';
     ImageMargin := 0;
@@ -1733,7 +1727,6 @@ begin
     Name := 'btnRunCurrent';
     SetPosition(172, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Run the current test';
     ImageMargin := 0;
@@ -1748,7 +1741,6 @@ begin
     Name := 'btnStopTests';
     SetPosition(196, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := 'Stop Testing';
     ImageMargin := 0;
@@ -1773,7 +1765,6 @@ begin
     Name := 'Button9';
     SetPosition(232, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1788,7 +1779,6 @@ begin
     Name := 'Button10';
     SetPosition(256, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1803,7 +1793,6 @@ begin
     Name := 'Button11';
     SetPosition(280, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1828,7 +1817,6 @@ begin
     Name := 'Button12';
     SetPosition(316, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1843,7 +1831,6 @@ begin
     Name := 'Button13';
     SetPosition(340, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1858,7 +1845,6 @@ begin
     Name := 'Button14';
     SetPosition(364, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
@@ -1873,7 +1859,6 @@ begin
     Name := 'Button15';
     SetPosition(388, 2, 24, 24);
     Text := '';
-    Flat := True;
     FontDesc := '#Label1';
     Hint := '';
     ImageMargin := 0;
