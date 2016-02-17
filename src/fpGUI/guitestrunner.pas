@@ -217,6 +217,7 @@ type
     ErrorMessage: string;
   end;
 
+
   TBaseCommand = class(TInterfacedObject, ICommand)
   protected
     FForm: TGUITestRunner;
@@ -225,10 +226,12 @@ type
     procedure Execute; virtual; abstract;
   end;
 
+
   TExitCommand = class(TBaseCommand)
   public
     procedure   Execute; override;
   end;
+
 
   TSelectAllCommand = class(TBaseCommand)
   public
@@ -245,35 +248,42 @@ type
     procedure Execute; override;
   end;
 
+
   TDeselectCurrentCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
+
 
   TRunSelectedCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
+
   TRunCurrentCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
+
 
   TDeselectAllCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
+
   TStopTestsCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
 
+
   THideTestNodesOnOpenCommand = class(TBaseCommand)
   public
     procedure Execute; override;
   end;
+
 
   TExpandAllNodesCommand = class(TBaseCommand)
   public
@@ -1926,11 +1936,11 @@ begin
     miHideTestNodesOnOpen := AddMenuItem('Hide Test Nodes On Open', '', @HideTestNodesOnOpenClicked);
     miShowTestedNode := AddMenuItem('Show Tested Node', '', @ShowTestedNodeClicked);
     miBreakOnFailure := AddMenuItem('Break On Failures', '', nil);
-    AddMenuItem('-', '', nil);
+    AddSeparator;
     miShowTestCasesWithRuntimeProperties := AddMenuItem('Show TestCases with RunTime Properties', '', nil);
     miShowOverriddenFailures := AddMenuItem('Show Overridden Failures', '', nil);
     miShowExitedEarly := AddMenuItem('Show passing Summary Level Tests which exited early', '', nil);
-    AddMenuItem('-', '', nil);
+    AddSeparator;
     miFailTestIfNoChecks := AddMenuItem('Fail TestCase if no checks performed', '', nil);
     miEnableWarnings := AddMenuItem('Enable Warnings', '', @EnableWarningsActionExecute);
     miInhibitSummaryLevelChecks := AddMenuItem('Inhibit Summary Level Checking', '', nil);
