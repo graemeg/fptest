@@ -1,4 +1,4 @@
-{%MainUnit fpcunit.pp}
+{%MainUnit TestFramework.pas}
 
 {$IFDEF read_interface}
 
@@ -58,7 +58,9 @@
 
 procedure TTestProc.AssertTrue(const AMessage: string; ACondition: boolean; AErrorAddrs: Pointer);
 begin
-  CheckTrue(ACondition, AMessage);
+  OnCheckCalled;
+  if (not ACondition) then
+      FailNotEquals(BoolToStr(true, true), BoolToStr(false, true), AMessage, CallerAddr);
 end;
 
 procedure TTestProc.AssertTrue(ACondition: boolean);
@@ -78,17 +80,23 @@ end;
 
 procedure TTestProc.AssertEquals(const AMessage: string; Expected, Actual: string); overload;
 begin
-  CheckEquals(Expected, Actual, AMessage);
+  OnCheckCalled;
+  if expected <> actual then
+    FailNotEquals(expected, actual, AMessage, CallerAddr);
 end;
 
 procedure TTestProc.AssertEquals(Expected, Actual: string); overload;
 begin
-  CheckEquals(Expected, Actual);
+  OnCheckCalled;
+  if expected <> actual then
+    FailNotEquals(expected, actual, '', CallerAddr);
 end;
 
 procedure TTestProc.AssertEquals(const AMessage: string; Expected, Actual: integer);
 begin
-  CheckEquals(Expected, Actual, AMessage);
+  OnCheckCalled;
+  if (expected <> actual) then
+    FailNotEquals(IntToStr(expected), IntToStr(actual), AMessage, CallerAddr);
 end;
 
 procedure TTestProc.AssertEquals(Expected, Actual: integer);
@@ -108,12 +116,16 @@ end;
 
 procedure TTestProc.AssertEquals(const AMessage: string; Expected, Actual: currency);
 begin
-  CheckEquals(Expected, Actual, AMessage);
+  OnCheckCalled;
+  if (abs(expected-actual) > 0) then
+    FailNotEquals(FloatToStr(expected), FloatToStr(actual), AMessage, CallerAddr);
 end;
 
 procedure TTestProc.AssertEquals(Expected, Actual: currency);
 begin
-  CheckEquals(Expected, Actual);
+  OnCheckCalled;
+  if (abs(expected-actual) > 0) then
+    FailNotEquals(FloatToStr(expected), FloatToStr(actual), '', CallerAddr);
 end;
 
 procedure TTestProc.AssertEquals(const AMessage: string; Expected, Actual, Delta: double);
