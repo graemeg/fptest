@@ -367,18 +367,22 @@ begin
   RunTest(RegisteredTests);
 end;
 
+{ Get rid of any control characters. Anything smaller than $1F. Also replace
+  LineEnding characters with a space, to tidy up the resulting string. }
 function DeControl(const AString: string): string;
 var
   i: Integer;
   LChr: Char;
+  s: string;
 begin
   Result := '';
   if AString = '' then
     Exit;
 
-  for i:= 1 to Length(AString) do
+  s := StringReplace(AString, LineEnding, ' ', [rfReplaceAll]);
+  for i := 1 to Length(s) do
   begin
-    LChr := AString[i];
+    LChr := s[i];
     if Ord(LChr) > $1F then
       Result := Result + LChr;
   end;
