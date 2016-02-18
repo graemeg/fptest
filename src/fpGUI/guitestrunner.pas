@@ -835,7 +835,7 @@ begin
   obj.TreeNode := TestToNode(Failure.FailedTest);
   obj.Caption := Failure.FailedTest.Name;                                // Caption
   obj.ThrownExceptionName := Failure.ThrownExceptionName;               // exception type
-  obj.FilteredErrorMessage := DeControl(Failure.ThrownExceptionMessage); // filtered errormessage
+  obj.FilteredErrorMessage := TrimLeft(DeControl(Failure.ThrownExceptionMessage)); // filtered errormessage
   obj.LocationInfo := Failure.LocationInfo;                              // unit name and line number
   // These are not shown in display
   obj.FullTestPath := Failure.FailedTest.ParentPath + '.';               // full path to test method
