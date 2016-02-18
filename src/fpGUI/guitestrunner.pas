@@ -1572,6 +1572,7 @@ begin
     ExpandAllNodesCommand.Execute;
 
   TestTree.Selection := TestTree.RootNode.FirstSubNode;
+  TestTree.SetFocus;
 end;
 
 constructor TGUITestRunner.Create(AOwner: TComponent);
