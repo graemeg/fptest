@@ -495,11 +495,6 @@ const
   {: Section of the dunit.ini file where GUI information will be stored }
   cnConfigIniSection = 'GUITestRunner Config';
 
-  {: Color constants for the progress bar and failure details panel }
-  clOK        = clGreen;
-  clFAILURE   = clFuchsia;
-  clERROR     = clRed;
-
   {: Indexes of the color images used in the Test tree and failure list }
   imgNONE      = 0;
   imgRUNNING   = 1;
@@ -624,13 +619,13 @@ end;
 
 function TGUITestRunner.NodeToTest(Node: TTreeNode): ITestProxy;
 var
-  idx: PtrUInt;
+  idx: PtrInt;
 begin
   Result := nil;
   if not assigned(Node) then
     Exit;
 
-  idx  := PtrUInt(Node.data);
+  idx  := PtrInt(Node.data);
   if (idx >= 0) and (idx < FTests.Count) then
     result := FTests[idx] as ITestProxy;
 end;
@@ -1199,11 +1194,6 @@ begin
   end;
 end;
 
-{$IFNDEF VER130}
-  {$IFNDEF VER140}
-    {$WARN UNSAFE_CAST OFF}
-  {$ENDIF}
-{$ENDIF}
 function TGUITestRunner.AddFailureItem(Failure: TTestFailure): TListItem;
 var
   Item : TListItem;
@@ -1420,7 +1410,7 @@ begin
   FTests := TInterfaceList.Create;
   LoadConfiguration;
 
-  TimeSeparator := ':';
+  DefaultFormatSettings.TimeSeparator := ':';
   SetUpStateImages;
   SetupCustomShortcuts;
   TestTree.Items.Clear;
@@ -1669,11 +1659,6 @@ begin
   end;
   UpdateStatus(True);
 end;
-{$IFNDEF VER130}
-  {$IFNDEF VER140}
-    {$WARN UNSAFE_CAST ON}
-  {$ENDIF}
-{$ENDIF}
 
 procedure TGUITestRunner.SaveConfigurationActionExecute(Sender: TObject);
 begin
