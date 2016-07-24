@@ -316,11 +316,11 @@ type
                    const ErrorAddress: Pointer = nil);
     procedure Fail(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil);
-    procedure FailEquals(const expected, actual: WideString;
+    procedure FailEquals(const expected, actual: UnicodeString;
                          const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil);
-    procedure FailNotEquals(const expected, actual: WideString;
+    procedure FailNotEquals(const expected, actual: UnicodeString;
                             const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil);
-    procedure FailNotSame(const expected, actual: WideString;
+    procedure FailNotSame(const expected, actual: UnicodeString;
                           const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil);
     //function  get_ExceptionClass: ExceptClass;
     //procedure set_ExceptionClass(const Value: ExceptClass);
@@ -359,9 +359,9 @@ type
     procedure CheckNotEqualsString(const expected, actual: string;
                                    const ErrorMsg: string = '');
   {$IFNDEF UNICODE}
-    procedure CheckEquals(const expected, actual: WideString;
+    procedure CheckEquals(const expected, actual: UnicodeString;
                           const ErrorMsg: string= ''); overload;
-    procedure CheckNotEquals(const expected, actual: WideString;
+    procedure CheckNotEquals(const expected, actual: UnicodeString;
                              const ErrorMsg: string = ''); overload;
     procedure CheckEqualsMem(const expected, actual: pointer;
                              const size:longword;
@@ -370,9 +370,9 @@ type
                                 const size:longword;
                                 const ErrorMsg:string='');
   {$ENDIF}
-    procedure CheckEqualsWideString(const expected, actual: WideString;
+    procedure CheckEqualsUnicodeString(const expected, actual: UnicodeString;
                                     const ErrorMsg: string= '');
-    procedure CheckNotEqualsWideString(const expected, actual: WideString;
+    procedure CheckNotEqualsUnicodeString(const expected, actual: UnicodeString;
                                        const ErrorMsg: string = '');
     procedure CheckEqualsBin(const expected, actual: longword;
                              const ErrorMsg: string = '';
