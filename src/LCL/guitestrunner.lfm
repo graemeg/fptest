@@ -4,7 +4,7 @@ object GUITestRunner: TGUITestRunner
   Top = 203
   Width = 575
   Caption = 'FPTest/DUnit2: An Xtreme testing framework'
-  ClientHeight = 572
+  ClientHeight = 573
   ClientWidth = 575
   Color = clBtnFace
   Font.Color = clWindowText
@@ -17,23 +17,23 @@ object GUITestRunner: TGUITestRunner
   OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True
-  LCLVersion = '1.5'
+  LCLVersion = '1.7'
   object BodyPanel: TPanel
     Left = 0
-    Height = 572
+    Height = 573
     Top = 0
     Width = 575
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
-    ClientHeight = 572
+    ClientHeight = 573
     ClientWidth = 575
     TabOrder = 0
     object ErrorBoxSplitter: TSplitter
       Cursor = crVSplit
       Left = 2
       Height = 6
-      Top = 444
+      Top = 445
       Width = 571
       Align = alBottom
       Color = clBtnFace
@@ -45,19 +45,19 @@ object GUITestRunner: TGUITestRunner
     end
     object TopPanel: TPanel
       Left = 2
-      Height = 442
+      Height = 443
       Top = 2
       Width = 571
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 442
+      ClientHeight = 443
       ClientWidth = 571
       TabOrder = 0
       object ResultsSplitter: TSplitter
         Cursor = crVSplit
         Left = 0
         Height = 5
-        Top = 242
+        Top = 243
         Width = 571
         Align = alBottom
         Color = clBtnFace
@@ -66,13 +66,13 @@ object GUITestRunner: TGUITestRunner
       end
       object TreePanel: TPanel
         Left = 0
-        Height = 242
+        Height = 243
         Top = 0
         Width = 571
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 2
-        ClientHeight = 242
+        ClientHeight = 243
         ClientWidth = 571
         Constraints.MinHeight = 100
         TabOrder = 0
@@ -90,7 +90,7 @@ object GUITestRunner: TGUITestRunner
         end
         object TestTree: TTreeView
           Left = 2
-          Height = 190
+          Height = 191
           Hint = 'Hierarchy of test cases. Checked test cases will be run.'
           Top = 50
           Width = 567
@@ -268,7 +268,7 @@ object GUITestRunner: TGUITestRunner
       object ResultsPanel: TPanel
         Left = 0
         Height = 195
-        Top = 247
+        Top = 248
         Width = 571
         Align = alBottom
         BevelOuter = bvNone
@@ -343,9 +343,9 @@ object GUITestRunner: TGUITestRunner
             end
             object ScoreLabel: TLabel
               Left = 2
-              Height = 14
+              Height = 13
               Top = 3
-              Width = 36
+              Width = 31
               Caption = 'Score:'
               ParentColor = False
             end
@@ -403,7 +403,7 @@ object GUITestRunner: TGUITestRunner
               Caption = 'Test Time'
               MaxWidth = 200
               MinWidth = 82
-              Width = 82
+              Width = 59
             end          
             item
               Alignment = taRightJustify
@@ -452,7 +452,7 @@ object GUITestRunner: TGUITestRunner
               AutoSize = True
               Caption = 'Location'
               MinWidth = 50
-              Width = 145
+              Width = 143
             end>
           Constraints.MinHeight = 50
           HideSelection = False
@@ -470,7 +470,7 @@ object GUITestRunner: TGUITestRunner
     object ErrorBoxPanel: TPanel
       Left = 2
       Height = 120
-      Top = 450
+      Top = 451
       Width = 571
       Align = alBottom
       BevelOuter = bvNone
@@ -1259,6 +1259,12 @@ object GUITestRunner: TGUITestRunner
       OnExecute = ShowOverriddenFailuresActionExecute
       OnUpdate = ShowOverriddenFailuresActionUpdate
     end
+    object SaveResultsToXMLAction: TAction
+      Category = 'Options'
+      Caption = 'Save Results to XML'
+      Checked = True
+      OnExecute = SaveResultsToXMLActionExecute
+    end
   end
   object MainMenu: TMainMenu
     Images = ActionsImages
@@ -1600,7 +1606,10 @@ object GUITestRunner: TGUITestRunner
       end
       object UseRegistryItem: TMenuItem
         Action = UseRegistryAction
-        Caption = 'Use Registry'
+      end
+      object SaveResultsToXMLItem: TMenuItem
+        Action = SaveResultsToXMLAction
+        OnClick = SaveResultsToXMLItemClick
       end
       object N9: TMenuItem
         Caption = '-'

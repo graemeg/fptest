@@ -33,12 +33,8 @@
    Graeme Geldenhuys <graemeg@gmail.com>
    Luiz Américo Pereira Câmara (LCL port)
 }
-{$UNDEF XMLLISTENER}
-{$IFNDEF VER130}
-  {$IFNDEF VER140}
-    {$DEFINE XMLLISTENER}
-  {$ENDIF}
-{$ENDIF}
+
+{$DEFINE XMLLISTENER}
 {$MODE DELPHI}
 
 unit GuiTestRunner;
@@ -62,6 +58,8 @@ type
   { TGUITestRunner }
 
   TGUITestRunner = class(TForm, ITestListener, ITestListenerX)
+    SaveResultsToXMLAction: TAction;
+    SaveResultsToXMLItem: TMenuItem;
     ScoreLabel: TLabel;
     StateImages: TImageList;
     RunImages: TImageList;
@@ -234,6 +232,8 @@ type
     ShowWarnedTestToolButton: TToolButton;
     PaintBox1: TPaintBox;
     procedure FormCreate(Sender: TObject);
+    procedure SaveResultsToXMLActionExecute(Sender: TObject);
+    procedure SaveResultsToXMLItemClick(Sender: TObject);
     procedure TestTreeClick(Sender: TObject);
     procedure FailureListViewSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
@@ -892,6 +892,8 @@ begin
       'ShowOverriddenFailures', ShowOverriddenFailuresAction.Checked);
     ShowEarlyExitedTestAction.Checked := ReadBool(cnConfigIniSection,
       'ShowEarlyExitTests', ShowEarlyExitedTestAction.Checked);
+    SaveResultsToXMLAction.Checked := ReadBool(cnConfigIniSection,
+      'SaveResultsToXML', SaveResultsToXMLAction.Checked);
 
     FPopupX := ReadInteger(cnConfigIniSection,'PopupX', 350);
     FPopupY := ReadInteger(cnConfigIniSection,'PopupY', 30);
@@ -961,6 +963,7 @@ begin
     WriteBool(cnConfigIniSection, 'ShowRunTimeProperties',    ShowTestCasesWithRunTimePropertiesAction.Checked);
     WriteBool(cnConfigIniSection, 'ShowOverriddenFailures',   ShowOverriddenFailuresAction.Checked);
     WriteBool(cnConfigIniSection, 'ShowEarlyExitTests',       ShowEarlyExitedTestAction.Checked);
+    WriteBool(cnConfigIniSection, 'SaveResultsToXML',         SaveResultsToXMLAction.Checked);
 
     WriteInteger(cnConfigIniSection, 'PopupX',                FPopupX);
     WriteInteger(cnConfigIniSection, 'PopupY',                FPopupY);
@@ -1452,6 +1455,24 @@ begin
     IgnoreMemoryLeakInSetUpTearDownAction.Checked := False;
 end;
 
+procedure TGUITestRunner.SaveResultsToXMLActionExecute(Sender: TObject);
+begin
+  if FHoldOptions then
+    Exit;
+
+  with UseRegistryAction do
+    Checked := not Checked;
+end;
+
+procedure TGUITestRunner.SaveResultsToXMLItemClick(Sender: TObject);
+begin
+  if FHoldOptions then
+    Exit;
+
+  with SaveResultsToXMLAction do
+    Checked := not Checked;
+end;
+
 procedure TGUITestRunner.FormDestroy(Sender: TObject);
 begin
   ClearResult;
@@ -1815,8 +1836,9 @@ begin
     TestResult := GetTestResult; // Replaces TTestResult.create
     try
       {$IFDEF XMLLISTENER}
-      TestResult.AddListener(
-        TXMLListener.Create(FAppDataPath + Suite.Name
+      if SaveResultsToXMLAction.Checked then
+        TestResult.AddListener(
+          TXMLListener.Create(FAppDataPath + Suite.Name
           {, 'type="text/xsl" href="fpcunit2.xsl"'}));
       {$ENDIF}
       TestResult.addListener(self);
