@@ -495,11 +495,6 @@ const
   {: Section of the dunit.ini file where GUI information will be stored }
   cnConfigIniSection = 'GUITestRunner Config';
 
-  {: Color constants for the progress bar and failure details panel }
-  clOK        = clGreen;
-  clFAILURE   = clFuchsia;
-  clERROR     = clRed;
-
   {: Indexes of the color images used in the Test tree and failure list }
   imgNONE      = 0;
   imgRUNNING   = 1;
