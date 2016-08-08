@@ -2820,11 +2820,11 @@ begin
       Exit;
     // paint progress
     if lErrors > 0 then
-      Canvas.Brush.Color := clRed
+      Canvas.Brush.Color := clERROR
     else if (lErrors = 0) and (lFailures > 0) then
-      Canvas.Brush.Color := clFuchsia
+      Canvas.Brush.Color := clFAILURE
     else
-      Canvas.Brush.Color := clGreen;
+      Canvas.Brush.Color := clOK;
     Canvas.Rectangle(0, 0, round(lTestNumber / (lTestCount) * PaintBox1.Width), PaintBox1.Height);
   end;
 end;
