@@ -138,7 +138,7 @@ const
 type
   TXMLStack = class(TInterfacedObject, IXMLStack)
   private
-    FStack: TObjectList;
+    FStack: TFPObjectList;
   protected
     function  Pop: TDomElement;
     procedure Push(const ANode: TDomElement);
@@ -152,7 +152,7 @@ type
 constructor TXMLStack.Create;
 begin
   inherited Create;
-  FStack := TObjectList.Create(False);
+  FStack := TFPObjectList.Create(False);
 end;
 
 destructor TXMLStack.Destroy;
