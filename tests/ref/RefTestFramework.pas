@@ -208,7 +208,7 @@ type
     function  get_ErrorMessage: string;
     procedure set_ErrorMessage(const Value: string);
     function  get_ErrorAddress: PtrType;
-    procedure set_ErrorAddress(const Value: Cardinal);
+    procedure set_ErrorAddress(const Value: PtrType);
     procedure Warn(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil); overload;
     function  UpdateOnFail(const ATest: ITest;
@@ -232,18 +232,18 @@ type
     function  GetMemDiffStr(const expected, actual: pointer;
                             const size: longword; const ErrorMsg: string): string;
 
-    function  EqualsErrorMessage(const expected, actual :WideString;
-                                 const ErrorMsg: string): WideString; virtual;
-    function  NotEqualsErrorMessage(const expected, actual :WideString;
-                                    const ErrorMsg: string): WideString; virtual;
+    function  EqualsErrorMessage(const expected, actual :UnicodeString;
+                                 const ErrorMsg: string): UnicodeString; virtual;
+    function  NotEqualsErrorMessage(const expected, actual :UnicodeString;
+                                    const ErrorMsg: string): UnicodeString; virtual;
   public
     procedure Fail(const ErrorMsg: string;
                    const ErrorAddress: Pointer = nil);
-    procedure FailEquals(const expected, actual: WideString;
+    procedure FailEquals(const expected, actual: UnicodeString;
                          const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil); //virtual;
-    procedure FailNotEquals(const expected, actual: WideString;
+    procedure FailNotEquals(const expected, actual: UnicodeString;
                             const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil); //virtual;
-    procedure FailNotSame(const expected, actual: WideString;
+    procedure FailNotSame(const expected, actual: UnicodeString;
                           const ErrorMsg: string = ''; ErrorAddrs: Pointer = nil); //virtual;
     procedure OnCheckCalled;
 
@@ -274,9 +274,9 @@ type
     procedure CheckNotEqualsString(const expected, actual: string;
                                    const ErrorMsg: string = '');
   {$IFNDEF UNICODE}
-    procedure CheckEquals(const expected, actual: WideString;
+    procedure CheckEquals(const expected, actual: UnicodeString;
                           const ErrorMsg: string= ''); overload;
-    procedure CheckNotEquals(const expected, actual: WideString;
+    procedure CheckNotEquals(const expected, actual: UnicodeString;
                              const ErrorMsg: string = ''); overload;
     procedure CheckEqualsMem(const expected, actual: pointer;
                              const size:longword;
@@ -285,9 +285,9 @@ type
                                 const size:longword;
                                 const ErrorMsg:string='');
   {$ENDIF}
-    procedure CheckEqualsWideString(const expected, actual: WideString;
+    procedure CheckEqualsUnicodeString(const expected, actual: UnicodeString;
                                     const ErrorMsg: string= '');
-    procedure CheckNotEqualsWideString(const expected, actual: WideString;
+    procedure CheckNotEqualsUnicodeString(const expected, actual: UnicodeString;
                                        const ErrorMsg: string = '');
     procedure CheckEqualsBin(const expected, actual: longword;
                              const ErrorMsg: string = '';
@@ -364,7 +364,7 @@ type
     property  ExceptionClass: ExceptClass read get_ExceptionClass
                                           write set_ExceptionClass;
     property  ErrorMessage: string read get_ErrorMessage write set_ErrorMessage;
-    property  ErrorAddress: Cardinal read get_ErrorAddress write set_ErrorAddress;
+    property  ErrorAddress: PtrType read get_ErrorAddress write set_ErrorAddress;
     property  ExpectedException :ExceptClass read  get_ExpectedException
                                              write StartExpectingException;
     property  InhibitSummaryLevelChecks: boolean read get_InhibitSummaryLevelChecks
@@ -1757,7 +1757,7 @@ begin
   FExcluded := Value;
 end;
 
-function TTestProc.get_ErrorAddress: Cardinal;
+function TTestProc.get_ErrorAddress: PtrType;
 begin
   Result := FErrorAddress;
 end;
@@ -1802,12 +1802,12 @@ begin
   FCheckCalled := Value;
 end;
 
-function TTestProc.get_InhibitSummaryLevelChecks: Boolean;
+function TTestProc.get_InhibitSummaryLevelChecks: boolean;
 begin
   Result := FInhibitSummaryLevelChecks;
 end;
 
-procedure TTestProc.set_InhibitSummaryLevelChecks(const Value: Boolean);
+procedure TTestProc.set_InhibitSummaryLevelChecks(const Value: boolean);
 begin
   FInhibitSummaryLevelChecks := Value;
 end;
@@ -1898,7 +1898,7 @@ begin // Note the 0th element is reserved for old code value.
   if LLen >= Length(FAllowedLeakList) then
     Fail('Too many values in AllowedLeakArray. Limit = ' +
       IntToStr(Length(FAllowedLeakList) - 1));
-  
+
   for i := 1 to Length(FAllowedLeakList) - 1 do
   begin
     if i <= LLen then
@@ -2001,7 +2001,7 @@ procedure TTestProc.SaveConfiguration(const iniFile: TCustomIniFile;
       FreeAndNil(LKeys);
     end;
   end;
-  
+
 begin
   if Section = '' then
     Exit;
@@ -2147,7 +2147,7 @@ end;
 
 function TTestProc.InterfaceSupports(const Value: TSupportedIface): Boolean;
 begin
-  Result := (Ord(SupportedIfaceType) >= Ord(Value)); 
+  Result := (Ord(SupportedIfaceType) >= Ord(Value));
 end;
 
 function TTestProc.IsValidTestMethod(const AProc: TTestMethod): boolean;
@@ -2360,7 +2360,7 @@ begin
     raise EPostTestFailure.Create(ErrorMsg) at ErrorAddress;
 end;
 
-procedure TTestproc.CheckMethodIsNotEmpty(const AMethod: TTestMethod);
+procedure TTestProc.CheckMethodIsNotEmpty(const AMethod: TTestMethod);
 const
   AssemblerRet = $C3;
 begin
@@ -2929,8 +2929,8 @@ begin
 end;
 
 {---------- helper functions ------------}
-function TTestProc.EqualsErrorMessage(const expected, actual: WideString;
-                                      const ErrorMsg: string): WideString;
+function TTestProc.EqualsErrorMessage(const expected, actual: UnicodeString;
+                                      const ErrorMsg: string): UnicodeString;
 begin
   if (ErrorMsg <> '') then
     Result := Format(sMsgActualEqualsExpFmt, [ErrorMsg + ', ', expected, actual])
@@ -2938,8 +2938,8 @@ begin
     Result := Format(sActualEqualsExpFmt, [expected, actual])
 end;
 
-function TTestProc.NotEqualsErrorMessage(const expected, actual: WideString;
-                                         const ErrorMsg: string): WideString;
+function TTestProc.NotEqualsErrorMessage(const expected, actual: UnicodeString;
+                                         const ErrorMsg: string): UnicodeString;
 begin
   if (ErrorMsg <> '') then
     Result := Format(sExpectedButWasAndMessageFmt, [ErrorMsg, expected, actual])
@@ -2965,21 +2965,21 @@ begin
     raise EPostTestFailure.Create(ErrorMsg) at ErrorAddress;
 end;
 
-procedure TTestProc.FailEquals(const expected, actual: WideString;
+procedure TTestProc.FailEquals(const expected, actual: UnicodeString;
                                const ErrorMsg: string;
                                      ErrorAddrs: Pointer);
 begin
   Fail(EqualsErrorMessage(expected, actual, ErrorMsg), ErrorAddrs);
 end;
 
-procedure TTestProc.FailNotEquals(const expected, actual: WideString;
+procedure TTestProc.FailNotEquals(const expected, actual: UnicodeString;
                                   const ErrorMsg: string;
                                         ErrorAddrs: Pointer);
 begin
   Fail(NotEqualsErrorMessage(expected, actual, ErrorMsg), ErrorAddrs);
 end;
 
-procedure TTestProc.FailNotSame(const expected, actual: WideString;
+procedure TTestProc.FailNotSame(const expected, actual: UnicodeString;
                                 const ErrorMsg: string;
                                       ErrorAddrs: Pointer);
 begin
@@ -3080,7 +3080,7 @@ begin
 end;
 
 {$IFNDEF UNICODE}
-procedure TTestProc.CheckEquals(const expected, actual: WideString;
+procedure TTestProc.CheckEquals(const expected, actual: UnicodeString;
     const ErrorMsg: string);
 begin
   OnCheckCalled;
@@ -3096,7 +3096,7 @@ begin
     Fail(GetMemDiffStr(expected, actual, size, ErrorMsg), CallerAddr);
 end;
 
-procedure TTestProc.CheckNotEquals(const expected, actual: WideString;
+procedure TTestProc.CheckNotEquals(const expected, actual: UnicodeString;
     const ErrorMsg: string);
 begin
   OnCheckCalled;
@@ -3118,7 +3118,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TTestProc.CheckEqualsWideString(const expected, actual: WideString;
+procedure TTestProc.CheckEqualsUnicodeString(const expected, actual: UnicodeString;
     const ErrorMsg: string);
 begin
   OnCheckCalled;
@@ -3126,7 +3126,7 @@ begin
     FailNotEquals(expected, actual, ErrorMsg, CallerAddr);
 end;
 
-procedure TTestProc.CheckNotEqualsWideString(const expected, actual: WideString;
+procedure TTestProc.CheckNotEqualsUnicodeString(const expected, actual: UnicodeString;
     const ErrorMsg: string);
 begin
   OnCheckCalled;
