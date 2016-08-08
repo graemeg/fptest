@@ -1929,7 +1929,7 @@ begin
   begin
     Name := 'mnuFile';
     SetPosition(400, 84, 120, 20);
-    AddMenuItem('Quit', 'Ctrl+Q', nil);
+    AddMenuItem('Quit', 'Esc', nil);
   end;
 
   mnuTestTree := TfpgPopupMenu.Create(self);
