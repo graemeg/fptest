@@ -34,10 +34,13 @@
    Luiz Américo Pereira Câmara (LCL port)
 }
 
-{$DEFINE XMLLISTENER}
-{$MODE DELPHI}
-
 unit GuiTestRunner;
+
+{$MODE DELPHI}{$H+}
+
+{ if enabled, test results will be written to a XML file }
+{.$DEFINE XMLLISTENER}
+
 interface
 
 uses
@@ -53,7 +56,7 @@ type
   }
   UINT = LongWord;
 
-  TTestFunc = function (item :ITestProxy):Boolean of object;
+  TTestFunc = function (item :ITestProxy): Boolean of object;
 
   { TGUITestRunner }
 
