@@ -150,10 +150,15 @@ procedure _PrintTestTree(ATest: ITestProxy);
 var
   TestTests: IInterfaceList;
   i: Integer;
+  lStatus: string;
 begin
   if ATest = nil then
     Exit; //==>
-  writeln(Indent + ATest.Name);
+  if ATest.Enabled then
+    lStatus := '[x] '
+  else
+    lStatus := '[ ] ';
+  writeln(Indent + lStatus + ATest.Name);
   Inc(uIndent, 2);
   TestTests := ATest.Tests;
   for i := 0 to TestTests.count - 1 do
@@ -164,6 +169,7 @@ end;
 procedure PrintTestTree;
 begin
   uIndent := 0;
+  RegisteredTests.LoadConfiguration(TTextTestListener.IniFileName, False, False);
   _PrintTestTree(RegisteredTests);
 end;
 
@@ -410,7 +416,7 @@ begin
       writeln('No tests registered')
     else
     try
-    Suite.LoadConfiguration(TTextTestListener.IniFileName, False, False);
+      Suite.LoadConfiguration(TTextTestListener.IniFileName, False, False);
       Result := RunTest(Suite,[TTextTestListener.Create
           {$IFDEF XMLLISTENER}
             , TXMLListener.Create({LocalAppDataPath +} Suite.Name
