@@ -16,34 +16,33 @@ unit EpikTimer;
     System sleep function
     Designed to support multiple operating systems and Architectures
     Designed to support other hardware tick sources
-            
+
   Credits: Thanks to Martin Waldenburg for a lot of great ideas for using
            the Pentium's RDTSC instruction in wmFastTime and QwmFastTime.
 }
 
-{ Copyright (C) 2003-2006 by Tom Lisjac <netdxr@gmail.com>,
+{ Copyright (C) 2003-2014 by Tom Lisjac <netdxr@gmail.com>,
    Felipe Monteiro de Carvalho and Marcel Minderhoud
 
-  This library is licensed on the same Modifyed LGPL as Free Pascal RTL and LCL are
+  This library is licensed on the same Modified LGPL as Free Pascal RTL and LCL are
 
-  Please contact the author if you'd like to use this component but the Modifyed LGPL
+  Please contact the author if you'd like to use this component but the Modified LGPL
   doesn't work with your project licensing.
 
   This program is distributed in the hope that it will be useful, but WITHOUT
   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
   FITNESS FOR A PARTICULAR PURPOSE.
-  
+
   Contributor(s):
-  
+
   * Felipe Monteiro de Carvalho (felipemonteiro.carvalho@gmail.com)
-  
   * Marcel Minderhoud
-  
+  * Graeme Geldenhuys <graemeg@gmail.com>
+
 }
 {
  Known Issues
 
-   - Tested on Linux but no other Lazarus/FPC supported Unix platforms
    - If system doesn't have microsecond system clock resolution, the component
      falls back to a single gated measurement of the hardware tick frequency via
      nanosleep. This usually results in poor absolute accuracy due large amounts
@@ -70,7 +69,13 @@ uses
 {$IFDEF Windows}
   Windows, MMSystem,
 {$ELSE}
-  baseunix, unix, unixutil,
+  unix, unixutil, baseunix,
+  {$IFDEF LINUX}
+  Linux,  // for clock_gettime() access
+  {$ENDIF}
+  {$IFDEF FreeBSD}
+  FreeBSD,  // for clock_gettime() access
+  {$ENDIF}
 {$ENDIF}
   Classes, SysUtils, dateutils;
 
@@ -83,24 +88,24 @@ Const
 type
 
   TickType = Int64; // Global declaration for all tick processing routines
-  
+
   FormatPrecision = 1..12; // Number of decimal places in elapsed text format
-  
+
   // Component powers up in System mode to provide some cross-platform safety.
   TickSources = (SystemTimebase, HardwareTimebase); // add others if desired
 
   (* * * * * * * * * * * Timebase declarations  * * * * * * * * * * *)
-  
+
   { There are two timebases currently implemented in this component but others
     can be added by declaring them as "TickSources", adding a TimebaseData
     variable to the Private area of TEpikTimer and providing a "Ticks" routine
     that returns the current counter value.
-    
+
     Timebases are "calibrated" during initialization by taking samples of the
     execution times of the SystemSleep and Ticks functions measured with in the
     tick period of the selected timebase. At runtime, these values are retrieved
     and used to remove the call overhead to the best degree possible.
-    
+
     System latency is always present and contributes "jitter" to the edges of
     the sample measurements. This is especially true if a microsecond system
     clock isn't detected on the host system and a fallback gated measurement
@@ -108,13 +113,13 @@ type
     timebase frequency. This is sufficient for short term measurements where
     high resolution comparisons are desired... but over a long measurement
     period, the hardware and system wall clock will diverge significantly.
-    
+
     If a microsecond system clock is found, timebase correlation is used to
     synchronize the hardware counter and system clock. This is described below.
   }
 
   TickCallFunc = function: Ticktype; // Ticks interface function
-  
+
   // Contains timebase overhead compensation factors in ticks for each timebase
   TimebaseCalibrationParameters = record
     FreqCalibrated: Boolean; // Indicates that the tickfrequency has been calibrated
@@ -133,9 +138,9 @@ type
     SleepOverhead: Ticktype;   // SystemSleep all overhead in TicksFrequency for this timebase
     Ticks: TickCallFunc; // all methods get their ticks from this function when selected
   end;
-  
+
   TimeBaseSelector = ^TimebaseData;
-  
+
   (*  * * * * * * * * * * Timebase Correlation  * * * * * * * * * * *)
 
   { The TimeBaseCorrelation record stores snapshot samples of both the system
@@ -166,15 +171,15 @@ type
   // minutes of operation, there won't be very much correcting to do!
 
   CorrelationModes=(Manual, OnTimebaseSelect, OnGetElapsed);
-  
+
   (* * * * * * * * * * * Timer Data record structure  * * * * * * * * * * *)
-  
+
   // This is the timer data context. There is an internal declaration of this
   // record and overloaded methods if you only want to use the component for a
   // single timer... or you can declare multiple TimerData records in your
   // program and create as many instances as you want with only a single
   // component on the form. See the "Stopwatch" methods in the TEpikTimer class.
-  
+
   // Each timers points to the timebase that started it... so you can mix system
   // and hardware timers in the same application.
 
@@ -184,7 +189,7 @@ type
     StartTime:TickType; // Ticks sample when timer was started
     TotalTicks:TickType; // Total ticks... for snapshotting and pausing
   end;
-  
+
   TEpikTimer= class(TComponent)
     private
       BuiltInTimer:TimerData; // Used to provide a single built-in timer;
@@ -193,13 +198,13 @@ type
       FHWTicks:TimeBaseData;     // The hardware timebase
       FSystemTicks:TimeBaseData; // The system timebase
       FSelectedTimebase:TimeBaseSelector; // Pointer to selected database
-      
+
       FTimeBaseSource: TickSources; // use hardware or system timebase
       FWantDays: Boolean; // true if days are to be displayed in string returns
       FWantMS: Boolean; // True to display milliseconds in string formatted calls
       FSPrecision: FormatPrecision; // number of digits to display in string calls
       FMicrosecondSystemClockAvailable:Boolean; // true if system has microsecond clock
-      
+
       StartupCorrelationSample:TimebaseCorrelationData; // Starting ticks correlation snapshot
       UpdatedCorrelationSample:TimebaseCorrelationData; // Snapshot of last correlation sample
       FCorrelationMode: CorrelationModes; // mode to control when correlation updates are performed
@@ -285,13 +290,13 @@ implementation
   source which, in this case, is the Pentium's internal 64 Time Stamp Counter.
   The second source (the default) uses the given environment's most precision
   "timeofday" system call so it can work across OS platforms and architectures.
-  
+
   The hardware timer's accuracy depends on the frequency of the timebase tick
   source that drives it... in other words, how many of the timebase's ticks
   there are in a second. This frequency is measured by capturing a sample of the
   timebase ticks for a known period against a source of known accuracy. There
   are two ways to do this.
-  
+
   The first is to capture a large sample of ticks from both the unknown and
   known timing sources. Then the frequency of the unknown tick stream can be
   calculated by: UnknownSampleTicks / (KnownSampleTicks / KnownTickFrequency).
@@ -307,6 +312,13 @@ implementation
   approach is usable, however, for short term, high resolution comparisons where
   absolute accuracy isn't important.
 }
+
+const
+  NanoPerSec = 1000000000; // 1 billionth of a second
+  NanoPerMilli = 1000000;  // 1 millionth of a millisecond
+  MilliPerSec = 1000;
+  USecPerSec = 1000000;  // Microsecond. 1 millionth of a second
+
 
 (* * * * * * * * Start of i386 Hardware specific code  * * * * * * *)
 
@@ -379,51 +391,41 @@ function NullHardwareTicks:TickType; begin Result:=0 end;
 // Return microsecond normalized time source for a given platform.
 // This should be sync'able to an external time standard (via NTP, for example).
 function SystemTicks: TickType;
-{$IFDEF Windows}
+{$IFDEF WINDOWS}
 begin
   QueryPerformanceCounter(Result);
-  //Result := Int64(TimeStampToMSecs(DateTimeToTimeStamp(Now)) * 1000) // an alternative Win32 timebase
 {$ELSE}
-var t : timeval;
-begin
-  fpgettimeofday(@t,nil);
-   // Build a 64 bit microsecond tick from the seconds and microsecond longints
-  Result := (TickType(t.tv_sec) * 1000000) + t.tv_usec;
-{$ENDIF}
-end;
-
-function TEpikTimer.SystemSleep(Milliseconds: Integer):Integer;
-{$IFDEF Windows}
-
-begin
-  Sleep(Milliseconds);
-  Result := 0;
-end;
-
-{$ELSE}
-
-  {$IFDEF CPUX86_64}
+  {$IF defined(LINUX) or defined(FreeBSD)}
+  // This is essentially the same as FPC 3.0.4's GetTickCount64() call
+  function _GetTickCount: QWord;
+  var
+    ts: TTimeSpec;
+    t: timeval;
+  begin
+    // use the Posix clock_gettime() call
+    if clock_gettime(CLOCK_MONOTONIC, @ts)=0 then
+    begin
+      Result := (TickType(ts.tv_sec) * MilliPerSec) + (ts.tv_nsec div NanoPerMilli);
+      Exit;
+    end;
+    // Use the FPC fallback
+    fpgettimeofday(@t,nil);
+    Result := (TickType(t.tv_sec) * MilliPerSec) +  (t.tv_usec div 1000 { microsecond to millisecond });
+  end;
 
 begin
-  Sleep(Milliseconds);
-  Result := 0;
-end;
-
+    Result := _GetTickCount;
   {$ELSE}
-
-var
-  timerequested, timeremaining: timespec;
-begin
-  // This is not a very accurate or stable gating source... but it's the
-  // only one that's available for making short term measurements.
-  timerequested.tv_sec:=Milliseconds div 1000;
-  timerequested.tv_nsec:=(Milliseconds mod 1000) * 1000000;
-  Result := fpnanosleep(@timerequested, @timeremaining) // returns 0 if ok
+    Result := GetTickCount64;
+  {$ENDIF}
+{$ENDIF}
 end;
 
-  {$ENDIF}
-
-{$ENDIF}
+function TEpikTimer.SystemSleep(Milliseconds: Integer): integer;
+begin
+  Sleep(Milliseconds);
+  Result := 0;
+end;
 
 function TEpikTimer.GetHardwareTicks: TickType;
 begin
@@ -529,7 +531,7 @@ begin
   Tmp := Elapsed(T);
   P := inttostr(FSPrecision);
   MS := frac(Tmp); SM:=format('%0.'+P+'f',[MS]); delete(SM,1,1);
-  D := trunc(Tmp / 84600); Tmp:=Trunc(tmp) mod 84600;
+  D := trunc(Tmp / 86400); Tmp:=Trunc(tmp) mod 86400;
   H := trunc(Tmp / 3600); Tmp:=Trunc(Tmp) mod 3600;
   M := Trunc(Tmp / 60); S:=(trunc(Tmp) mod 60);
   If FWantDays then
@@ -539,12 +541,12 @@ begin
   If FWantMS then Result:=Result+SM;
 end;
 
-function TEpikTimer.ElapsedStr(var T: TimerData): string;
+function TEpikTimer.ElapsedStr(var T: TimerData): String;
 begin
   Result := format('%.'+inttostr(FSPrecision)+'f',[Elapsed(T)]);
 end;
 
-function TEpikTimer.WallClockTime: string;
+function TEpikTimer.WallClockTime: String;
 var
   Y, D, M, hour, min, sec, ms, us: Word;
 {$IFNDEF Windows}
@@ -559,7 +561,8 @@ begin
   // I opted for this approach which also provides microsecond precision.
   fpgettimeofday(@t,nil);
   EpochToLocal(t.tv_sec, Y, M, D, hour, min, sec);
-  ms:=t.tv_usec div 1000; us:=t.tv_usec mod 1000;
+  ms:=t.tv_usec div MilliPerSec;
+  us:=t.tv_usec mod MilliPerSec;
 {$ENDIF}
   Result:='';
   If FWantDays then
@@ -585,7 +588,7 @@ function  TEpikTimer.ElapsedDHMS: String; begin Result:=ElapsedDHMS(BuiltInTimer
 // timebase source. These have to be unique as the output of this measurement
 // is measured in "ticks"... which are different periods for each timebase.
 
-function TEpikTimer.CalibrateCallOverheads(Var Timebase:TimebaseData):Integer;
+function TEpikTimer.CalibrateCallOverheads(var TimeBase: TimebaseData): Integer;
 var i:Integer; St,Fin,Total:TickType;
 begin
   with Timebase, Timebase.CalibrationParms do
@@ -620,7 +623,7 @@ end;
 // time reference which, in this case, is nanosleep. There is a *lot* of jitter
 // in a nanosleep call so an attempt is made to compensate for some of it here.
 
-function TEpikTimer.CalibrateTickFrequency(Var Timebase:TimebaseData):Integer;
+function TEpikTimer.CalibrateTickFrequency(var TimeBase: TimebaseData): Integer;
 var
   i: Integer;
   Total, SS, SE: TickType;
@@ -641,7 +644,7 @@ begin
     ElapsedTicks:=Total div FreqIterations;
     SampleTime:=FrequencyGateTimeMS;
 
-    TicksFrequency:=Trunc( ElapsedTicks / (SampleTime / 1000));
+    TicksFrequency:=Trunc( ElapsedTicks / (SampleTime / MilliPerSec));
 
     FreqCalibrated:=True;
   end;
@@ -672,7 +675,7 @@ end;
   microsecond system clock accumulates enough ticks to perform a *very*
   accurate frequency measurement of the typically picosecond time stamp counter. }
 
-Function TEpikTimer.GetTimebaseCorrelation:TickType;
+function TEpikTimer.GetTimebaseCorrelation: TickType;
 Var
   HWDiff, SysDiff, Corrected: Extended;
 begin
@@ -739,7 +742,7 @@ constructor TEpikTimer.Create(AOwner: TComponent);
             FHWTickSupportAvailable:=CalibrateCallOverheads(FHWTicks)=0
           End
       end;
-         
+
     CalibrateCallOverheads(FSystemTicks);
     CalibrateTickFrequency(FSystemTicks);
 
