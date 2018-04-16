@@ -531,7 +531,7 @@ begin
   Tmp := Elapsed(T);
   P := inttostr(FSPrecision);
   MS := frac(Tmp); SM := format('%0.'+P+'f',[MS]); delete(SM,1,1);
-  D := trunc(Tmp / 84600); Tmp := Trunc(tmp) mod 84600;
+  D := trunc(Tmp / 86400); Tmp := Trunc(tmp) mod 86400;
   H := trunc(Tmp / 3600); Tmp := Trunc(Tmp) mod 3600;
   M := Trunc(Tmp / 60); S := (trunc(Tmp) mod 60);
 
