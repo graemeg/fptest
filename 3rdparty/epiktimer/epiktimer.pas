@@ -530,15 +530,18 @@ var
 begin
   Tmp := Elapsed(T);
   P := inttostr(FSPrecision);
-  MS := frac(Tmp); SM:=format('%0.'+P+'f',[MS]); delete(SM,1,1);
-  D := trunc(Tmp / 86400); Tmp:=Trunc(tmp) mod 86400;
-  H := trunc(Tmp / 3600); Tmp:=Trunc(Tmp) mod 3600;
-  M := Trunc(Tmp / 60); S:=(trunc(Tmp) mod 60);
-  If FWantDays then
+  MS := frac(Tmp); SM := format('%0.'+P+'f',[MS]); delete(SM,1,1);
+  D := trunc(Tmp / 84600); Tmp := Trunc(tmp) mod 84600;
+  H := trunc(Tmp / 3600); Tmp := Trunc(Tmp) mod 3600;
+  M := Trunc(Tmp / 60); S := (trunc(Tmp) mod 60);
+
+  if FWantDays then
     Result := format('%2.3d:%2.2d:%2.2d:%2.2d',[D,H,M,S])
   else
     Result := format('%2.2d:%2.2d:%2.2d',[H,M,S]);
-  If FWantMS then Result:=Result+SM;
+
+  if FWantMS then
+    Result := Result+SM;
 end;
 
 function TEpikTimer.ElapsedStr(var T: TimerData): String;
@@ -574,12 +577,35 @@ end;
 
 (* * * Overloaded methods to use the component's internal timer data * * *)
 
-procedure TEpikTimer.Clear; begin Clear(BuiltInTimer) end;
-procedure TEpikTimer.Start; begin Start(BuiltInTimer) end;
-procedure TEpikTimer.Stop;  Begin Stop(BuiltInTimer) End;
-function  TEpikTimer.Elapsed: Extended; begin Result:=Elapsed(BuiltInTimer) end;
-function  TEpikTimer.ElapsedStr: String; Begin Result:=ElapsedStr(BuiltInTimer) end;
-function  TEpikTimer.ElapsedDHMS: String; begin Result:=ElapsedDHMS(BuiltInTimer) end;
+procedure TEpikTimer.Clear;
+begin
+  Clear(BuiltInTimer);
+end;
+
+procedure TEpikTimer.Start;
+begin
+  Start(BuiltInTimer);
+end;
+
+procedure TEpikTimer.Stop;
+begin
+  Stop(BuiltInTimer);
+end;
+
+function TEpikTimer.Elapsed: Extended;
+begin
+  Result := Elapsed(BuiltInTimer);
+end;
+
+function TEpikTimer.ElapsedStr: String;
+begin
+  Result := ElapsedStr(BuiltInTimer);
+end;
+
+function TEpikTimer.ElapsedDHMS: String;
+begin
+  Result := ElapsedDHMS(BuiltInTimer);
+end;
 
 (* * * * * * * * * * Timebase calibration section  * * * * * * * * * *)
 
