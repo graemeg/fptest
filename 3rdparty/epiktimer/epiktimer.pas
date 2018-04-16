@@ -275,8 +275,8 @@ type
       destructor Destroy; Override;
     Published
       property StringPrecision: FormatPrecision read FSPrecision write FSPrecision;
-      property WantMilliseconds: Boolean read FWantMS write FWantMS;
-      property WantDays: Boolean read FWantDays write FWantDays;
+      property WantMilliseconds: Boolean read FWantMS write FWantMS default True;
+      property WantDays: Boolean read FWantDays write FWantDays default False;
       property TimebaseSource: TickSources read FTimeBaseSource write SetTimebaseSource;
       property CorrelationMode:CorrelationModes read FCorrelationMode write FCorrelationMode;
   end;
@@ -772,7 +772,7 @@ begin
   inherited Create(AOwner);
   StringPrecision := 6;
   FWantMS         := True;
-  FWantDays       := True;
+  FWantDays       := False;
   InitTimebases;
   CorrelationMode := OnTimebaseSelect;
   // Default is the safe, cross-platform but less precise system timebase
