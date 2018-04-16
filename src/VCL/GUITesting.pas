@@ -60,9 +60,6 @@ uses
   SysUtils,
   Classes;
 
-const
-  rcs_id: string = '#(@)$Id: GUITesting.pas,v 1.35 2004/10/17 10:39:00 neuromancer Exp $';
-
 {$IFDEF DUNIT_CLX}
 const
   VK_F8 = Key_F8;
