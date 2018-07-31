@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><!--link rel="stylesheet" href="style.css"-->
-
-
+<html>
+<head>
 
 <meta content="text/html; charset=UTF-8" http-equiv="content-type">
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
@@ -10,7 +9,7 @@
 <h1>Advanced high integrity DUnit2 description.</h1>
 </div>
 
-<a name="Top"></a><br>
+<br>
 <ul>
 <li><a href="#Introduction"><font size="5">Introduction</font></a>
 
@@ -167,9 +166,9 @@ allocating resources in a once off operation becomes standardized, more
 visible and safer to implement. Care is still required however because
 creation and destruction still occurs outside the GUI existence.</font></div>
 
-<font size="+1"><br>
-<font size="5"><a name="SetUpOnce_and_TeardownOnce"></a><font size="5">SetUpOnce and 
-TeardownOnce</font><font size="3"> <br></font>
+<br>
+<a name="SetUpOnce_and_TeardownOnce"></a><font size="5">SetUpOnce and 
+TeardownOnce</font><br>
 <div style="margin-left: 40px;"><font size="+1">DUnit2 introduces two new protected 
 procedures "SetUpOnce" and "TeardownOnce". These significantly simplify the 
 process of writing efficient unit tests and overcome the need to associate 
@@ -183,7 +182,7 @@ SetUp; override;<br>&nbsp; procedure Teardown; override;<br>&nbsp; procedure
 TeardownOnce; override;<br>published<br>&nbsp; procedure 
 VerifyThatThereIsAnUnAssignedCommPort;<br>&nbsp; procedure 
 VerifyThatTheCommPortOpens;<br>&nbsp; procedure 
-VerifyThatTheCommPortCloses;<br>end;</em></font></font></div><br>Test Decorators</font></font> 
+VerifyThatTheCommPortCloses;<br>end;</em></font></font></div><br>Test Decorators 
 
 <div style="margin-left: 40px;"><font size="+1"> Pattern aware DUnit author(s) provided a less convenient solution in V9.4 by introducing test "Decorators".<br>
 <br>
@@ -705,21 +704,42 @@ ProjectName.exe - Default Project<br>
 A suite of tests can be compiled into a DLL and registered using unit "TestModules.pas" procedures.<br>
 DLL based tests show in the TestTree as a project using the DLL name.
 At some time in the future someone more familiar with .NET might like
-to so the same for Assemblies. Registration is shown below.</font></div>
-
-<div style="margin-left: 40px;"><font size="+1">RegisterModuleTests('Full path and dll filename.ext');</font></div>
+to so the same for Assemblies. Registration is shown below.</font><br>
+<code>RegisterModuleTests('Full path and dll filename.ext');</code>
+</div>
 
 <div style="margin-left: 40px;"><font size="+1"><br>
-The syntax for registering tests in named a project is simple. In unit
+The syntax for registering tests in a project is simple. In unit
 test unit's initialization section the registration code looks like the
 following.<br>
 <br>
-<em><font face="Lucida Console">ProjectRegisterTest('My First Ever Project', TMyTestCase.Suite);<br>
-RegisterTest(TMyTestCase.Suite); // Automatically allocated to the "Default Project"<br>
-ProjectRegisterTests('My Next Project', [TTestCaseABC.suite, TTestCaseXYZ.Suite]);<br>
-ProjectRegisterTests('My Suite Project', 'A Test Suite Of Tests', [TTestCaseJKL.suite, TTestCaseMNO.Suite]);<br>
+Register single test suite:<br>
+<code>
+  RegisterTest(TMyTestCase.Suite); //Automatically allocated to the "Default Project"
+</code><br>
+or<br>
+<code>TestFramework.RegisterTest('RootNodeName', TTestCaseFirst.Suite);</code><br>
 <br>
-</font></em></font></div>
+Register 2 test suits with the same title:<br>
+<code>
+  ProjectRegisterTests('RootNodeName', [TTestCaseFirst.Suite]);<br>
+  ProjectRegisterTests('RootNodeName', [TOtherTestCase.Suite]);
+</code><br>
+<br>
+Register 2 test with different titles:<br>
+<code>
+  ProjectRegisterTests('RootNodeName_A', [TTestCaseFirst.Suite]);<br>
+  ProjectRegisterTests('RootNodeName_B', [TOtherTestCase.Suite]);
+</code><br>
+<br>
+Register multiple test suits at once:<br>
+<code>
+  ProjectRegisterTests('RootNodeName', [TTestCaseABC.suite, TTestCaseXYZ.Suite]);
+</code><br>
+<br>
+Where <i>RootNodeName</i> becomes the name of the root node.
+<br>
+</font></div>
 
 <div style="margin-left: 40px;"><font size="+1">If multi-threading is
 added to DUnit2 the default project will run in the context of the VCL
@@ -875,18 +895,13 @@ An example file running tiOPF2 tests is shown below in two sections, beginning a
 
 </li><li><font size="4">The code is still undergoing refinement in particular to improve readability and maintainability.</font>
 
-</li><li><font size="4"><a href="http://members.optusnet.com.au/mcnabp/Projects/DUnit2/FeatureMatrix.html">Check methods feature matrix</a>.</font></li>
+</li><li><font size="4"><a href="FeatureMatrix.html">Check methods feature matrix</a>.</font></li>
 </ul>
 
-<font size="+1"> <a href="#Top"> Back to Top</a><br>
 <br>
 <font size="3">Page last updated 29th Aug 2008</font><br>
 <br>
  Copyright<br>
  DUnit Group 2006, 2008<br>
-All rights reserved.<br>
-<br>
-<br>
-<a href="http://validator.w3.org/check?uri=referer"><img alt="Valid HTML 4.0 Transitional" src="DUnit2Description_files/valid-html40.png" height="31" width="88"></a></font> 
-<img class="maincounter" alt="Page Hit Counter" src="DUnit2Description_files/counter.gif">
+All rights reserved.
 </body></html>
