@@ -72,7 +72,7 @@ begin
               Canvas.DrawLine(Right, Top, Right, Bottom);   // right
               Canvas.DrawLine(Right, Bottom, Left, Bottom);   // bottom
               // inside gradient fill
-              InflateRect(FClientRect, -1, -1);
+              InflateRect(-1, -1);
               Canvas.GradientFill(FClientRect, Color, fpgLighter(Color, 45), gdVertical);
             end;  { if }
             FClientRect := SavedRect;
@@ -104,7 +104,7 @@ begin
             Canvas.SetLineStyle(1, lsSolid);
             Canvas.DrawRectangle(FClientRect);
             { This must be completed and adjusted with border style }
-            InflateRect(FClientRect, -1, -1);
+            InflateRect(-1, -1);
             Canvas.SetLineStyle(1, lsSolid); // just in case background changed that
           end;
       else
