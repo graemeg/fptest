@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Configuration">
+    <meta name="author" content="Graeme Geldenhuys">
+    <meta name="author" content="Jiří Vejda">
+    <link rel="stylesheet" type="text/css" href="fptest.css">
+    <title>fpTest - Configuration</title>
+  </head>
+
+  <body>
+    <h2>Configuration (<i>fptest.ini</i>)</h2>
+
+    <div>
+      <p>fpTest reads test project related information from the <i>fptest.ini</i>
+        file, which will be auto-created in the same directory as the binary
+        file.
+      </p>
+    </div>
+
+    <h3 id="Excluding_Tests">Excluding tests</h3>
+
+    <div>
+      <p>Individual tests can be excluded separately from Enabling and Disabling
+        tests. Test state will be not cleared when globally enabling tests.</p>
+
+      <p>Excluding tests is allowed at multiple levels:</p>
+      <ul>
+        <li>per test project,</li>
+        <li>per test suite,</li>
+        <li>per test case,</li>
+        <li>per test method.</li>
+      </ul>
+
+      <p>Excluded tests are marked:</p>
+      <ul>
+        <li>with a red X in treeview in GUI version,</li>
+        <li>with an x in place of dots in console mode (TextTestRunner).</li>
+      </ul>
+    </div>
+
+    <h4>Excluding test in GUI</h4>
+             
+    <div>
+      <p>To exclude a test in the GUI version right click on the test and choose
+        <i>Exclude Test Execution</i>. To re-include tests right click on the test
+        and choose <i>Include Test Execution</i>.
+      </p>
+    </div>
+
+    <h4>Excluding test in <i>fptest.ini</i></h4>
+
+    <div>
+      <p>Configuration file allows explicitly to disable the tests you don't
+        want to run and fpTest will run all the others. This was done for
+        a specific reason - when new tests are implemented, they will be
+        automatically allowed. This is especially important when you do
+        something like Test Driven Development (TDD).
+      </p>
+
+      <p><b>Example:</b></p>
+
+      <ul>
+        <li>Project1.exe (binary name)
+        <ul>
+          <li>Suite1 (test suite)
+          <ul>
+            <li>TClassA (test case)
+              <ul>
+                <li>TestOne (test method)</li>
+                <li>TestTwo (test method)</li>
+                <li>TestThree (test method)</li>
+              </ul>
+            </li>
+            <li>TClassB (test case)
+              <ul>
+                <li>TestOne (test method)</li>
+                <li>TestTwo (test method)</li>
+                <li>TestThree (test method)</li>
+              </ul>
+            </li>
+            </ul>
+          </li>
+          </ul>
+        </li>
+      </ul>
+
+      <p>With an empty or non-existant <i>fptest.ini</i> file, all 6 test methods
+        will run. Three from TClassA and three from TClassB.
+      </p>
+
+      <p><b>Disabling test project</b><br>
+        To disable test in whole project <i>fptest.ini</i> file will look like
+        this:<br>
+        <br>
+        <code>
+          [Excluded_Test]<br>
+          project1.exe=0
+        </code>
+      </p>
+
+      <p><b>Disabling test suite</b><br>
+        If we want to disable Suite1 completely, <i>fptest.ini</i> file will 
+        look as follows:<br>
+        <br>
+        <code>
+          [Excluded_Test.Project1.exe]<br>
+          Suite1=0
+        </code>
+      </p>
+
+      <p><b>Disabling test case</b><br>
+        To disable TClassB completely:<br>
+        <br>
+        <code>
+          [Excluded_Test.Project1.exe.Suite1]<br>
+          TClassA=0
+        </code>
+      </p>
+
+      <p><small>Note: you don't have to disable each test method one by one.</small></p>
+
+      <p><b>Disabling test in test case</b><br>
+        To disable <i>TestOne()</i> and <i>TestTwo()</i> from the TClassB test suite
+        <i>fptest.ini</i> file will look as follows:<br>
+        <br>
+        <code>
+          [Excluded_Test.project1.exe.Suite1.TClassA]<br>
+          TestOne=0<br>
+          TestTwo=0
+        </code>
+      </p>
+
+      <img alt="View of excluded tests in GUI version" src="DUnit2Description_files/ExcludedTests.png">
+    </div>
+  </body>
+</html>

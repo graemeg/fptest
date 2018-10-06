@@ -6,13 +6,18 @@
     <link rel="stylesheet" type="text/css" href="fptest.css">
     <title>FPTest Description</title>
   </head>
-<body>
-  <h1>Advanced high integrity fpTest/DUnit2 description.</h1>
 
-  <h2>Table of contents</h2>
+  <body>
+    <h1>Advanced high integrity fpTest/DUnit2 description.</h1>
+
+    <h2>Table of contents</h2>
 
 <ul>
   <li><a href="#Introduction">Introduction</a></li>
+  <li><a href="fptest_configuration.html">Configuration</a></li>
+    <ul>
+      <li><a href="fptest_configuration.html#Excluding_Tests">Excluding Tests</a></li>
+    </ul>
   <li><a href="#SetUp_and_Teardown">SetUp and Teardown</a></li>
   <li><a href="#Constructors_and_Destructors">Constructors and Destructors</a></li>
   <li><a href="#DUnit2_Constructors_and_Destructors">DUnit2 Constructors and Destructors</a></li>
@@ -34,7 +39,6 @@
   <li><a href="#Project_Registration">Project Registration</a></li>
   <li><a href="#FPTest_Self_Testing">FPTest Self Testing</a></li>
   <li><a href="#DUnit2_Unit_Test_Suite">DUnit2's Unit Test Suite</a></li>
-  <li><a href="#Excluding_Tests">Excluding Tests</a></li>
   <li><a href="#XML_Report_Generator">XML_Report_Generator</a></li>
   <li><a href="#Closing_summary">Closing summary</a></li>
   <li><a href="FeatureMatrix.html">Feature matrix</a></li>
@@ -169,7 +173,8 @@ class, reducing code complexity and maintenance.<br>
 &nbsp; &nbsp; procedure SetUpOnce; override;<br>
 &nbsp; &nbsp; procedure SetUp; override;<br>
 &nbsp; &nbsp; procedure Teardown; override;<br>
-&nbsp; &nbsp; procedure TeardownOnce; override;<br>published<br>
+&nbsp; &nbsp; procedure TeardownOnce; override;<br>
+&nbsp; published<br>
 &nbsp; &nbsp; procedure VerifyThatThereIsAnUnAssignedCommPort;<br>
 &nbsp; &nbsp; procedure VerifyThatTheCommPortOpens;<br>
 &nbsp; &nbsp; procedure VerifyThatTheCommPortCloses;<br>
@@ -589,14 +594,14 @@ public<br>
 end;<br>
 <br>
 TMyRunTestRunner = class(TTestCase)<br>
-// Empty but can have SetUp, TearDown procedures if desired<br>
+&nbsp; // Empty but can have SetUp, TearDown procedures if desired<br>
 end;<br>
 <br>
 ......<br>
 <br>
 TMyRunTestExample.RunTest;<br>
 begin<br>
-// Do something useful<br>
+&nbsp; // Do something useful<br>
 &nbsp; Check(SomeBooleanResult, 'My error message');<br>
 end;<br>
 <br>
@@ -775,38 +780,15 @@ Condensed view of unit tests executing 21st May 2007 showing the range of testin
 <br>
 <img style="width: 532px; height: 779px;" alt="Entire suite of tests executed as two projects" src="DUnit2Description_files/Two%2520Projects.png"></div>
 
-<h2 id="Excluding_Tests">Excluding Tests</h2> 
+<h2 id="XML_Report_Generator">XML Report Generator</h2>
 
-<div>
-<ul>
-<li>Individual tests can now be excluded separately from Enabling and Disabling tests.
-
-</li><li>Excluded test state is persisted in DUnit.ini and is not cleared by globally enabling tests.
-
-</li><li>To exclude a test in the GUI version right click on the test and choose Exclude Test Execution.
-
-</li><li>To re-include tests right click on the test and choose Include Test Execution.
-
-</li><li>Excluded tests are shown with a red X in the GUI test treeview.
-
-</li><li>Excluded tests are stored in Sections in DUnit.ini and include the project name.
-
-</li><li>To exclude the same tests from execution in
-console mode duplicate the sections in the .ini file and change the
-project name accordingly.
-
-</li><li>In console mode (TextTestRunner) excluded tests are shown with an x in place of dots.
-
-</li><li>After tests suite execution the XML report file shows the number of Excluded tests.</li>
-</ul>
-
-<img style="width: 478px; height: 640px;" alt="View of excluded tests in GUI version" src="DUnit2Description_files/ExcludedTests.png">
-
-<h2 id="XML_Report_Generator">XML Report Generator</h2> 
+  <div>
+    <p>fpTest has an XML report generator, that is controlled by the compiler
+      define <i>{XMLLISTENER}</i> and can be enabled at the top of the
+      <i>TextTestRunner.pas</i> or <i>GUITestRunner.pas</i> units.
+    </p>
 
 <ul>
-<li>An XML report generator has been added for D7..D10 but not .NET.
-
 </li><li>D7..D10 automatically link to the supplied xdom.pas.
 
 </li><li>To compile D5 or D6 xdom.pas would need to be
@@ -822,7 +804,6 @@ $IFDEFs removed to include XMLListener.pas.
 </li><li><a href="DUnit2Test.xml">DUnit2 XML test results report. Note tag difference to tiOPF2 shown below</a></li>
 </ul>
 
-<br>
 An example file running tiOPF2 tests is shown below in two sections, beginning and ending.<br>
 <br>
 <img style="width: 1183px; height: 387px;" alt="Beginning of XML report" src="DUnit2Description_files/XMLStart.png"><br>
