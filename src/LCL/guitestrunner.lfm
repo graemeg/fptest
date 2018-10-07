@@ -1138,7 +1138,7 @@ object GUITestRunner: TGUITestRunner
     end
     object UseRegistryAction: TAction
       Category = 'Options'
-      Caption = 'UseRegistryAction'
+      Caption = 'Use Registry'
       OnExecute = UseRegistryActionExecute
     end
     object CopyProcnameToClipboardAction: TAction

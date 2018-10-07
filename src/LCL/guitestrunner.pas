@@ -2261,12 +2261,7 @@ begin
     RunTheTest(Suite);
   finally
     HoldOptions(False);
-  {$IFDEF VER130}
     FreeAndNil(FSelectedTests);
-  {$ELSE}
-    FSelectedTests.Free;
-    FSelectedTests := nil;
-  {$ENDIF}
   end;
 end;
 
