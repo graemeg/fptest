@@ -6,8 +6,12 @@ program project1;
   {$APPTYPE CONSOLE}
 {$ENDIF}
 
-{.$Define TextRunner}
-{$Define GUIRunner}
+// Text or Gui project?
+{$Define TextRunner}
+{.$Define GUIRunner}
+
+// Optional extra when using GUI Runner with fpGUI Toolkit
+{.$Define FPGUI}
 
 uses
   {$IFDEF UNIX}{$IFDEF UseCThreads}
@@ -21,7 +25,7 @@ uses
   {$IFDEF GUIRunner}
   ,GuiTestRunner
   {$ENDIF}
-  {$ifndef LCL}
+  {$ifdef FPGUI}
   ,formimages
   {$endif}
   ;
