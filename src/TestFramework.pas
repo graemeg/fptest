@@ -317,6 +317,10 @@ type
                            const ErrorMsg: string = ''); overload;
     procedure CheckNull(const obj: TObject;
                         const ErrorMsg: string = ''); overload;
+    procedure CheckNotNull(const obj :Pointer;
+                           const ErrorMsg :string = ''); overload;
+    procedure CheckNull(const obj: Pointer;
+                        const ErrorMsg: string = ''); overload;
     procedure CheckNotSame(const expected, actual: IInterface;
                            const ErrorMsg: string = ''); overload;
     procedure CheckSame(const expected, actual: TObject;
@@ -3309,6 +3313,20 @@ begin
   OnCheckCalled;
   if obj <> nil then
     FailEquals('nil', PtrToStr(Pointer(obj)), ErrorMsg, CallerAddr);
+end;
+
+procedure TTestProc.CheckNotNull(const obj: Pointer; const ErrorMsg: string);
+begin
+  OnCheckCalled;
+  if obj = nil then
+    FailNotEquals('pointer', PtrToStr(obj), ErrorMsg, CallerAddr);
+end;
+
+procedure TTestProc.CheckNull(const obj: Pointer; const ErrorMsg: string);
+begin
+  OnCheckCalled;
+  if obj <> nil then
+    FailEquals('nil', PtrToStr(obj), ErrorMsg, CallerAddr);
 end;
 
 procedure TTestProc.CheckException(const AMethod: TExceptTestMethod;

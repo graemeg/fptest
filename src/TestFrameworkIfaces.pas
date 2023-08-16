@@ -395,6 +395,10 @@ type
                            const ErrorMsg: string = ''); overload;
     procedure CheckNull(const obj: TObject;
                         const ErrorMsg: string = ''); overload;
+    procedure CheckNotNull(const obj :Pointer;
+                           const ErrorMsg :string = ''); overload;
+    procedure CheckNull(const obj: Pointer;
+                        const ErrorMsg: string = ''); overload;
     procedure CheckNotSame(const expected, actual: IInterface;
                            const ErrorMsg: string = ''); overload;
     procedure CheckSame(const expected, actual: TObject;
