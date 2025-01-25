@@ -2,8 +2,8 @@ program showoverrides;
 
 {$mode objfpc}{$H+}
 
-{.$Define TextRunner}
-{$Define GUIRunner}
+{$Define TextRunner}
+{.$Define GUIRunner}
 
 {$IFDEF TextRunner}
   {$IFDEF Windows}
