@@ -1,9 +1,9 @@
-program selftest;
+program TestRunner;
 
 {$mode objfpc}{$H+}
 
-{.$Define TextRunner}
-{$Define GUIRunner}
+{$Define TextRunner}
+{.$Define GUIRunner}
 
 {$IFDEF TextRunner}
   {$IFDEF Windows}

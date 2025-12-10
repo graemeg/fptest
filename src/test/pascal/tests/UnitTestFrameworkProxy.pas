@@ -909,7 +909,7 @@ begin
 end;
 
 initialization
-  {$ifdef selftest} RefTestFramework. {$endif}
+ // {.$ifdef selftest} RefTestFramework. {.$endif}
   RegisterTests('Validate_TestFrameworkProxy', [TTestProxyFrameworkRegistersProjects.Suite
                                                 {$IFNDEF VER130}
                                                   {$IFNDEF VER140}
@@ -919,6 +919,6 @@ initialization
                                                   {$ENDIF}
                                                 {$ENDIF}
                                                ]);
-  {$ifdef selftest} RefTestFramework. {$endif}
+ // {.$ifdef selftest} RefTestFramework. {.$endif}
   RegisterTest('Validate_TestFrameworkProxy', TTestBreakOnFailure.Suite);
 end.

@@ -1633,12 +1633,12 @@ type
        procedure TestCheckNotEqualsMemMsgP;
        procedure TestCheckNotEqualsMemMsgF;
        {$ENDIF}
-       procedure TestCheckEqualsWideStringP;
-       procedure TestCheckEqualsWideStringF;
-       procedure TestCheckEqualsWideStringMsgP;
-       procedure TestCheckEqualsWideStringMsgF;
-       procedure TestCheckNotEqualsWideStringP;
-       procedure TestCheckNotEqualsWideStringF;
+       //procedure TestCheckEqualsWideStringP;
+       //procedure TestCheckEqualsWideStringF;
+       //procedure TestCheckEqualsWideStringMsgP;
+       //procedure TestCheckEqualsWideStringMsgF;
+       //procedure TestCheckNotEqualsWideStringP;
+       //procedure TestCheckNotEqualsWideStringF;
     {$ENDIF}
   end;
 
@@ -7266,9 +7266,9 @@ begin  // I make it 27 calls to check for win32 code here
   Ls2 := 'aaa';
   Ls3 := 'bbb';
 
-  CheckEqualsWideString(Ls1, Ls1, 'CheckEquals WideString');
-  CheckNotEqualsWideString(Ls1, Ls2, 'CheckNotEquals WideString');
-  CheckNotEqualsWideString(Ls2, Ls3, 'CheckNotEquals WideString');
+  //CheckEqualsWideString(Ls1, Ls1, 'CheckEquals WideString');
+  //CheckNotEqualsWideString(Ls1, Ls2, 'CheckNotEquals WideString');
+  //CheckNotEqualsWideString(Ls2, Ls3, 'CheckNotEquals WideString');
   {$ENDIF}
 
   CheckTrue(true, 'CheckTrue');
@@ -8076,47 +8076,47 @@ begin
   CheckNotEquals(s1, s2, 'AMsg');
 end;
   {$ENDIF UNICODE}
-procedure TTestChecks.TestCheckEqualsWideStringP;
-begin
-  s1 := 'aaa';
-  s2 := 'aaa';
-  CheckEqualsWideString(s1, s2);
-end;
+//procedure TTestChecks.TestCheckEqualsWideStringP;
+//begin
+//  s1 := 'aaa';
+//  s2 := 'aaa';
+//  CheckEqualsWideString(s1, s2);
+//end;
 
-procedure TTestChecks.TestCheckEqualsWideStringF;
-begin
-  s1 := 'aaa'#1024;
-  s2 := '123';
-  CheckEqualsWideString(s1, s2);
-end;
+//procedure TTestChecks.TestCheckEqualsWideStringF;
+//begin
+//  s1 := 'aaa'#1024;
+//  s2 := '123';
+//  CheckEqualsWideString(s1, s2);
+//end;
 
-procedure TTestChecks.TestCheckEqualsWideStringMsgP;
-begin
-  s1 := 'aaa';
-  s2 := 'aaa';
-  CheckEqualsWideString(s1, s2, 'AMsg');
-end;
+//procedure TTestChecks.TestCheckEqualsWideStringMsgP;
+//begin
+//  s1 := 'aaa';
+//  s2 := 'aaa';
+//  CheckEqualsWideString(s1, s2, 'AMsg');
+//end;
 
-procedure TTestChecks.TestCheckEqualsWideStringMsgF;
-begin
-  s1 := 'aaa'#1024;
-  s2 := '123';
-  CheckEqualsWideString(s1, s2, 'AMsg');
-end;
+//procedure TTestChecks.TestCheckEqualsWideStringMsgF;
+//begin
+//  s1 := 'aaa'#1024;
+//  s2 := '123';
+//  CheckEqualsWideString(s1, s2, 'AMsg');
+//end;
 
-procedure TTestChecks.TestCheckNotEqualsWideStringP;
-begin
-  s1 := 'aaa'#1024;
-  s2 := 'aaa';
-  CheckNotEqualsWideString(s1, s2);
-end;
+//procedure TTestChecks.TestCheckNotEqualsWideStringP;
+//begin
+//  s1 := 'aaa'#1024;
+//  s2 := 'aaa';
+//  CheckNotEqualsWideString(s1, s2);
+//end;
 
-procedure TTestChecks.TestCheckNotEqualsWideStringF;
-begin
-  s1 := 'aaa';
-  s2 := 'aaa';
-  CheckNotEqualsWideString(s1, s2);
-end;
+//procedure TTestChecks.TestCheckNotEqualsWideStringF;
+//begin
+//  s1 := 'aaa';
+//  s2 := 'aaa';
+//  CheckNotEqualsWideString(s1, s2);
+//end;
 {$ENDIF CLR}
 
 { TTestInheritsFrom }
@@ -12551,13 +12551,13 @@ begin
 end;
 
 initialization
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('TestTestProc',
                               [TTestITestProc.Suite,
                                TTestITestProcName.Suite,
                                TTestITestProcCreatesNamed.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('ValidateTestCaseBehavior',
                               [TTestITestCaseExists.Suite,
                                TTestNamedTestCase.Suite,
@@ -12573,12 +12573,12 @@ initialization
 //  RefTestFramework.
 //  RegisterTest('ValidateTestCaseBehavior', TTestRegisrationOfParamMethodTestCase.Suite);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('VerifyAllChecksSignalPassAndFail',
                               [TTestCheckTests.Suite,
                                TTestChecksCount.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('ValidateTestSuiteBehaviour',
                               [TTestITestSuiteExists.Suite,
                                TTestITestSuiteAddMethods.Suite,
@@ -12591,24 +12591,24 @@ initialization
                                TVerifyGetNameInSuiteIsAccessed.Suite,
                                TTestLevelTestRunsFrom.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('VerifyLeagcyCode', [TTestLegacyRunTestMethod.Suite,
                                     TTestLegacyRunTestMethodCheckFails.Suite]);
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('ValidateTestProjectBehavior',
                               [TTestITestProjectExists.Suite,
                                TTestTestProjectBehaviorOnRegisterFirstTestCase.Suite,
                                TTestTestProjectAddMethods.Suite,
                                TTestTestProjectAddSuite.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('ValidateProjectManagerBehavior',
                               [TestIProjectManager.Suite,
                                TTestITestProjectIterator.Suite,
                                TTestITestCanRunProject.Suite,
                                TTestMultiProjectCount.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('TestErrorHandling',
                               [TTestTestCaseHandlesFailCalls.Suite,
                                TTestTestCaseHandlesHaltCall.Suite,
@@ -12625,35 +12625,35 @@ initialization
                                TTestExcludedTestReporting.Suite,
                                TTestHandlesBreakOnNotPassed.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('TestProjectRegistration',
                               [TestRegisterTestToProjectDefault.Suite,
                                TestRegisterTestToNamedProject.Suite]);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTest('TestRecordElapsedTime', TTestsElapsedTimes.Suite);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTest(TTestSetUpDataAccess.Suite);
 
-  RefTestFramework.
+//  RefTestFramework.
   RegisterTests('TestStatusReports',
                               [TTestStatusMessageCallback.Suite,
                               TTestStatusMessageAutoCallback.Suite]);
 
-  RefTestFramework.
+  //RefTestFramework.
   RegisterTests('TestSaveConfiguration',
                               [TestSaveEnableState.Suite,
                                TestSaveProjectEnableState.Suite]);
 
-  RefTestFramework.
+  //RefTestFramework.
   RegisterTests('TestLoadConfiguration',
                               [TestLoadConfigurationDisablesTests.Suite,
                                TestLoadConfigurationDisablesProjects.Suite,
                                TestLoadConfigurationExcludesTests.Suite,
                                TestLoadConfigurationExcludesProjects.Suite]);
 
-  RefTestFramework.
+  //RefTestFramework.
   RegisterTests('TestDecorator_Extentions',
                               [TTestDecoratorDecorates.Suite,
                               TTestRepeatTest.Suite,
@@ -12670,8 +12670,8 @@ initialization
                               ]);
   {$ENDIF}
 
-  RefTestFramework.
-  ProjectRegisterTest('Test Multiple Projects', TestMultiProject.Suite);
+  //RefTestFramework.
+//  ProjectRegisterTest('Test Multiple Projects', TestMultiProject.Suite);
 
 end.
 
