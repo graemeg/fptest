@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <name>FPTest</name>
+  <version>1.0.0</version>
+  <author>Graeme Geldenhuys</author>
+  <license>MPL-1.1</license>
+
+  <build>
+    <projectType>library</projectType>
+    <outputDirectory>target</outputDirectory>
+    <libraryName>fptest</libraryName>
+
+    <unitPaths>
+      <!-- These act as inclusion rules based on conditions -->
+      <path condition="FPGUI">fpgui</path>
+      <path condition="LCL">lcl</path>
+      <!-- There are just to clean up the FPC command - not strictly needed -->
+      <path condition="UNUSED">vcl</path>
+    </unitPaths>
+  </build>
+
+  <test>
+    <framework>fptest</framework>
+    <testSource>TestRunner.pas</testSource>
+    <frameworkOptions>
+      <option>--all</option>
+    </frameworkOptions>
+    <unitPaths>
+      <!-- These act as inclusion rules based on conditions -->
+      <path condition="FPGUI">fpgui</path>
+    </unitPaths>
+  </test>
+
+  <profiles>
+    <profile>
+      <id>fpgui</id>
+      <defines>
+         <define>FPGUI</define>
+      </defines>
+    </profile>
+
+    <profile>
+      <id>lcl</id>
+      <defines>
+         <define>LCL</define>
+      </defines>
+    </profile>
+
+    <profile>
+      <id>memleak</id>
+      <compilerOptions>
+        <option>-gh</option>
+        <option>-gl</option>
+      </compilerOptions>
+    </profile>
+
+    <profile>
+      <id>test</id>
+      <defines>
+        <define>SELFTEST</define>
+      </defines>
+    </profile>
+
+  </profiles>
+
+
+</project>
